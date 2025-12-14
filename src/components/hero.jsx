@@ -1,9 +1,8 @@
-import HeroImage from "../assets/hero-image.jpg"; // Reemplazá con tu imagen principal
+import HeroImage from "../assets/heroexample-2.jpg"; // Reemplazá con tu imagen principal
 
 function Hero() {
   return (
     <section className="relative w-screen h-screen flex items-center justify-center bg-gray-100">
-      {/* Imagen de fondo */}
       <img
         src={HeroImage}
         alt="Hero Los Molinos"
@@ -18,9 +17,11 @@ function Hero() {
         <p className="mt-4 text-lg md:text-2xl text-white drop-shadow-md">
           Venta de accesorios para tu parrilla en Dolores y la zona
         </p>
-        <button className="mt-6 px-6 py-2 border-2 border-white text-white font-medium rounded-lg hover:bg-white hover:text-orange-500 transition-colors duration-200">
-            Explorar Productos
-        </button>
+        <a href="/productos" className="cursor-pointer">
+          <button className="cursor-pointer text-2xl mt-6 px-2 py-1 border-2 bg-orange-500 border-orange-500 text-white font-medium rounded-lg hover:text-white hover:bg-orange-400 hover:border-orange-400 transition-all duration-500">
+              Explorar Productos
+          </button>
+        </a>
       </div>
     </section>
   );

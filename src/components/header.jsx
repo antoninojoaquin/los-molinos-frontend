@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom"; // 🔹 IMPORTAR Link
+import { Link } from "react-router-dom";
 import { FaHeart, FaShoppingCart, FaSearch } from "react-icons/fa";
 import Logo from "../assets/logo.png";
 
@@ -8,7 +8,6 @@ function Header() {
 
   return (
     <header className="bg-white shadow-md fixed w-full top-0 z-50">
-      {/* Top bar */}
       <div className="flex justify-between items-center h-28 px-4 md:px-8">
         <div className="cursor-pointer flex-shrink-0">
           <Link to="/">
@@ -18,7 +17,7 @@ function Header() {
 
         <div className="flex items-center space-x-8">
           <div className="relative hidden md:flex">
-            <button className="absolute left-0 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-400 transition-colors duration-200 focus:outline-none">
+            <button className="border-none bg-transparent p-[0.6em] text-[2em] font-medium cursor-pointer absolute left-0 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-400 transition-colors duration-200 focus:outline-none">
               <FaSearch size={22} />
             </button>
             <input
@@ -34,14 +33,13 @@ function Header() {
           </div>
 
           <div className="md:hidden flex items-center">
-            <button onClick={() => setOpen(!open)} className="text-orange-500 text-4xl focus:outline-none">
+            <button onClick={() => setOpen(!open)} className="border-none bg-transparent p-[0.6em] text-[2em] font-medium cursor-pointer text-orange-500 text-4xl focus:outline-none">
               ☰
             </button>
           </div>
         </div>
       </div>
 
-      {/* Nav bar desktop */}
       <div className="bg-white shadow-inner hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex justify-center space-x-40 text-xl tracking-widest text-orange-500 h-14 items-center">
@@ -54,11 +52,10 @@ function Header() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {open && (
-        <nav className="md:hidden bg-white shadow-md animate-slideDown px-4 py-4 space-y-4">
+        <nav className="animate-slideDown px-4 py-4 space-y-4">
           <div className="relative">
-            <button className="absolute left-0 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-400 transition-colors duration-200 focus:outline-none">
+            <button className="border-none bg-transparent p-[0.6em] text-[2em] font-medium cursor-pointer absolute left-0 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-400 transition-colors duration-200 focus:outline-none">
               <FaSearch size={20} />
             </button>
             <input
