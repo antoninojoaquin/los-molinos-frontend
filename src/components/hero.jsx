@@ -2,7 +2,7 @@ import HeroImage from "../assets/heroexample-2.webp";
 
 function Hero() {
   return (
-    <section className="relative w-screen h-screen flex items-center justify-center bg-gray-100">
+    <section className="relative w-screen h-screen flex items-center justify-center">
       <img
         src={HeroImage}
         alt="Hero Los Molinos"
