@@ -1,4 +1,4 @@
-import HeroImage from "../assets/heroexample-2.jpg"; // Reemplazá con tu imagen principal
+import HeroImage from "../assets/heroexample-2.webp";
 
 function Hero() {
   return (
@@ -6,10 +6,10 @@ function Hero() {
       <img
         src={HeroImage}
         alt="Hero Los Molinos"
+        loading="eager"
         className="absolute inset-0 w-full h-full object-cover brightness-75"
       />
 
-      {/* Contenido */}
       <div className="relative z-10 text-center px-4 md:px-8">
         <h1 className="text-4xl md:text-6xl font-bold text-white drop-shadow-lg">
           Bienvenido a Los Molinos Regionales
