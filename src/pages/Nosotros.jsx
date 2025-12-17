@@ -1,48 +1,51 @@
-import React from "react";
-import { motion } from "framer-motion";
-import Logo from "../assets/logofooter.png";
-
-export default function Nosotros() {
+function Nosotros() {
   return (
-    <main className="flex flex-col min-h-screen bg-gray-100 text-gray-900 p-2">
-      <section className="max-w-6xl mx-auto mb-4">
-        <div className="grid md:grid-cols-2 items-center">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold mb-4">
-              Somos Los Molinos Regionales -
-            </h1>
-            <h1 className="text-base md:text-lg text-gray-700 leading-relaxed">
-              Tradición y calidad en cada producto.
-            </h1>
-          </div>
+    <section className="w-screen bg-gray-100 py-20 px-6 md:px-12 flex justify-center">
+      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        
+        {/* Texto */}
+        <div>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6">
+            Somos Los Molinos Regionales
+          </h2>
 
-          <div className="flex py-4 items-center sm:items-end justify-center sm:justify-end">
-            <img src={Logo} alt="logo-lm" className="w-auto h-96 object-contain"/>
-          </div>
+          <p className="text-base md:text-lg text-gray-700 leading-relaxed mb-4">
+            Nacimos con una idea clara: llevar a cada asado productos de calidad,
+            funcionales y pensados para quienes disfrutan de la parrilla como un ritual.
+          </p>
+
+          <p className="text-base md:text-lg text-gray-700 leading-relaxed mb-4">
+            Desde Dolores y para toda la zona, trabajamos con accesorios seleccionados,
+            durables y con diseño, combinando tradición y modernidad en cada detalle.
+          </p>
+
+          <p className="text-base md:text-lg text-gray-700 leading-relaxed">
+            Creemos que un buen asado empieza mucho antes del fuego: empieza con las
+            herramientas correctas.
+          </p>
         </div>
-      </section>
 
-      <section id="mision" className="max-w-4xl mx-auto mb-12">
-        <h2 className="text-2xl font-bold mb-4">Nuestra misión</h2>
-        <p className="text-gray-700 mb-6">
-          Brindar productos de primera calidad para parrilla, fomentando la tradición y el disfrute del asado en cada hogar, con un servicio cercano y confiable.
-        </p>
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">
+            ¿Qué nos define?
+          </h3>
 
-        <div className="text-orange-500 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <ValueCard title="Calidad" desc="Seleccionamos cuidadosamente cada producto." />
-          <ValueCard title="Tradición" desc="Respetamos la cultura del asado regional, combinando lo clásico con lo moderno." />
-          <ValueCard title="Servicio" desc="Atención personalizada para que cada cliente viva la mejor experiencia." />
+          <ul className="space-y-4 text-gray-700">
+            <li className="flex items-start gap-3">
+              <span>Pasión por la parrilla y la cultura del asado.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span>Accesorios pensados para durar y rendir.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span>Cercanía, atención personalizada y compromiso local.</span>
+            </li>
+          </ul>
         </div>
-      </section>
-    </main>
+
+      </div>
+    </section>
   );
 }
 
-function ValueCard({ title, desc }) {
-  return (
-    <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-      <h4 className="font-semibold mb-1">{title}</h4>
-      <p className="text-sm text-gray-600">{desc}</p>
-    </div>
-  );
-}
+export default Nosotros;
