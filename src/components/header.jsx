@@ -5,13 +5,14 @@ import Logo from "../assets/logo.png";
 
 function Header() {
   const [open, setOpen] = useState(false);
+  const closeMenu = () => setOpen(false);
 
   return (
     <header className="bg-white shadow-md fixed w-full top-0 z-50">
       <div className="flex justify-between items-center h-28 px-4 md:px-8">
         <div className="cursor-pointer flex-shrink-0">
           <Link to="/">
-            <img src={Logo} alt="Los Molinos Regionales" className="h-32 md:h-44" />
+            <img src={Logo} onClick={closeMenu} alt="Los Molinos Regionales" className="h-32 md:h-44" />
           </Link>
         </div>
 
@@ -68,11 +69,11 @@ function Header() {
             <FaHeart className="cursor-pointer hover:text-orange-400 transition-colors duration-200" />
             <FaShoppingCart className="cursor-pointer hover:text-orange-400 transition-colors duration-200" />
           </div>
-          <Link to="/" className="block text-lg hover:text-orange-400 transition-colors duration-200">Inicio</Link>
-          <Link to="/productos" className="block text-lg hover:text-orange-400 transition-colors duration-200">Productos</Link>
-          <Link to="/ubicacion" className="block text-lg hover:text-orange-400 transition-colors duration-200">Ubicación</Link>
-          <Link to="/nosotros" className="block text-lg hover:text-orange-400 transition-colors duration-200">Nosotros</Link>
-          <Link to="/contacto" className="block text-lg hover:text-orange-400 transition-colors duration-200">Contacto</Link>
+          <Link to="/" onClick={closeMenu} className="block text-lg hover:text-orange-400 transition-colors duration-200">Inicio</Link>
+          <Link to="/productos" onClick={closeMenu} className="block text-lg hover:text-orange-400 transition-colors duration-200">Productos</Link>
+          <Link to="/ubicacion" onClick={closeMenu} className="block text-lg hover:text-orange-400 transition-colors duration-200">Ubicación</Link>
+          <Link to="/nosotros" onClick={closeMenu} className="block text-lg hover:text-orange-400 transition-colors duration-200">Nosotros</Link>
+          <Link to="/contacto" onClick={closeMenu} className="block text-lg hover:text-orange-400 transition-colors duration-200">Contacto</Link>
         </nav>
       )}
     </header>

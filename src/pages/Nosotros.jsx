@@ -25,20 +25,20 @@ function Nosotros() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-[0_0_10px_rgba(249,115,22,0.6)] p-8">
           <h3 className="text-2xl font-bold text-gray-900 mb-6">
             ¿Qué nos define?
           </h3>
 
           <ul className="space-y-4 text-gray-700">
             <li className="flex items-start gap-3">
-              <span>Pasión por la parrilla y la cultura del asado.</span>
+              <span className="text-orange-500">●</span><span>Pasión por la parrilla y la cultura del asado.</span>
             </li>
             <li className="flex items-start gap-3">
-              <span>Accesorios pensados para durar y rendir.</span>
+              <span className="text-orange-500">●</span><span>Accesorios pensados para durar y rendir.</span>
             </li>
             <li className="flex items-start gap-3">
-              <span>Cercanía, atención personalizada y compromiso local.</span>
+              <span className="text-orange-500">●</span><span>Cercanía, atención personalizada y compromiso local.</span>
             </li>
           </ul>
         </div>
