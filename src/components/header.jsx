@@ -18,12 +18,12 @@ function Header() {
 
         <div className="flex items-center space-x-8">
           <div className="relative hidden md:flex">
-            <button className="border-none bg-transparent p-[0.6em] text-[2em] font-medium cursor-pointer absolute left-0 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-400 transition-colors duration-200 focus:outline-none">
+            <button className="border-none bg-transparent px-3 p-2.5 cursor-pointer absolute top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-400 transition-colors duration-200 focus:outline-none">
               <FaSearch size={22} />
             </button>
             <input
               type="text"
-              placeholder=" Buscar productos..."
+              placeholder="Buscar productos..."
               className="w-72 pl-10 pr-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
             />
           </div>
@@ -56,12 +56,12 @@ function Header() {
       {open && (
         <nav className="animate-slideDown px-4 py-4 space-y-4">
           <div className="relative">
-            <button className="border-none bg-transparent p-[0.6em] text-[2em] font-medium cursor-pointer absolute left-0 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-400 transition-colors duration-200 focus:outline-none">
+            <button className="border-none bg-transparent px-3 p-2.5 cursor-pointer absolute top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-400 transition-colors duration-200 focus:outline-none">
               <FaSearch size={20} />
             </button>
             <input
               type="text"
-              placeholder=" Buscar productos..."
+              placeholder="Buscar productos..."
               className="w-full pl-10 pr-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
             />
           </div>
