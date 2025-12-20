@@ -2,10 +2,8 @@ function Nosotros() {
   return (
     <section className="w-screen bg-gray-950 py-20 px-6 md:px-12 flex justify-center">
       <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        
-        {/* Texto */}
         <div>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-orange-500 mb-6">
+          <h2 className="text-3xl mt-6 md:text-4xl font-extrabold text-orange-500 mb-6">
             Somos Los Molinos Regionales
           </h2>
 
@@ -25,7 +23,7 @@ function Nosotros() {
           </p>
         </div>
 
-        <div className="bg-gray-100 rounded-2xl shadow-[0_0_30px_rgba(249,115,22,0.6)] p-8">
+        <div className="mt-10 bg-gray-100 rounded-2xl shadow-[0_0_30px_rgba(249,115,22,0.6)] p-8">
           <h3 className="text-2xl font-bold text-gray-900 mb-6">
             ¿Qué nos define?
           </h3>

@@ -5,6 +5,7 @@ import Footer from "./components/footer.jsx";
 import Hero from "./components/hero.jsx";
 import Nosotros from "./pages/Nosotros.jsx";
 import Ubicacion from "./pages/Ubicacion.jsx";
+import Contacto from "./pages/Contacto.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<Hero />} />
             <Route path="/nosotros" element={<Nosotros />} />
             <Route path="/ubicacion" element={<Ubicacion />} />
+            <Route path="/contacto" element={<Contacto />} />
           </Routes>
         </main>
         <Footer />

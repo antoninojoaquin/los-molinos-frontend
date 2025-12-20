@@ -13,7 +13,7 @@ function Footer() {
         </div>
 
         <div className="text-center md:text-left space-y-2">
-            <p><span className="text-orange-500 font-medium">Email:</span> contacto@losmolinos.com</p>
+            <p><span className="text-orange-500 font-medium">Email:</span> lmregionales@gmail.com</p>
             <p><span className="text-orange-500 font-medium">Tel:</span> +54 9 2245 42-9517</p>
             <p><span className="text-orange-500 font-medium">Dirección:</span> Aristobulo Del Valle 178, Dolores, Buenos Aires</p>
         </div>
