@@ -68,6 +68,7 @@ function Contacto() {
                 data-netlify="true"
                 onSubmit={handleSubmit}
                 className="grid grid-cols-1 gap-6"
+                netlify
               >
                 <input type="hidden" name="form-name" value="contacto" />
                 <div>
