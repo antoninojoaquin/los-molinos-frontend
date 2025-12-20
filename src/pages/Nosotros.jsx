@@ -23,12 +23,12 @@ function Nosotros() {
           </p>
         </div>
 
-        <div className="mt-10 bg-gray-100 rounded-2xl shadow-[0_0_30px_rgba(249,115,22,0.6)] p-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">
+        <div className="mt-10 bg-gray-900 border border-gray-800 rounded-2xl shadow-[0_0_30px_rgba(249,115,22,0.6)] p-8">
+          <h3 className="text-2xl font-bold text-gray-300 mb-6">
             ¿Qué nos define?
           </h3>
 
-          <ul className="space-y-4 text-gray-700">
+          <ul className="space-y-4 text-gray-100">
             <li className="flex items-start gap-3">
               <span className="text-orange-500">●</span><span>Pasión por la parrilla y la cultura del asado.</span>
             </li>
