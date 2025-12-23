@@ -1,3 +1,7 @@
+import React from 'react'
+import { FaShieldAlt, FaHandshake } from "react-icons/fa";
+import { GiBarbecue } from "react-icons/gi";
+
 function Nosotros() {
   return (
     <section className="w-screen bg-gray-950 py-20 px-6 md:px-12 flex justify-center">
@@ -30,13 +34,13 @@ function Nosotros() {
 
           <ul className="space-y-4 text-gray-100">
             <li className="flex items-start gap-3">
-              <span className="text-orange-500">●</span><span>Pasión por la parrilla y la cultura del asado.</span>
+              <GiBarbecue className="text-orange-500 text-xl mt-1 min-w-[20px]"/><span>Pasión por la parrilla y la cultura del asado.</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-orange-500">●</span><span>Accesorios pensados para durar y rendir.</span>
+              <FaShieldAlt className="text-orange-500 text-xl mt-1 min-w-[20px]"/><span>Accesorios pensados para durar y rendir.</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-orange-500">●</span><span>Cercanía, atención personalizada y compromiso local.</span>
+              <FaHandshake className="text-orange-500 text-xl mt-1 min-w-[20px]"/><span>Cercanía, atención personalizada y compromiso local.</span>
             </li>
           </ul>
         </div>
