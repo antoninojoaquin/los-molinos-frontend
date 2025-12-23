@@ -32,7 +32,7 @@ function Nosotros() {
             ¿Qué nos define?
           </h3>
 
-          <ul className="space-y-4 text-gray-100">
+          <ul className="space-y-7 text-gray-100">
             <li className="flex items-start gap-3">
               <GiBarbecue className="text-orange-500 text-xl mt-1 min-w-[20px]"/><span>Pasión por la parrilla y la cultura del asado.</span>
             </li>
