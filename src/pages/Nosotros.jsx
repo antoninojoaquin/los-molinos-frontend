@@ -28,11 +28,11 @@ function Nosotros() {
         </div>
 
         <div className="mt-10 bg-gray-900 border border-gray-800 rounded-2xl shadow-[0_0_60px_rgba(249,115,22,0.2)] p-8">
-          <h3 className="text-2xl font-bold text-gray-300 mb-6">
+          <h3 className="text-2xl font-bold my-7 text-gray-300 mb-6">
             ¿Qué nos define?
           </h3>
 
-          <ul className="space-y-7 text-gray-100">
+          <ul className="space-y-7 my-7 text-gray-100">
             <li className="flex items-start gap-3">
               <GiBarbecue className="text-orange-500 text-xl mt-1 min-w-[20px]"/><span>Pasión por la parrilla y la cultura del asado.</span>
             </li>
