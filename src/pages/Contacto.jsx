@@ -121,7 +121,7 @@ function Contacto() {
 
                 <button 
                   type="submit"
-                  className="w-full bg-orange-500 hover:bg-orange-400 text-gray-900 font-bold py-4 rounded-full transition-all duration-200 mt-2 shadow-lg hover:shadow-orange-500/25"
+                  className="w-full bg-orange-500 hover:bg-orange-400 text-gray-900 font-bold py-4 rounded-full transition-all duration-200 mt-2 shadow-lg hover:cursor-pointer hover:shadow-orange-500/25"
                 >
                   Enviar Mensaje
                 </button>
@@ -139,7 +139,7 @@ function Contacto() {
                 </p>
                 <button 
                   onClick={() => { setEnviado(false); setFormData({ nombre:'', email:'', mensaje:'' }) }}
-                  className="mt-8 text-orange-500 font-semibold hover:text-orange-400 transition-colors"
+                  className="mt-8 text-orange-500 font-semibold hover:text-orange-400 transition-colors hover:cursor-pointer"
                 >
                   Enviar otro mensaje
                 </button>
