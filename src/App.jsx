@@ -3,9 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/header.jsx";
 import Footer from "./components/footer.jsx";
 import Hero from "./components/hero.jsx";
-import Nosotros from "./pages/Nosotros.jsx";
-import Ubicacion from "./pages/Ubicacion.jsx";
-import Contacto from "./pages/Contacto.jsx";
+import About from "./pages/About.jsx";
+import Ubication from "./pages/Ubication.jsx";
+import Contact from "./pages/Contact.jsx";
+import ProductList from "./pages/ProductList.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 
 function App() {
@@ -17,9 +18,10 @@ function App() {
         <main className="flex">
           <Routes>
             <Route path="/" element={<Hero />} />
-            <Route path="/nosotros" element={<Nosotros />} />
-            <Route path="/ubicacion" element={<Ubicacion />} />
-            <Route path="/contacto" element={<Contacto />} />
+            <Route path="/nosotros" element={<About />} />
+            <Route path="/ubicacion" element={<Ubication />} />
+            <Route path="/contacto" element={<Contact />} />
+            <Route path="/productos" element={<ProductList />} />
           </Routes>
         </main>
         <Footer />
