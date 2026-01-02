@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-
 function Contacto() {
   const [formData, setFormData] = useState({
     nombre: '',
@@ -17,24 +16,21 @@ function Contacto() {
     });
   };
 
-  const encode = (data) => {
-    return Object.keys(data)
-      .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-      .join("&");
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    fetch("/", {
+    const res = await fetch("https://formspree.io/f/xbdlygko", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: encode({ "form-name": "contacto", ...formData })
-    })
-      .then(() => {
-        setEnviado(true);
-      })
-      .catch((error) => alert("Hubo un error al enviar el mensaje. Por favor intenta de nuevo."));
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    if (res.ok) {
+      setEnviado(true);
+      setFormData({ nombre: "", email: "", mensaje: "" });
+    } else {
+      alert("Hubo un error al enviar el mensaje.");
+    }
   };
 
   return (
@@ -54,23 +50,17 @@ function Contacto() {
             Estamos para asesorarte en lo que necesites.
           </p>
         </div>
-        
 
         <div className="relative">
           <div className="absolute -inset-1 rounded-3xl bg-orange-500 opacity-20 blur-xl" />
-          
+
           <div className="relative bg-gray-900 border border-gray-800 rounded-3xl p-8 md:p-10 shadow-2xl min-h-[480px] flex flex-col justify-center">
-            
+
             {!enviado ? (
               <form 
-                name="contacto" 
-                method="POST" 
-                data-netlify="true"
                 onSubmit={handleSubmit}
                 className="grid grid-cols-1 gap-6"
-                netlify
               >
-                <input type="hidden" name="form-name" value="contacto" />
                 <div>
                   <label htmlFor="nombre" className="block text-sm font-medium text-gray-400 mb-2">
                     Nombre completo
