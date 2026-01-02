@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
+import Lottie from "lottie-react";
+import loadingAnimation from "../assets/loading.json";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -18,10 +21,21 @@ export default function ProductList() {
       } catch (error) {
         console.error("Error al traer productos:", error);
       }
+      finally {
+        setLoading(false);
+      }
     };
 
     fetchProducts();
   }, []);
+
+if (loading) {
+  return (
+    <div className="flex bg-gray-950 justify-center items-center h-128 w-full">
+      <Lottie animationData={loadingAnimation} loop className="w-64 h-64" />
+    </div>
+  );
+}
 
 return (
   <section className="w-full bg-gray-950 px-6 py-12">
