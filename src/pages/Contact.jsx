@@ -37,11 +37,11 @@ function Contacto() {
     <section className="w-screen bg-gray-950 py-24 px-6 md:px-12 flex justify-center">
       <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <div>
-          <span className="text-orange-500 font-semibold tracking-wide uppercase">
+          <h2 className="text-orange-500 font-semibold tracking-wide uppercase">
             Hablemos
-          </span>
+          </h2>
 
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white mt-3 mb-6">
+          <h2 className="text-4xl md:text-4xl font-extrabold text-white mt-3 mb-6">
             ¿Tenés alguna duda?
           </h2>
 

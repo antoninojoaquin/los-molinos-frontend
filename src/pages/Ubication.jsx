@@ -3,11 +3,11 @@ function Ubicacion() {
     <section className="w-screen bg-gray-950 py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div>
-          <span className="text-orange-500 font-semibold tracking-wide">
+          <h2 className="text-orange-500 font-semibold tracking-wide">
             DÓNDE ESTAMOS
-          </span>
+          </h2>
 
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white mt-3 mb-6">
+          <h2 className="text-4xl md:text-4xl text-white mt-3 mb-6">
             Dolores, Buenos Aires
           </h2>
 

@@ -7,7 +7,10 @@ function Nosotros() {
     <section className="w-screen bg-gray-950 py-20 px-6 md:px-12 flex justify-center">
       <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div>
-          <h2 className="text-3xl mt-6 md:text-4xl font-extrabold text-orange-500 mb-6">
+          <h2 className="text-orange-500 mt-3 font-semibold tracking-wide">
+            ¿QUIÉNES SOMOS?
+          </h2>
+          <h2 className="text-2xl mt-2 md:text-3xl font-extrabold text-white mb-6">
             Somos Los Molinos Regionales
           </h2>
 

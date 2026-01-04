@@ -18,7 +18,7 @@ function Hero() {
           Venta de accesorios para tu parrilla en Dolores y la zona
         </p>
         <a href="/productos" className="cursor-pointer">
-          <button className="cursor-pointer text-2xl mt-6 px-2 py-1 border-2 shadow-[0_0_20px_rgba(0,0,0,1)] bg-orange-500 border-orange-500 text-white font-medium rounded-lg hover:text-white hover:bg-orange-400 hover:border-orange-400 transition-all duration-500">
+          <button className="cursor-pointer text-2xl mt-6 px-10 py-2 border-2 shadow-[0_0_20px_rgba(0,0,0,1)] bg-orange-500 border-orange-500 text-white font-medium rounded-full hover:text-white hover:bg-orange-400 hover:border-orange-400 transition-all duration-500">
               Explorar Productos
           </button>
         </a>
