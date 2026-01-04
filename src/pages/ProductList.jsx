@@ -38,7 +38,7 @@ if (loading) {
 }
 
 return (
-  <section className="w-full bg-gray-950 px-6 mt-8 py-12">
+  <section className="w-full bg-gray-950 px-6 md:px-16 mt-8 py-12">
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {products.map(product => (
         <div
@@ -50,7 +50,7 @@ return (
           <p className="text-gray-300 font-medium px-1">{product.name}</p>
           <p className="text-gray-50 font-extrabold px-1">${product.price}</p>
           <div className="flex justify-center mt-auto">
-            <button className="mt-2 mb-0.5 px-4 py-2 border-1 rounded-full border-orange-500 bg-orange-500 text-white font-semibold hover:bg-orange-400 hover:border-orange-400 transition-colors hover:cursor-pointer">Agregar al Carrito</button>
+            <button className="mt-2 mb-0.5 px-16 py-2 border-1 rounded-full border-orange-500 bg-orange-500 text-white font-semibold hover:bg-orange-400 hover:border-orange-400 transition-colors hover:cursor-pointer">Agregar al Carrito</button>
           </div>       
         </div>
       ))}

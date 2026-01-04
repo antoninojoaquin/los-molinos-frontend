@@ -47,7 +47,7 @@ function Footer() {
       </div>
 
       <div className="border-t border-gray-700 text-center py-4 text-sm">
-        © 2025 Los Molinos Regionales. Todos los derechos reservados.
+        © 2026 Los Molinos Regionales. Todos los derechos reservados.
       </div>
     </footer>
   );

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { FaHeart, FaShoppingCart, FaSearch } from "react-icons/fa";
 import Logo from "../assets/logo.png";
 
@@ -41,14 +41,37 @@ function Header() {
         </div>
       </div>
 
-      <div className="bg-white shadow-inner hidden md:block">
+      <div className="bg-white border-gray-100 border-1 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex justify-center space-x-40 text-xl tracking-widest text-orange-500 h-14 items-center">
-            <Link to="/" className="hover:text-orange-400 transition-colors duration-200">Inicio</Link>
-            <Link to="/productos" className="hover:text-orange-400 transition-colors duration-200">Productos</Link>
-            <Link to="/ubicacion" className="hover:text-orange-400 transition-colors duration-200">Ubicación</Link>
-            <Link to="/nosotros" className="hover:text-orange-400 transition-colors duration-200">Nosotros</Link>
-            <Link to="/contacto" className="hover:text-orange-400 transition-colors duration-200">Contacto</Link>
+            {[
+              { to: "/", label: "Inicio" },
+              { to: "/productos", label: "Productos" },
+              { to: "/ubicacion", label: "Ubicación" },
+              { to: "/nosotros", label: "Nosotros" },
+              { to: "/contacto", label: "Contacto" },
+            ].map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className="relative pb-1 transition-colors group inline-block"
+              >
+                {({ isActive }) => (
+                  <>
+                    <span className={`${isActive ? "text-orange-500" : "hover:text-orange-400"}`}>
+                      {item.label}
+                    </span>
+
+                    <span
+                      className={`
+                        absolute left-0 -bottom-1 h-[2px] bg-orange-500 transition-all duration-300
+                        ${isActive ? "w-full" : "w-0 group-hover:w-full"}
+                      `}
+                    />
+                  </>
+                )}
+              </NavLink>
+            ))}
           </nav>
         </div>
       </div>
