@@ -38,18 +38,20 @@ if (loading) {
 }
 
 return (
-  <section className="w-full bg-gray-950 px-6 py-12">
-    <h2 className="text-2xl font-semibold mb-6 py-6 text-orange-500">Productos</h2>
-
+  <section className="w-full bg-gray-950 px-6 mt-8 py-12">
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {products.map(product => (
         <div
           key={product.id}
-          className="bg-gray-800 p-1 rounded-lg shadow"
+          className="bg-gray-800 p-1 rounded-lg shadow flex flex-col h-full"
         >
           <img className="object-cover h-64 w-full" src={product.imageUrl} alt={product.name}/>
-          <p className="text-gray-100 font-medium">{product.name}</p>
-          <p className="text-gray-100">${product.price}</p>
+          <p className="text-gray-500 mt-0.5 mb-4 text-sm">{product.category}</p>
+          <p className="text-gray-300 font-medium px-1">{product.name}</p>
+          <p className="text-gray-50 font-extrabold px-1">${product.price}</p>
+          <div className="flex justify-center mt-auto">
+            <button className="mt-2 mb-0.5 px-4 py-2 border-1 rounded-full border-orange-500 bg-orange-500 text-white font-semibold hover:bg-orange-400 hover:border-orange-400 transition-colors hover:cursor-pointer">Agregar al Carrito</button>
+          </div>       
         </div>
       ))}
     </div>
