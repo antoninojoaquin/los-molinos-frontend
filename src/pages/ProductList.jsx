@@ -38,7 +38,7 @@ if (loading) {
 }
 
 return (
-  <section className="w-full bg-gray-950 px-6 md:px-16 mt-8 py-12">
+  <section className="w-full bg-gray-950 px-6 md:px-16 md:mt-8 py-12">
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {products.map(product => (
         <div
