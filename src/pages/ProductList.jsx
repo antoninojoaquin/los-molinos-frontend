@@ -48,9 +48,9 @@ return (
           <img className="object-cover h-64 w-full" src={product.imageUrl} alt={product.name}/>
           <p className="text-gray-500 mt-0.5 mb-4 text-sm">{product.category}</p>
           <p className="text-gray-300 font-medium px-1">{product.name}</p>
-          <p className="text-gray-50 font-extrabold px-1">${product.price}</p>
-          <div className="flex justify-center mt-auto">
-            <button className="mt-2 mb-0.5 px-16 py-2 border-1 rounded-full border-orange-500 bg-orange-500 text-white font-semibold hover:bg-orange-400 hover:border-orange-400 transition-colors hover:cursor-pointer">Agregar al Carrito</button>
+          <div className="gap-2 flex items-center justify-between mt-auto">
+            <p className="text-gray-50 border-1 text-center rounded-full font-extrabold mt-2 py-1.5 md:py-2 px-0.5 w-auto">${product.price}</p>
+            <button className="mt-2 mb-0.5 w-full text-xs md:text-base px-1 md:px-9 py-2 border-1 rounded-full border-orange-500 bg-orange-500 text-white font-semibold hover:bg-orange-400 hover:border-orange-400 transition-colors hover:cursor-pointer">Agregar al Carrito</button>
           </div>       
         </div>
       ))}
