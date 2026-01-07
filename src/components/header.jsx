@@ -5,14 +5,12 @@ import Logo from "../assets/logo.png";
 
 function Header() {
   const [open, setOpen] = useState(false);
-  const [favoritesCount, setFavoritesCount] = useState(0);
   const closeMenu = () => setOpen(false);
 
   useEffect(() => {
     const updateFavorites = () => {
       const storedFavorites =
         JSON.parse(localStorage.getItem("favorites")) || [];
-      setFavoritesCount(storedFavorites.length);
     };
 
     updateFavorites();
@@ -45,11 +43,6 @@ function Header() {
           <div className="hidden lg:flex items-center space-x-6 text-4xl">
             <Link to="/favoritos" className="relative">
               <FaHeart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
-              {favoritesCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
-                  {favoritesCount}
-                </span>
-              )}
             </Link>
             <FaShoppingCart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
           </div>
@@ -112,11 +105,6 @@ function Header() {
           <div className="flex space-x-8 text-3xl text-orange-500">
             <Link to="/favoritos" onClick={closeMenu} className="relative">
               <FaHeart className="cursor-pointer hover:text-orange-400 transition-colors duration-200" />
-              {favoritesCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
-                  {favoritesCount}
-                </span>
-              )}
             </Link>
             <FaShoppingCart className="cursor-pointer hover:text-orange-400 transition-colors duration-200" />
           </div>
