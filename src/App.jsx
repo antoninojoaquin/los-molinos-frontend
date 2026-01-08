@@ -9,6 +9,7 @@ import Contact from "./pages/Contact.jsx";
 import ProductList from "./pages/ProductList.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import Favorites from "./pages/Favorites.jsx";
+import Cart from "./pages/Cart.jsx";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/contacto" element={<Contact />} />
             <Route path="/productos" element={<ProductList />} />
             <Route path="/favoritos" element={<Favorites />} />
+            <Route path="/carrito" element={<Cart />} />
           </Routes>
         </main>
         <Footer />

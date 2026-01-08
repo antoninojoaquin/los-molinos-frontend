@@ -6,11 +6,13 @@ import { FaHeart } from "react-icons/fa";
 import loadingAnimation from "../assets/loading.json";
 
 const FAVORITES_KEY = "favorites";
+const CART_KEY = "cart";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -36,6 +38,39 @@ export default function ProductList() {
       JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
     setFavorites(storedFavorites);
   }, []);
+
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    setCart(storedCart);
+  }, []);
+
+  const addToCart = (product) => {
+    const existingProduct = cart.find(item => item.id === product.id);
+
+    let updatedCart;
+
+    if (existingProduct) {
+      updatedCart = cart.map(item =>
+        item.id === product.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+    } else {
+      updatedCart = [
+        ...cart,
+        {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          imageUrl: product.imageUrl,
+          quantity: 1,
+        },
+      ];
+    }
+
+    setCart(updatedCart);
+    localStorage.setItem(CART_KEY, JSON.stringify(updatedCart));
+  };
 
   const toggleFavorite = (productId) => {
     let updatedFavorites;
@@ -99,7 +134,10 @@ export default function ProductList() {
                 ${product.price}
               </p>
 
-              <button className="mt-2 mb-0.5 w-full text-xs md:text-base px-1 md:px-9 py-1 md:py-2 border-1 rounded-full border-orange-500 bg-orange-500 text-white font-semibold hover:bg-orange-400 hover:border-orange-400 transition-colors hover:cursor-pointer">
+              <button
+                onClick={() => addToCart(product)}
+                className="mt-2 mb-0.5 w-full text-xs md:text-base px-1 md:px-9 py-1 md:py-2 border-1 rounded-full border-orange-500 bg-orange-500 text-white font-semibold hover:bg-orange-400 hover:border-orange-400 transition-colors hover:cursor-pointer"
+              >
                 Agregar al Carrito
               </button>
             </div>

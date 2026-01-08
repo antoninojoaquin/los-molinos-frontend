@@ -44,7 +44,9 @@ function Header() {
             <Link to="/favoritos" className="relative">
               <FaHeart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
             </Link>
-            <FaShoppingCart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
+            <Link to="/carrito" className="relative">
+              <FaShoppingCart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
+            </Link>
           </div>
 
           <div className="lg:hidden flex items-center">
