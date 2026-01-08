@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Footer from "./components/Footer.jsx";
-import Hero from "./components/Hero.jsx";
-import Header from "./components/Header.jsx";
+import Footer from "./components/footer.jsx";
+import Hero from "./components/hero.jsx";
+import Header from "./components/header.jsx";
 import About from "./pages/About.jsx";
 import Ubication from "./pages/Ubication.jsx";
 import Contact from "./pages/Contact.jsx";
