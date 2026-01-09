@@ -102,20 +102,20 @@ export default function ProductList() {
         {products.map(product => (
           <div
             key={product.id}
-            className="relative bg-gray-800 p-1 rounded-lg shadow flex flex-col h-full"
+            className="relative bg-gray-800 p-1 rounded-3xl shadow flex flex-col h-full"
           >
             <img
-              className="object-cover h-64 w-full"
+              className="object-cover h-64 w-full rounded-3xl"
               src={product.imageUrl}
               alt={product.name}
             />
 
             <FaHeart
               onClick={() => toggleFavorite(product.id)}
-              className={`absolute top-2 left-2 text-4xl cursor-pointer transition-colors duration-200
+              className={`absolute top-2 right-2 text-4xl cursor-pointer transition-colors p-2 bg-gray-800 rounded-4xl duration-200
                 ${
                   favorites.includes(product.id)
-                    ? "hover:text-orange-400 text-orange-500"
+                    ? "hover:text-orange-300 text-orange-500"
                     : "hover:text-orange-400"
                 }
               `}
@@ -130,7 +130,7 @@ export default function ProductList() {
             </p>
 
             <div className="gap-2 flex items-center justify-between mt-auto">
-              <p className="text-gray-50 border-1 text-center rounded-full font-extrabold mt-2 py-1.5 md:py-2 px-1 w-auto shadow-sm shadow-white">
+              <p className="text-gray-50 border-1 text-center rounded-full font-extrabold mt-2 py-1.5 md:py-2 px-1 w-auto">
                 ${product.price}
               </p>
 
