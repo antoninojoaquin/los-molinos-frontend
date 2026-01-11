@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaTrash, FaMinus, FaPlus } from "react-icons/fa";
+import { FaTrash, FaMinus, FaPlus, FaHeartBroken } from "react-icons/fa";
 
 const CART_KEY = "cart";
 
@@ -49,8 +49,9 @@ export default function Cart() {
 
   if (cart.length === 0) {
     return (
-      <section className="w-full h-auto bg-gray-950 px-6 md:px-16 md:mt-8 py-12 flex items-center justify-center min-h-screen">
-        <p className="text-orange-500 text-xl">
+      <section className="w-full flex flex-col bg-gray-950 px-6 md:px-16 md:mt-8 py-12 items-center justify-center min-h-[50vh]">
+        <FaHeartBroken className="text-6xl text-orange-500 mb-4" />
+        <p className="text-white/50 font-semibold text-xl">
           Tu carrito está vacío
         </p>
       </section>

@@ -1,13 +1,12 @@
 @import "tailwindcss";
 
-/* Variables globales */
 :root {
   font-family:'Roboto Slab', Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light dark;
   color: rgba(0, 0, 0, 0.87);
-  background-color: #ffffff; /* Fondo claro por defecto */
+  background-color: #ffffff;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -16,11 +15,11 @@
 
 a {
   font-weight: 500;
-  color: #F97316; /* Naranja del tema */
+  color: #F97316;
   text-decoration: none;
 }
 a:hover {
-  color: #fb923c; /* Naranja más claro al hover */
+  color: #fb923c;
 }
 
 body {

@@ -15,7 +15,7 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <div className="pt-28 min-h-screen flex flex-col justify-between overflow-x-hidden bg-gray-100">
+      <div className="pt-24 min-h-screen flex flex-col justify-between overflow-x-hidden bg-gray-100">
         <Header />
         <main className="flex">
           <Routes>
