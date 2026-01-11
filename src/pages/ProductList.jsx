@@ -114,7 +114,7 @@ export default function ProductList() {
 
             <FaHeart
               onClick={() => toggleFavorite(product.id)}
-              className={`absolute top-2 right-2 text-4xl z-10 cursor-pointer transition-colors p-2 bg-black/50 rounded-4xl duration-200
+              className={`absolute top-2 right-2 text-[40px] z-10 cursor-pointer transition-colors p-2 bg-black/50 rounded-4xl duration-200
                 ${
                   favorites.includes(product.id)
                     ? "hover:text-orange-300 text-orange-500"
