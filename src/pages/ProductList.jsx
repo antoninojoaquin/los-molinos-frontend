@@ -102,44 +102,47 @@ export default function ProductList() {
         {products.map(product => (
           <div
             key={product.id}
-            className="relative bg-gray-800 p-1 rounded-3xl shadow flex flex-col h-full"
+            className="relative overflow-hidden p-1 md:p-2 bg-gray-800 rounded-3xl shadow flex flex-col h-96"
           >
             <img
-              className="object-cover h-64 w-full rounded-3xl"
+              className="absolute inset-0 object-cover h-full w-full rounded-3xl"
               src={product.imageUrl}
               alt={product.name}
             />
 
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-0" />
+
             <FaHeart
               onClick={() => toggleFavorite(product.id)}
-              className={`absolute top-2 right-2 text-4xl cursor-pointer transition-colors p-2 bg-gray-800 rounded-4xl duration-200
+              className={`absolute top-2 right-2 text-4xl z-10 cursor-pointer transition-colors p-2 bg-black/50 rounded-4xl duration-200
                 ${
                   favorites.includes(product.id)
                     ? "hover:text-orange-300 text-orange-500"
-                    : "hover:text-orange-400"
+                    : "hover:text-orange-300 text-white"
                 }
               `}
             />
-
-            <p className="text-gray-500 mt-0.5 mb-4 text-sm">
-              {product.category}
-            </p>
-
-            <p className="text-gray-300 font-medium px-1">
-              {product.name}
-            </p>
-
-            <div className="gap-2 flex items-center justify-between mt-auto">
-              <p className="text-gray-50 border-1 text-center rounded-full font-extrabold mt-2 py-1.5 md:py-2 px-1 w-auto">
-                ${product.price}
+            <div className="relative z-10 mt-auto w-full p-2 ">
+              <p className="relative z-10 text-orange-300 uppercase mb-2 text-[11px] md:text-xs">
+                {product.category}
               </p>
 
-              <button
-                onClick={() => addToCart(product)}
-                className="mt-2 mb-0.5 w-full text-xs md:text-base px-1 md:px-9 py-1 md:py-2 border-1 rounded-full border-orange-500 bg-orange-500 text-white font-semibold hover:bg-orange-400 hover:border-orange-400 transition-colors hover:cursor-pointer"
-              >
-                Agregar al Carrito
-              </button>
+              <p className="relative z-10 text-white font-bold text-md md:text-xl">
+                {product.name}
+              </p>
+
+              <div className="gap-2 flex items-center justify-between mt-auto">
+                <p className="relative z-10 text-white border-1 border-white/30 bg-white/30 text-center rounded-full font-extrabold mt-2 py-2 md:py-2 px-1 w-auto">
+                  ${product.price}
+                </p>
+
+                <button
+                  onClick={() => addToCart(product)}
+                  className="relative z-10 mt-2 mb-0.5 w-auto text-xs md:text-sm px-1 md:px-9 py-2 md:py-2 border-1 rounded-full border-orange-500 bg-orange-500 text-white font-semibold hover:bg-orange-400 hover:border-orange-400 transition-colors hover:cursor-pointer"
+                >
+                  Agregar al carrito
+                </button>
+              </div>
             </div>
           </div>
         ))}
