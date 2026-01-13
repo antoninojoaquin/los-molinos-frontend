@@ -33,7 +33,7 @@ function Header() {
           </Link>
         </div>
 
-        <nav className="hidden lg:flex items-center space-x-8 xl:space-x-16 text-lg font-medium tracking-widest text-orange-500">
+        <nav className="hidden lg:flex items-center space-x-8 xl:space-x-16 text-xl font-medium tracking-widest text-orange-500">
           {[
             { to: "/", label: "Inicio" },
             { to: "/productos", label: "Productos" },
