@@ -4,6 +4,7 @@ import { db } from "../firebase";
 import Lottie from "lottie-react";
 import { FaHeart, FaHeartBroken } from "react-icons/fa";
 import loadingAnimation from "../assets/loading.json";
+import cartAnimation from "../assets/shopping-cart.json";
 
 const FAVORITES_KEY = "favorites";
 const CART_KEY = "cart";
@@ -13,6 +14,7 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
   const [cart, setCart] = useState([]);
+  const [cooldownId, setCooldownId] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -146,13 +148,32 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
                   </p>
 
                   <button
+                    disabled={cooldownId === product.id}
                     onClick={() => {
-                       addToCart(product);
-                       triggerCartSuccess && triggerCartSuccess();
-                      }} 
-                    className="relative z-10 mt-2 mb-0.5 w-auto text-xs md:text-sm px-1 md:px-9 py-2 border-1 rounded-full border-orange-500 bg-orange-500 text-white font-semibold hover:bg-orange-400 hover:border-orange-400 transition-colors hover:cursor-pointer"
+                      addToCart(product);
+                      triggerCartSuccess && triggerCartSuccess();
+                      setCooldownId(product.id);
+                      setTimeout(() => setCooldownId(null), 2000);
+                    }}
+                    className={`relative z-10 mt-2 mb-0.5 w-auto text-xs md:text-sm px-1 md:px-9 py-2 border-1 rounded-full transition-colors
+                      ${
+                        cooldownId === product.id
+                          ? "bg-gray-500 border-gray-500 cursor-not-allowed"
+                          : "bg-orange-500 border-orange-500 hover:bg-orange-400 hover:border-orange-400"
+                      }
+                    `}
                   >
-                    Agregar al carrito
+                    {cooldownId === product.id ? (
+                    <div className="w-5 h-5 flex items-center justify-center">
+                      <Lottie
+                        animationData={cartAnimation}
+                        loop={false}
+                        className="scale-[2]"
+                      />
+                    </div>
+                    ) : (
+                      "Agregar al carrito"
+                    )}
                   </button>
                 </div>
               </div>
