@@ -11,23 +11,37 @@ import ScrollToTop from "./components/ScrollToTop.jsx";
 import Favorites from "./pages/Favorites.jsx";
 import Cart from "./pages/Cart.jsx";
 
+import { useState } from "react";
+
 function App() {
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const triggerCartSuccess = () => {
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 1500);
+  };
+
   return (
     <Router>
       <ScrollToTop />
       <div className="pt-24 min-h-screen flex flex-col justify-between overflow-x-hidden bg-gray-100">
-        <Header />
+        <Header showSuccess={showSuccess} />
         <main className="flex">
           <Routes>
             <Route path="/" element={<Hero />} />
             <Route path="/nosotros" element={<About />} />
             <Route path="/ubicacion" element={<Ubication />} />
             <Route path="/contacto" element={<Contact />} />
-            <Route path="/productos" element={<ProductList />} />
-            <Route path="/favoritos" element={<Favorites />} />
+            <Route
+              path="/productos"
+              element={<ProductList triggerCartSuccess={triggerCartSuccess} />}
+            />
+
+            <Route path="/favoritos" element={<Favorites triggerCartSuccess={triggerCartSuccess} />} />
             <Route path="/carrito" element={<Cart />} />
           </Routes>
         </main>
+
         <Footer />
       </div>
     </Router>

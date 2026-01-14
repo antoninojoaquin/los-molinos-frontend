@@ -8,7 +8,7 @@ import loadingAnimation from "../assets/loading.json";
 const FAVORITES_KEY = "favorites";
 const CART_KEY = "cart";
 
-export default function ProductList({ showOnlyFavorites = false }) {
+export default function ProductList({ showOnlyFavorites = false, triggerCartSuccess }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
@@ -146,7 +146,10 @@ export default function ProductList({ showOnlyFavorites = false }) {
                   </p>
 
                   <button
-                    onClick={() => addToCart(product)}
+                    onClick={() => {
+                       addToCart(product);
+                       triggerCartSuccess && triggerCartSuccess();
+                      }} 
                     className="relative z-10 mt-2 mb-0.5 w-auto text-xs md:text-sm px-1 md:px-9 py-2 border-1 rounded-full border-orange-500 bg-orange-500 text-white font-semibold hover:bg-orange-400 hover:border-orange-400 transition-colors hover:cursor-pointer"
                   >
                     Agregar al carrito

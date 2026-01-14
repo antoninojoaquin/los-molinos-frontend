@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FaHeart, FaShoppingCart } from "react-icons/fa";
 import Logo from "../assets/logo.png";
+import Lottie from "lottie-react";
+import cartAnimation from "../assets/success.json";
 
-function Header() {
+function Header({ showSuccess }) {
   const [open, setOpen] = useState(false);
   const closeMenu = () => setOpen(false);
 
@@ -68,8 +70,12 @@ function Header() {
             <Link to="/favoritos" className="relative group">
               <FaHeart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
             </Link>
-            <Link to="/carrito" className="relative group">
-              <FaShoppingCart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
+            <Link to="/carrito" className="relative group flex items-center justify-center w-9 h-9">
+              {showSuccess ? (
+                <Lottie animationData={cartAnimation} style={{ width: 60, height: 60 }} />
+              ) : (
+                <FaShoppingCart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
+              )}
             </Link>
           </div>
 
