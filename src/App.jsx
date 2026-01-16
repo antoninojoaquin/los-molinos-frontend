@@ -24,7 +24,7 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <div className="pt-24 min-h-screen flex flex-col justify-between overflow-x-hidden bg-gray-100">
+      <div className="pt-24 min-h-screen flex flex-col justify-between overflow-x-hidden bg-gray-950">
         <Header showSuccess={showSuccess} />
         <main className="flex">
           <Routes>

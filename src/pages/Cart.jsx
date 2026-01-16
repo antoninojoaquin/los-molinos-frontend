@@ -60,11 +60,7 @@ export default function Cart() {
   }
 
   return (
-    <section className="w-full mt-8 bg-gray-950 px-6 md:px-24 py-12">
-      <h2 className="text-2xl font-bold text-white mb-8">
-        Carrito de Compras
-      </h2>
-
+    <section className="w-full bg-gray-950 px-6 md:px-24 py-12">
       <div className="flex flex-col gap-6">
         {cart.map(item => (
           <div

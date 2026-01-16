@@ -109,7 +109,7 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {displayedProducts.map((product) => (
             <div
               key={product.id}
@@ -155,10 +155,10 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
                       setCooldownId(product.id);
                       setTimeout(() => setCooldownId(null), 2000);
                     }}
-                    className={`relative z-10 mt-2 mb-0.5 w-auto text-xs md:text-sm px-1 md:px-9 py-2 border-1 rounded-full transition-colors
+                    className={`relative z-10 mt-2 mb-0.5 w-auto text-white text-xs md:text-sm px-1 md:px-9 py-2 border-1 rounded-full transition-colors cursor-pointer
                       ${
                         cooldownId === product.id
-                          ? "bg-gray-500 border-gray-500 cursor-not-allowed"
+                          ? "bg-gray-500 border-gray-500"
                           : "bg-orange-500 border-orange-500 hover:bg-orange-400 hover:border-orange-400"
                       }
                     `}
