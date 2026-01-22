@@ -123,7 +123,7 @@ export default function Cart() {
             ${total}
           </p>
 
-          <button className="w-full py-3 rounded-full bg-orange-500 hover:bg-orange-400 text-white font-semibold transition-colors">
+          <button className="w-full py-3 rounded-full bg-orange-500 hover:bg-orange-400 text-white font-semibold transition-colors cursor-pointer">
             Finalizar Compra
           </button>
         </div>
