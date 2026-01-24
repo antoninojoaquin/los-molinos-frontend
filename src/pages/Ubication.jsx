@@ -27,7 +27,7 @@ function Ubicacion() {
         </div>
 
         <div className="relative">
-          <div className="absolute -inset-1 rounded-3xl bg-orange-500 opacity-30 blur-xl" />
+          <div className="absolute -inset-1 rounded-3xl"/>
           
           <div className="relative w-full h-80 md:h-96 rounded-3xl overflow-hidden border border-gray-800">
             <iframe

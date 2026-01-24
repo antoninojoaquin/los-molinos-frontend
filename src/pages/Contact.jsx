@@ -52,8 +52,6 @@ function Contacto() {
         </div>
 
         <div className="relative">
-          <div className="absolute -inset-1 rounded-3xl bg-orange-500 opacity-20 blur-xl" />
-
           <div className="relative bg-gray-900 border border-gray-800 rounded-3xl p-8 md:p-10 shadow-2xl min-h-[480px] flex flex-col justify-center">
 
             {!enviado ? (

@@ -30,7 +30,7 @@ export default function Cart() {
     const updatedCart = cart
       .map(item =>
         item.id === id
-          ? { ...item, quantity: item.quantity - 1 }
+          ? { ...item, quantity: Math.max(1, item.quantity - 1) }
           : item
       )
       .filter(item => item.quantity > 0);
