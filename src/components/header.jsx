@@ -48,7 +48,7 @@ function Header() {
             >
               {({ isActive }) => (
                 <>
-                  <span className={`${isActive ? "text-orange-600 font-bold" : "hover:text-orange-400 transition-colors"}`}>
+                  <span className={`${isActive ? "font-extrabold" : "hover:text-orange-400 transition-colors"}`}>
                     {item.label}
                   </span>
                   <span
