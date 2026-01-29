@@ -20,7 +20,7 @@ function Header() {
   }, []);
 
   return (
-    <header className="bg-white fixed w-full top-0 z-50">
+    <header className="bg-gray-900 fixed w-full top-0 z-50 ">
       <div className="max-w-[1920px] mx-auto px-4 md:px-8 h-24 flex justify-between items-center">
         <div className="flex-shrink-0 cursor-pointer">
           <Link to="/">
@@ -65,10 +65,10 @@ function Header() {
 
         <div className="flex items-center space-x-6 md:space-x-8">    
           <div className="flex items-center space-x-6 text-2xl md:text-3xl">
-            <Link to="/favoritos" className="relative group">
+            <Link to="/favoritos" onClick={closeMenu} className="relative group">
               <FaHeart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
             </Link>
-            <Link to="/carrito" className="relative group">
+            <Link to="/carrito" onClick={closeMenu} className="relative group">
               <FaShoppingCart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
             </Link>
           </div>
@@ -87,11 +87,11 @@ function Header() {
 
       {open && (
         <nav className="animate-slideDown px-4 py-4 space-y-4">
-          <Link to="/" onClick={closeMenu} className="block text-lg hover:text-orange-400 transition-colors duration-200">Inicio</Link>
-          <Link to="/productos" onClick={closeMenu} className="block text-lg hover:text-orange-400 transition-colors duration-200">Productos</Link>
-          <Link to="/ubicacion" onClick={closeMenu} className="block text-lg hover:text-orange-400 transition-colors duration-200">Ubicación</Link>
-          <Link to="/nosotros" onClick={closeMenu} className="block text-lg hover:text-orange-400 transition-colors duration-200">Nosotros</Link>
-          <Link to="/contacto" onClick={closeMenu} className="block text-lg hover:text-orange-400 transition-colors duration-200">Contacto</Link>
+          <Link to="/" onClick={closeMenu} className="block border-b-1 border-orange-300 text-lg hover:text-orange-400 transition-colors duration-200">Inicio</Link>
+          <Link to="/productos" onClick={closeMenu} className="block border-b-1 border-orange-300 text-lg hover:text-orange-400 transition-colors duration-200">Productos</Link>
+          <Link to="/ubicacion" onClick={closeMenu} className="block border-b-1 border-orange-300 text-lg hover:text-orange-400 transition-colors duration-200">Ubicación</Link>
+          <Link to="/nosotros" onClick={closeMenu} className="block border-b-1 border-orange-300 text-lg hover:text-orange-400 transition-colors duration-200">Nosotros</Link>
+          <Link to="/contacto" onClick={closeMenu} className="block border-b-1 border-orange-300 text-lg hover:text-orange-400 transition-colors duration-200">Contacto</Link>
         </nav>
       )}
     </header>

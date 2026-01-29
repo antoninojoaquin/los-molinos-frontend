@@ -60,72 +60,75 @@ export default function Cart() {
   }
 
   return (
-    <section className="w-full bg-gray-950 px-6 md:px-24 py-12">
-      <div className="flex flex-col gap-6">
-        {cart.map(item => (
-          <div
-            key={item.id}
-            className="flex items-center gap-4 bg-gray-800 p-4 rounded-lg shadow"
-          >
-            <img
-              src={item.imageUrl}
-              alt={item.name}
-              className="w-24 h-24 object-cover rounded"
-            />
+    <section className="w-full bg-gray-950 px-2 md:px-24 py-12">
+      <div className="flex flex-col md:flex-col lg:flex-row gap-8 items-start">
+        <div className="flex flex-col gap-6 flex-1">
+          {cart.map(item => (
+            <div
+              key={item.id}
+              className="flex items-center gap-4 bg-gray-800 p-4 rounded-lg shadow"
+            >
+              <img
+                src={item.imageUrl}
+                alt={item.name}
+                className="w-24 h-24 object-cover rounded"
+              />
 
-            <div className="flex-1">
-              <p className="text-gray-200 font-medium">
-                {item.name}
-              </p>
-              <p className="text-gray-400">
-                ${item.price}
-              </p>
+              <div className="flex-1">
+                <p className="text-gray-200 text-xs font-medium">
+                  {item.name}
+                </p>
+                <p className="text-gray-400 text-sm">
+                  ${item.price}
+                </p>
+              </div>
+
+              <div className="flex items-center scale-80 gap-3 border-gray-950 border-2 rounded-full">
+                <button
+                  onClick={() => decreaseQty(item.id)}
+                  className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 cursor-pointer"
+                >
+                  <FaMinus />
+                </button>
+
+                <span className="text-white font-semibold">
+                  {item.quantity}
+                </span>
+
+                <button
+                  onClick={() => increaseQty(item.id)}
+                  className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 cursor-pointer"
+                >
+                  <FaPlus />
+                </button>
+              </div>
+              <div className="flex flex-col gap-2 md:flex-row justify-center items-center -ml-4 md:ml-0">
+                <p className="text-white font-semibold w-24 text-lg md:text-xl text-center">
+                  ${item.price * item.quantity}
+                </p>
+
+                <button
+                  onClick={() => removeItem(item.id)}
+                  className="text-orange-500 text-lg hover:text-orange-400 cursor-pointer"
+                >
+                  <FaTrash />
+                </button>
+              </div>
             </div>
+          ))}
+        </div>
 
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => decreaseQty(item.id)}
-                className="p-2 bg-gray-700 rounded hover:bg-gray-600"
-              >
-                <FaMinus />
-              </button>
-
-              <span className="text-white font-semibold">
-                {item.quantity}
-              </span>
-
-              <button
-                onClick={() => increaseQty(item.id)}
-                className="p-2 bg-gray-700 rounded hover:bg-gray-600"
-              >
-                <FaPlus />
-              </button>
-            </div>
-
-            <p className="text-white font-semibold w-24 text-right">
-              ${item.price * item.quantity}
+        <div className="flex justify-end">
+          <div className="bg-gray-800 p-6 rounded-lg w-full md:w-96">
+            <p className="text-gray-400 mb-2">Total</p>
+            <p className="text-2xl font-bold text-white mb-4">
+              ${total}
             </p>
 
-            <button
-              onClick={() => removeItem(item.id)}
-              className="text-red-500 hover:text-red-400 ml-4"
-            >
-              <FaTrash />
+            <button className="w-full py-3 px-6 rounded-lg bg-orange-500 hover:bg-orange-400 text-white font-semibold transition-colors cursor-pointer">
+              Finalizar Compra
             </button>
           </div>
-        ))}
-      </div>
-
-      <div className="flex justify-end mt-10">
-        <div className="bg-gray-800 p-6 rounded-lg w-full md:w-96">
-          <p className="text-gray-400 mb-2">Total</p>
-          <p className="text-2xl font-bold text-white mb-4">
-            ${total}
-          </p>
-
-          <button className="w-full py-3 rounded-full bg-orange-500 hover:bg-orange-400 text-white font-semibold transition-colors cursor-pointer">
-            Finalizar Compra
-          </button>
         </div>
       </div>
     </section>

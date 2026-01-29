@@ -143,7 +143,7 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
                 </p>
 
                 <div className="gap-2 flex items-center justify-between mt-auto">
-                  <p className="relative z-10 text-white border-1 border-white/20 bg-white/30 text-center rounded-full font-extrabold mt-2 py-2 px-1 w-auto">
+                  <p className="relative z-10 text-white bg-white/30 text-center rounded-full mt-2 py-2 px-1 w-auto">
                     ${product.price}
                   </p>
 
@@ -155,7 +155,7 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
                       setCooldownId(product.id);
                       setTimeout(() => setCooldownId(null), 2000);
                     }}
-                    className={`relative z-10 mt-2 mb-0.5 w-auto text-white text-xs md:text-sm px-1 md:px-9 py-2 border-1 rounded-full transition-colors cursor-pointer
+                    className={`relative z-10 mt-2 mb-0.5 w-auto text-white text-xs md:text-sm px-1 md:px-9 py-2 border-1 border-orange-500 rounded-full transition-colors cursor-pointer
                       ${
                         cooldownId === product.id
                           ? "bg-gray-500 border-gray-500"
