@@ -48,6 +48,17 @@ export default function Cart() {
     0
   );
 
+  const handleCheckout = () => {
+    const productList = cart
+      .map(item => `• ${item.name} x${item.quantity}`)
+      .join("\n");
+
+    const message = `Hola, estoy interesado en:\n${productList}\n\nPrecio total: $${total}`;
+
+    const url = `https://wa.me/542245502977?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+  };
+
   if (cart.length === 0) {
     return (
       <section className="w-full flex flex-col bg-gray-950 px-6 md:px-16 py-12 items-center justify-center min-h-[60vh]">
@@ -61,7 +72,7 @@ export default function Cart() {
 
   return (
     <section className="w-full bg-gray-950 px-2 md:px-24 py-12">
-      <div className="flex flex-col md:flex-col lg:flex-row gap-8 items-start">
+      <div className="flex flex-col md:flex-col lg:flex-row gap-8 items-center lg:items-start">
         <div className="flex flex-col gap-6 flex-1">
           {cart.map(item => (
             <div
@@ -118,15 +129,17 @@ export default function Cart() {
           ))}
         </div>
 
-        <div className="flex justify-end">
-          <div className="bg-gray-800 p-6 rounded-lg w-full md:w-96">
+        <div className="w-full lg:w-auto flex justify-center lg:justify-end">
+          <div className="bg-gray-800 p-6 rounded-lg w-fullmd:w-96">
             <p className="text-gray-400 mb-2">Total</p>
             <p className="text-2xl font-bold text-white mb-4">
               ${total}
             </p>
 
-            <button className="w-full py-3 px-6 rounded-lg bg-orange-500 hover:bg-orange-400 text-white font-semibold transition-colors cursor-pointer">
-              Finalizar Compra
+            <button
+              onClick={handleCheckout}
+              className="w-full py-3 px-6 rounded-lg bg-orange-500 hover:bg-orange-400 text-white font-semibold transition-colors cursor-pointer">
+              Continuar pedido por WhatsApp
             </button>
           </div>
         </div>
