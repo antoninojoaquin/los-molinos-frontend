@@ -53,7 +53,7 @@ export default function Cart() {
       .map(item => `• ${item.name} x${item.quantity}`)
       .join("\n");
 
-    const message = `¡Hola! estoy interesado en:\n${productList}\n\n¿Podemos coordinar los detalles?`;
+    const message = `¡Hola! estoy interesado en:\n${productList}\n\nPrecio total: $${total}\n¿Podemos coordinar los detalles?`;
 
     const url = `https://wa.me/542245502977?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
