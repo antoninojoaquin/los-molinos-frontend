@@ -112,7 +112,7 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {displayedProducts.map((product) => (
             <div
-              key={product.id}
+              key={product.id} 
               className="relative overflow-hidden p-1 md:p-2 bg-gray-800 rounded-3xl shadow flex flex-col h-96"
             >
               <img
@@ -158,7 +158,7 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
                     className={`relative z-10 mt-2 mb-0.5 w-auto text-white text-xs md:text-sm px-1 md:px-9 py-2 border-1 border-orange-500 rounded-full transition-colors cursor-pointer
                       ${
                         cooldownId === product.id
-                          ? "bg-gray-500 border-gray-500"
+                          ? "bg-gray-500 border-gray-500 w-full items-center  justify-center flex"
                           : "bg-orange-500 border-orange-500 hover:bg-orange-400 hover:border-orange-400"
                       }
                     `}
