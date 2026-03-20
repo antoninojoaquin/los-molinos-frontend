@@ -20,7 +20,7 @@ function Header() {
   }, []);
 
   return (
-    <header className="bg-gray-900 fixed w-full top-0 z-50 ">
+    <header className="bg-gray-800 fixed w-full top-0 z-50 ">
       <div className="max-w-[1920px] mx-auto px-4 md:px-8 h-24 flex justify-between items-center">
         <div className="flex-shrink-0 cursor-pointer">
           <Link to="/">

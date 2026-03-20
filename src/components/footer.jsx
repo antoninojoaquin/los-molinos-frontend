@@ -3,7 +3,7 @@ import Logo from "../assets/logofooter.png";
 
 function Footer() {
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-800 text-white">
       <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
         <div className="flex items-center space-x-3">
           <img src={Logo} alt="Los Molinos Regionales" className="h-32 md:h-32" />

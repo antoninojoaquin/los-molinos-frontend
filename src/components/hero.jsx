@@ -1,4 +1,5 @@
 import HeroImage from "../assets/heroexample-2.webp";
+import { FaCircleArrowRight } from "react-icons/fa6";
 
 function Hero() {
   return (
@@ -17,9 +18,10 @@ function Hero() {
         <p className="mt-4 text-lg md:text-2xl text-white drop-shadow-md">
           Venta de accesorios para tu <span className="text-orange-500">parrilla</span> en Dolores y la zona
         </p>
-        <a href="/productos" className="cursor-pointer">
-          <button className="cursor-pointer text-2xl mt-6 px-10 py-2 border-2 shadow-[0_0_20px_rgba(0,0,0,1)] bg-orange-500 border-orange-500 text-white font-medium rounded-xl hover:text-white hover:bg-orange-400 hover:border-orange-400 transition-all duration-500">
-              Explorar Productos
+        <a href="/productos" className="cursor-pointer flex justify-center ">
+          <button className="flex items-center gap-4 cursor-pointer text-2xl mt-6 px-4 py-2 border-2 shadow-[0_0_20px_rgba(0,0,0,1)] bg-orange-500 border-orange-500 text-white font-medium rounded-xl hover:text-white hover:bg-orange-400 hover:border-orange-400 transition-all duration-500">
+            <FaCircleArrowRight className="text-4xl"/>
+            Explorar Productos
           </button>
         </a>
       </div>

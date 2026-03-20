@@ -52,7 +52,7 @@ function Contacto() {
         </div>
 
         <div className="relative">
-          <div className="relative bg-gray-900 border border-gray-800 rounded-3xl p-8 md:p-10 shadow-2xl min-h-[480px] flex flex-col justify-center">
+          <div className="relative bg-gray-900 border border-gray-800 rounded-2xl p-8 md:p-10 shadow-2xl min-h-[480px] flex flex-col justify-center">
 
             {!enviado ? (
               <form 
@@ -109,7 +109,7 @@ function Contacto() {
 
                 <button 
                   type="submit"
-                  className="w-full bg-orange-500 hover:bg-orange-400 text-gray-900 font-bold py-4 rounded-full transition-all duration-200 mt-2 shadow-lg hover:cursor-pointer hover:shadow-orange-500/25"
+                  className="w-full bg-orange-500 hover:bg-orange-400 text-gray-900 font-bold py-4 rounded-2xl transition-all duration-200 mt-2 shadow-lg hover:cursor-pointer hover:shadow-orange-500/25"
                 >
                   Enviar Mensaje
                 </button>
