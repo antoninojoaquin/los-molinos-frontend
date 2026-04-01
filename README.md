@@ -1,12 +1,22 @@
-# React + Vite
+# Los Molinos Regionales - Ecommerce
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Código fuente de **[lmregionales.vercel.app](https://lmregionales.vercel.app)**, una tienda online de productos regionales de parrilla que digitaliza un catálogo tradicional con una **UX moderna**.
 
-Currently, two official plugins are available:
+El proyecto es una **SPA en React**, desarrollada con **JavaScript** y **Tailwind CSS**, con arquitectura modular, diseño responsive e integración con **Firestore** para la gestión de stock y carga dinámica de productos.  
+Incluye un **checkout automatizado vía WhatsApp**, optimizando el flujo de conversión desde el carrito.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Preview de LMRegionales](https://lmregionales.vercel.app/lmregionales-screenshot.png)
 
-## Expanding the ESLint configuration
+## 📂 Secciones del Sitio
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Inicio:** Presentación visual con Hero e ingreso directo al catálogo.  
+- **Productos:** Catálogo sincronizado en tiempo real desde Firestore.  
+- **Ubicación:** Información para visitar o contactar físicamente al negocio.  
+- **Nosotros:** Historia y presentación del emprendimiento.  
+- **Contacto:** Medios para comunicarse rápidamente (WhatsApp, redes, etc.).  
+- **Carrito & Favoritos:** Funcionalidades de e-commerce para mejorar la experiencia de compra.
+
+
+---
+
+Hecho por Antonino Joaquín — **[LinkedIn](https://www.linkedin.com/in/antoninojoaquin/)**.
