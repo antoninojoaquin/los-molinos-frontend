@@ -13,13 +13,16 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #F97316;
-  text-decoration: none;
-}
-a:hover {
-  color: #fb923c;
+/* En la capa base para que las clases de Tailwind (text-*, hover:text-*) puedan pisarlo */
+@layer base {
+  a {
+    font-weight: 500;
+    color: #F97316;
+    text-decoration: none;
+  }
+  a:hover {
+    color: #fb923c;
+  }
 }
 
 body {
@@ -42,9 +45,6 @@ h1, h2 {
     color: #213547;
     background-color: #ffffff;
   }
-  a:hover {
-    color: #fb923c;
-  }
 }
 
 @keyframes slideDown {
@@ -53,4 +53,26 @@ h1, h2 {
 }
 .animate-slideDown {
   animation: slideDown 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slideUp {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Reserva el lugar del scrollbar: al bloquear el scroll (detalle de producto) la grilla no se re-acomoda */
+:root {
+  scrollbar-gutter: stable;
+  background-color: #030712;
 }

@@ -1,26 +1,31 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import Lottie from "lottie-react";
 import { FaHeart, FaHeartBroken } from "react-icons/fa";
 import loadingAnimation from "../assets/loading.json";
-import cartAnimation from "../assets/shopping-cart.json";
+import AddToCartButton from "../components/AddToCartButton";
+import ProductDetail from "../components/ProductDetail";
 import { useCart } from "../context/cartContext";
 import { fetchProducts } from "../services/products";
 import { formatPrice } from "../utils/formatPrice";
 import { readStorage, writeStorage } from "../utils/storage";
 import { getStock } from "../utils/stock";
+import { optimizeImage } from "../utils/image";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 const FAVORITES_KEY = "favorites";
 const LOW_STOCK_THRESHOLD = 2;
-const CART_BUTTON_LABELS = ["Agregar al carrito", "Máximo en carrito", "Sin stock"];
 
 export default function ProductList({ showOnlyFavorites = false }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [favorites, setFavorites] = useState(() => readStorage(FAVORITES_KEY, []));
-  const [cooldownId, setCooldownId] = useState(null);
-  const cooldownTimeout = useRef(null);
-  const { addToCart, getQuantity, syncStock } = useCart();
+  const { syncStock } = useCart();
+  const { productId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = showOnlyFavorites ? "/favoritos" : "/productos";
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -39,14 +44,13 @@ export default function ProductList({ showOnlyFavorites = false }) {
     loadProducts();
   }, [syncStock]);
 
-  useEffect(() => () => clearTimeout(cooldownTimeout.current), []);
-
-  const handleAddToCart = (product) => {
-    if (!addToCart(product)) return;
-    setCooldownId(product.id);
-    clearTimeout(cooldownTimeout.current);
-    cooldownTimeout.current = setTimeout(() => setCooldownId(null), 2000);
-  };
+  // Si el detalle se abrió desde la grilla, volver atrás deja el historial limpio.
+  // Si se entró por link directo, se reemplaza la URL por la del listado.
+  const openedFromList = location.state?.fromList;
+  const closeDetail = useCallback(() => {
+    if (openedFromList) navigate(-1);
+    else navigate(basePath, { replace: true });
+  }, [openedFromList, navigate, basePath]);
 
   const toggleFavorite = (productId) => {
     const updatedFavorites = favorites.includes(productId)
@@ -57,8 +61,15 @@ export default function ProductList({ showOnlyFavorites = false }) {
     writeStorage(FAVORITES_KEY, updatedFavorites);
   };
 
-  const displayedProducts = products.filter(
-    (product) => !showOnlyFavorites || favorites.includes(product.id)
+  // Los productos sin stock van al final (sort es estable: el resto mantiene su orden)
+  const displayedProducts = products
+    .filter((product) => !showOnlyFavorites || favorites.includes(product.id))
+    .sort((a, b) => (getStock(a) <= 0) - (getStock(b) <= 0));
+
+  const selectedProduct = productId && products.find((product) => product.id === productId);
+
+  useDocumentTitle(
+    selectedProduct ? selectedProduct.name : showOnlyFavorites ? "Favoritos" : "Productos"
   );
 
   if (loading) {
@@ -79,13 +90,17 @@ export default function ProductList({ showOnlyFavorites = false }) {
     );
   }
 
+  if (productId && !selectedProduct) {
+    return <Navigate to={basePath} replace />;
+  }
+
   return (
     <section className="w-full bg-gray-950 px-3 sm:px-6 md:px-16 py-12 min-h-[50vh]">
       {showOnlyFavorites && displayedProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center w-full py-20 text-white/50">
           <FaHeartBroken className="text-6xl text-orange-500 mb-4" />
           <p className="text-xl font-semibold text-center">
-            No tienes nada en favoritos
+            No tenés nada en favoritos
           </p>
         </div>
       ) : (
@@ -93,15 +108,8 @@ export default function ProductList({ showOnlyFavorites = false }) {
           {displayedProducts.map((product) => {
             const stock = getStock(product);
             const outOfStock = stock <= 0;
-            const maxInCart = !outOfStock && getQuantity(product.id) >= stock;
             const lowStock = !outOfStock && stock <= LOW_STOCK_THRESHOLD;
-            const inCooldown = cooldownId === product.id;
             const isFavorite = favorites.includes(product.id);
-            const buttonLabel = outOfStock
-              ? "Sin stock"
-              : maxInCart
-                ? "Máximo en carrito"
-                : "Agregar al carrito";
 
             return (
             <article
@@ -110,12 +118,23 @@ export default function ProductList({ showOnlyFavorites = false }) {
             >
               <img
                 className={`absolute inset-0 object-cover h-full w-full transition-transform duration-500 group-hover:scale-105 ${outOfStock ? "grayscale" : ""}`}
-                src={product.imageUrl}
+                src={optimizeImage(product.imageUrl, 800)}
+                srcSet={`${optimizeImage(product.imageUrl, 400)} 400w, ${optimizeImage(product.imageUrl, 800)} 800w`}
+                sizes="(min-width: 1024px) 25vw, 50vw"
                 alt={product.name}
                 loading="lazy"
+                decoding="async"
               />
 
               <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-45% to-transparent" />
+
+              {/* Toda la card abre el detalle; favoritos y carrito quedan por encima */}
+              <Link
+                to={`${basePath}/${product.id}`}
+                state={{ fromList: true }}
+                aria-label={`Ver detalle de ${product.name}`}
+                className="absolute inset-0 z-[5] rounded-3xl focus-visible:outline-2 focus-visible:outline-orange-400 focus-visible:-outline-offset-2"
+              />
 
               {(outOfStock || lowStock) && (
                 <span
@@ -135,14 +154,14 @@ export default function ProductList({ showOnlyFavorites = false }) {
                 onClick={() => toggleFavorite(product.id)}
                 aria-label={isFavorite ? `Quitar ${product.name} de favoritos` : `Agregar ${product.name} a favoritos`}
                 aria-pressed={isFavorite}
-                className={`absolute top-2.5 right-2.5 md:top-3 md:right-3 z-10 p-1.5 md:p-2 rounded-full bg-black/40 backdrop-blur-sm cursor-pointer transition-colors duration-200 hover:text-orange-300
+                className={`absolute top-2.5 right-2.5 md:top-3 md:right-3 z-10 p-1.5 md:p-2 rounded-full bg-black/55 cursor-pointer transition-colors duration-200 hover:text-orange-300
                   ${isFavorite ? "text-orange-500" : "text-white"}
                 `}
               >
                 <FaHeart className="text-base md:text-xl" />
               </button>
 
-              <div className="relative z-10 mt-auto w-full p-3 md:p-4 flex flex-col gap-1">
+              <div className="pointer-events-none relative z-10 mt-auto w-full p-3 md:p-4 flex flex-col gap-1">
                 <p className="text-orange-300 uppercase tracking-wide text-[10px] md:text-xs truncate">
                   {product.category}
                 </p>
@@ -155,49 +174,18 @@ export default function ProductList({ showOnlyFavorites = false }) {
                   {formatPrice(product.price)}
                 </p>
 
-                <button
-                  disabled={inCooldown || outOfStock || maxInCart}
-                  onClick={() => handleAddToCart(product)}
-                  className={`relative mt-2 w-full text-white text-xs md:text-sm font-semibold px-3 py-2.5 rounded-full transition-colors
-                    ${
-                      inCooldown
-                        ? "bg-gray-500"
-                        : outOfStock || maxInCart
-                          ? "bg-gray-600 cursor-not-allowed"
-                          : "bg-orange-500 hover:bg-orange-400 cursor-pointer"
-                    }
-                  `}
-                >
-                  {/* Todas las etiquetas ocupan la misma celda: el botón siempre mide lo que la más larga */}
-                  <span className="grid justify-items-center">
-                    {CART_BUTTON_LABELS.map((label) => (
-                      <span
-                        key={label}
-                        aria-hidden={label !== buttonLabel || inCooldown}
-                        className={`[grid-area:1/1] text-center leading-tight ${
-                          label === buttonLabel && !inCooldown ? "" : "invisible"
-                        }`}
-                      >
-                        {label}
-                      </span>
-                    ))}
-                  </span>
-
-                  {inCooldown && (
-                    <span className="absolute inset-0 flex items-center justify-center">
-                      <Lottie
-                        animationData={cartAnimation}
-                        loop={false}
-                        className="w-5 h-5 scale-[2]"
-                      />
-                    </span>
-                  )}
-                </button>
+                <div className="pointer-events-auto mt-2">
+                  <AddToCartButton product={product} className="py-2.5 text-xs md:text-sm" />
+                </div>
               </div>
             </article>
             );
           })}
         </div>
+      )}
+
+      {selectedProduct && (
+        <ProductDetail product={selectedProduct} onClose={closeDetail} />
       )}
     </section>
   );

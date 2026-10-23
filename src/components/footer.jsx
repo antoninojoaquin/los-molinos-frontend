@@ -1,5 +1,6 @@
 import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import Logo from "../assets/logofooter.png";
+import { WHATSAPP_NUMBER } from "../utils/whatsapp";
 
 function Footer() {
   return (
@@ -14,7 +15,7 @@ function Footer() {
 
         <div className="text-center md:text-left space-y-2">
             <p><span className="text-orange-500 font-medium">Email:</span> lmregionales@gmail.com</p>
-            <p><span className="text-orange-500 font-medium">Tel:</span> +54 9 2245 42-9517</p>
+            <p><span className="text-orange-500 font-medium">Tel:</span> +54 9 2245 50-2977</p>
             <p><span className="text-orange-500 font-medium">Dirección:</span> Aristobulo Del Valle 178, Dolores, Buenos Aires</p>
         </div>
 
@@ -36,7 +37,7 @@ function Footer() {
             <FaInstagram />
         </a>
         <a
-            href="https://wa.me/5492245429517"
+            href={`https://wa.me/${WHATSAPP_NUMBER}`}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-orange-500 transition-colors duration-200"

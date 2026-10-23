@@ -5,10 +5,14 @@ import { useCart } from "../context/cartContext";
 import { fetchProducts } from "../services/products";
 import { formatPrice } from "../utils/formatPrice";
 import { getStock } from "../utils/stock";
+import { getWhatsAppUrl } from "../utils/whatsapp";
+import { optimizeImage } from "../utils/image";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 export default function Cart() {
   const { cart, totalPrice, increaseQty, decreaseQty, removeItem, syncStock } = useCart();
   const [stockAdjusted, setStockAdjusted] = useState(false);
+  useDocumentTitle("Carrito");
 
   // El stock guardado en localStorage puede estar desactualizado
   useEffect(() => {
@@ -24,8 +28,7 @@ export default function Cart() {
 
     const message = `¡Hola! estoy interesado en:\n${productList}\n\nPrecio total: ${formatPrice(totalPrice)}\n¿Podemos coordinar los detalles?`;
 
-    const url = `https://wa.me/542245502977?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(getWhatsAppUrl(message), "_blank", "noopener,noreferrer");
   };
 
   const stockNotice = stockAdjusted && (
@@ -50,20 +53,20 @@ export default function Cart() {
     <section className="w-full bg-gray-950 px-2 md:px-24 py-12">
       {stockNotice}
       <div className="flex flex-col md:flex-col lg:flex-row gap-8 items-center lg:items-start">
-        <div className="flex flex-col gap-6 flex-1">
+        <div className="flex flex-col gap-6 flex-1 w-full">
           {cart.map(item => (
             <div
               key={item.id}
-              className="flex items-center gap-4 bg-gray-800 p-4 rounded-lg shadow"
+              className="flex flex-wrap md:flex-nowrap items-center gap-x-4 gap-y-3 bg-gray-800 p-4 rounded-lg shadow"
             >
               <img
-                src={item.imageUrl}
+                src={optimizeImage(item.imageUrl, 300)}
                 alt={item.name}
-                className="w-24 h-24 object-cover rounded"
+                className="w-20 h-20 md:w-24 md:h-24 object-cover rounded shrink-0"
               />
 
-              <div className="flex-1">
-                <p className="text-gray-200 text-xs font-medium">
+              <div className="flex-1 min-w-0">
+                <p className="text-gray-200 text-sm md:text-base font-medium leading-snug">
                   {item.name}
                 </p>
                 <p className="text-gray-400 text-sm">
@@ -82,41 +85,44 @@ export default function Cart() {
                 )}
               </div>
 
-              <div className="flex items-center scale-80 gap-3 border-gray-950 border-2 rounded-full">
-                <button
-                  onClick={() => decreaseQty(item.id)}
-                  disabled={item.quantity <= 1}
-                  aria-label={`Quitar una unidad de ${item.name}`}
-                  className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-700"
-                >
-                  <FaMinus />
-                </button>
+              {/* En celular, cantidad, subtotal y borrar van en una fila aparte debajo */}
+              <div className="w-full md:w-auto flex items-center justify-between md:justify-end gap-4 border-t border-gray-700 pt-3 md:border-0 md:pt-0">
+                <div className="flex items-center gap-3 border-gray-950 border-2 rounded-full">
+                  <button
+                    onClick={() => decreaseQty(item.id)}
+                    disabled={item.quantity <= 1}
+                    aria-label={`Quitar una unidad de ${item.name}`}
+                    className="p-2 bg-gray-700 text-white rounded-full hover:bg-gray-600 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-700"
+                  >
+                    <FaMinus />
+                  </button>
 
-                <span className="text-white font-semibold">
-                  {item.quantity}
-                </span>
+                  <span className="text-white font-semibold">
+                    {item.quantity}
+                  </span>
 
-                <button
-                  onClick={() => increaseQty(item.id)}
-                  disabled={item.quantity >= getStock(item)}
-                  aria-label={`Agregar una unidad de ${item.name}`}
-                  className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-700"
-                >
-                  <FaPlus />
-                </button>
-              </div>
-              <div className="flex flex-col gap-2 md:flex-row justify-center items-center -ml-4 md:ml-0">
-                <p className="text-white font-semibold w-24 text-lg md:text-xl text-center">
-                  {formatPrice(item.price * item.quantity)}
-                </p>
+                  <button
+                    onClick={() => increaseQty(item.id)}
+                    disabled={item.quantity >= getStock(item)}
+                    aria-label={`Agregar una unidad de ${item.name}`}
+                    className="p-2 bg-gray-700 text-white rounded-full hover:bg-gray-600 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-700"
+                  >
+                    <FaPlus />
+                  </button>
+                </div>
+                <div className="flex items-center gap-4">
+                  <p className="text-white font-semibold text-lg md:text-xl md:w-28 text-right">
+                    {formatPrice(item.price * item.quantity)}
+                  </p>
 
-                <button
-                  onClick={() => removeItem(item.id)}
-                  aria-label={`Eliminar ${item.name} del carrito`}
-                  className="text-orange-500 text-lg hover:text-orange-400 cursor-pointer"
-                >
-                  <FaTrash />
-                </button>
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    aria-label={`Eliminar ${item.name} del carrito`}
+                    className="text-orange-500 text-lg hover:text-orange-400 cursor-pointer"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -134,6 +140,11 @@ export default function Cart() {
               className="w-full py-3 px-6 rounded-lg bg-orange-500 hover:bg-orange-400 text-white font-semibold transition-colors cursor-pointer">
               Continuar pedido por WhatsApp
             </button>
+
+            <ul className="mt-4 space-y-1 text-sm text-gray-400">
+              <li>• Pago por transferencia, o en efectivo si retirás en el local.</li>
+              <li>• Por ahora, entregas solo en Dolores.</li>
+            </ul>
           </div>
         </div>
       </div>

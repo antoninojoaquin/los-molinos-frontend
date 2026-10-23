@@ -1,9 +1,13 @@
+import { Link } from "react-router-dom";
 import HeroImage from "../assets/heroexample-2.webp";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 import { FaCircleArrowRight } from "react-icons/fa6";
 
 function Hero() {
+  useDocumentTitle();
+
   return (
-    <section className="relative w-screen h-screen flex items-center justify-center">
+    <section className="relative w-full h-[calc(100dvh-6rem)] min-h-[28rem] flex items-center justify-center">
       <img
         src={HeroImage}
         alt="Hero Los Molinos"
@@ -18,12 +22,13 @@ function Hero() {
         <p className="mt-4 text-lg md:text-2xl text-white drop-shadow-md">
           Venta de accesorios para tu <span className="text-orange-500">parrilla</span> en Dolores y la zona
         </p>
-        <a href="/productos" className="cursor-pointer flex justify-center ">
-          <button className="flex items-center gap-4 cursor-pointer text-2xl mt-6 px-4 py-2.5 border-2 shadow-[0_0_20px_rgba(0,0,0,1)] bg-orange-500 border-orange-500 text-white font-medium rounded-full hover:text-white hover:bg-orange-400 hover:border-orange-400 transition-all duration-500">
-            <FaCircleArrowRight className="text-4xl"/>
-            Explorar Productos
-          </button>
-        </a>
+        <Link
+          to="/productos"
+          className="inline-flex items-center gap-4 text-2xl mt-6 px-4 py-2.5 border-2 shadow-[0_0_20px_rgba(0,0,0,1)] bg-orange-500 border-orange-500 text-white font-medium rounded-full hover:text-white hover:bg-orange-400 hover:border-orange-400 transition-all duration-500"
+        >
+          <FaCircleArrowRight className="text-4xl"/>
+          Explorar Productos
+        </Link>
       </div>
     </section>
   );
