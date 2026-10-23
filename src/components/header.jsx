@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { FaHeart, FaShoppingCart, FaHome, FaThLarge, FaMapMarkerAlt, FaChevronRight, FaWhatsapp } from "react-icons/fa";
+import { FaHeart, FaShoppingCart, FaHome, FaThLarge, FaMapMarkerAlt, FaChevronRight } from "react-icons/fa";
 import Logo from "../assets/logo.png";
 import { useCart } from "../context/cartContext";
 import { BUSINESS_HOURS, formatRange, isOpenNow } from "../utils/business";
-import { getWhatsAppUrl } from "../utils/whatsapp";
 
 const NAV_ITEMS = [
   { to: "/", label: "Inicio", icon: FaHome },
@@ -188,16 +187,6 @@ function Header() {
               {days}: {ranges.map(formatRange).join(" y ")} hs
             </p>
           ))}
-
-          <a
-            href={getWhatsAppUrl("¡Hola! Quería hacer una consulta.")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 flex items-center justify-center gap-2 w-full py-3 rounded-full bg-[#25D366] text-white hover:text-white font-semibold"
-          >
-            <FaWhatsapp className="text-xl" />
-            Escribinos por WhatsApp
-          </a>
         </div>
       </nav>
     </header>
