@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { FaTimes, FaWhatsapp, FaSearchPlus } from "react-icons/fa";
+import { FaTimes, FaWhatsapp, FaSearchPlus, FaShareAlt, FaCheck } from "react-icons/fa";
 import AddToCartButton from "./AddToCartButton";
 import { useCart } from "../context/cartContext";
 import { formatPrice } from "../utils/formatPrice";
@@ -120,6 +120,10 @@ export default function ProductDetail({ product, onClose }) {
   const stock = getStock(product);
   const outOfStock = stock <= 0;
   const inCart = getQuantity(product.id);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const copiedTimeout = useRef(null);
+
+  useEffect(() => () => clearTimeout(copiedTimeout.current), []);
 
   // Bloquea el scroll de fondo, cierra con Escape y devuelve el foco al cerrar
   useEffect(() => {
@@ -140,18 +144,38 @@ export default function ProductDetail({ product, onClose }) {
     };
   }, [onClose]);
 
-  useEffect(() => {
-    const previousTitle = document.title;
-    document.title = `${product.name} | Los Molinos Regionales`;
-    return () => {
-      document.title = previousTitle;
-    };
-  }, [product.name]);
-
   const productUrl = `${window.location.origin}/productos/${product.id}`;
   const whatsAppUrl = getWhatsAppUrl(
     `¡Hola! quería consultar por "${product.name}" (${formatPrice(product.price)}).\n${productUrl}`
   );
+
+  // En celular abre el menú nativo de compartir. En PC copia el link: el menú de Windows
+  // manda a WhatsApp Desktop, y la mayoría usa WhatsApp Web.
+  const handleShare = async () => {
+    const shareData = {
+      title: product.name,
+      text: `${product.name} - ${formatPrice(product.price)} en Los Molinos Regionales`,
+      url: productUrl,
+    };
+
+    if (navigator.share && isTouchDevice()) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        // El usuario canceló el menú de compartir
+      }
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(productUrl);
+      setLinkCopied(true);
+      clearTimeout(copiedTimeout.current);
+      copiedTimeout.current = setTimeout(() => setLinkCopied(false), 2000);
+    } catch (error) {
+      console.error("No se pudo copiar el link:", error);
+    }
+  };
 
   return (
     <div
@@ -214,6 +238,14 @@ export default function ProductDetail({ product, onClose }) {
             >
               <FaWhatsapp className="text-xl" />
               Consultar por WhatsApp
+            </button>
+
+            <button
+              onClick={handleShare}
+              className="flex items-center justify-center gap-2 w-full py-2 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
+            >
+              {linkCopied ? <FaCheck className="text-green-400" /> : <FaShareAlt />}
+              {linkCopied ? "¡Link copiado!" : "Compartir producto"}
             </button>
           </div>
         </div>
