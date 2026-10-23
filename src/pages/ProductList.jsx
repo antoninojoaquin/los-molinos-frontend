@@ -8,6 +8,10 @@ import cartAnimation from "../assets/shopping-cart.json";
 
 const FAVORITES_KEY = "favorites";
 const CART_KEY = "cart";
+const LOW_STOCK_THRESHOLD = 2;
+
+// Si un producto no tiene el campo stock en Firestore, no se limita la compra
+const getStock = (product) => product.stock ?? Infinity;
 
 export default function ProductList({ showOnlyFavorites = false, triggerCartSuccess }) {
   const [products, setProducts] = useState([]);
@@ -46,15 +50,20 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
     setCart(storedCart);
   }, []);
 
+  const getCartQuantity = (productId) =>
+    cart.find((item) => item.id === productId)?.quantity ?? 0;
+
   const addToCart = (product) => {
     const existingProduct = cart.find((item) => item.id === product.id);
+
+    if (getCartQuantity(product.id) >= getStock(product)) return false;
 
     let updatedCart;
 
     if (existingProduct) {
       updatedCart = cart.map((item) =>
         item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
+          ? { ...item, quantity: item.quantity + 1, stock: product.stock }
           : item
       );
     } else {
@@ -65,6 +74,7 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
           name: product.name,
           price: product.price,
           imageUrl: product.imageUrl,
+          stock: product.stock,
           quantity: 1,
         },
       ];
@@ -72,6 +82,7 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
 
     setCart(updatedCart);
     localStorage.setItem(CART_KEY, JSON.stringify(updatedCart));
+    return true;
   };
 
   const toggleFavorite = (productId) => {
@@ -110,18 +121,38 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          {displayedProducts.map((product) => (
+          {displayedProducts.map((product) => {
+            const stock = getStock(product);
+            const outOfStock = stock <= 0;
+            const maxInCart = !outOfStock && getCartQuantity(product.id) >= stock;
+            const lowStock = !outOfStock && stock <= LOW_STOCK_THRESHOLD;
+
+            return (
             <div
-              key={product.id} 
+              key={product.id}
               className="relative overflow-hidden p-1 md:p-2 bg-gray-800 rounded-3xl shadow flex flex-col h-96"
             >
               <img
-                className="absolute inset-0 object-cover h-full w-full rounded-3xl"
+                className={`absolute inset-0 object-cover h-full w-full rounded-3xl ${outOfStock ? "grayscale" : ""}`}
                 src={product.imageUrl}
                 alt={product.name}
               />
 
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-0" />
+
+              {(outOfStock || lowStock) && (
+                <span
+                  className={`absolute top-3 left-3 z-10 text-white text-[11px] md:text-xs font-semibold uppercase px-3 py-1 rounded-full
+                    ${outOfStock ? "bg-gray-600" : "bg-orange-500"}
+                  `}
+                >
+                  {outOfStock
+                    ? "Sin stock"
+                    : stock === 1
+                      ? "¡Última unidad!"
+                      : `¡Últimas ${stock}!`}
+                </span>
+              )}
 
               <FaHeart
                 onClick={() => toggleFavorite(product.id)}
@@ -148,18 +179,20 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
                   </p>
 
                   <button
-                    disabled={cooldownId === product.id}
+                    disabled={cooldownId === product.id || outOfStock || maxInCart}
                     onClick={() => {
-                      addToCart(product);
+                      if (!addToCart(product)) return;
                       triggerCartSuccess && triggerCartSuccess();
                       setCooldownId(product.id);
                       setTimeout(() => setCooldownId(null), 2000);
                     }}
-                    className={`relative z-10 mt-2 mb-0.5 w-auto text-white text-xs md:text-sm px-1 md:px-9 py-2 border-1 border-orange-500 rounded-full transition-colors cursor-pointer
+                    className={`relative z-10 mt-2 mb-0.5 w-auto text-white text-xs md:text-sm px-1 md:px-9 py-2 border-1 border-orange-500 rounded-full transition-colors
                       ${
                         cooldownId === product.id
                           ? "bg-gray-500 border-gray-500 w-full items-center  justify-center flex"
-                          : "bg-orange-500 border-orange-500 hover:bg-orange-400 hover:border-orange-400"
+                          : outOfStock || maxInCart
+                            ? "bg-gray-600 border-gray-600 cursor-not-allowed"
+                            : "bg-orange-500 border-orange-500 hover:bg-orange-400 hover:border-orange-400 cursor-pointer"
                       }
                     `}
                   >
@@ -171,6 +204,10 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
                         className="scale-[2]"
                       />
                     </div>
+                    ) : outOfStock ? (
+                      "Sin stock"
+                    ) : maxInCart ? (
+                      "Máximo en carrito"
                     ) : (
                       "Agregar al carrito"
                     )}
@@ -178,7 +215,8 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </section>

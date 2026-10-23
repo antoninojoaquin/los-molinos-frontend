@@ -1,25 +1,59 @@
 import { useEffect, useState } from "react";
 import { FaTrash, FaMinus, FaPlus } from "react-icons/fa";
 import { BiCartDownload } from "react-icons/bi";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
 const CART_KEY = "cart";
 
+const getStock = (item) => item.stock ?? Infinity;
+
 export default function Cart() {
   const [cart, setCart] = useState([]);
-
-  useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
-    setCart(storedCart);
-  }, []);
+  const [stockAdjusted, setStockAdjusted] = useState(false);
 
   const updateCart = (updatedCart) => {
     setCart(updatedCart);
     localStorage.setItem(CART_KEY, JSON.stringify(updatedCart));
   };
 
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    setCart(storedCart);
+
+    if (storedCart.length === 0) return;
+
+    // El stock guardado en localStorage puede estar desactualizado
+    const syncStock = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        const stockById = Object.fromEntries(
+          querySnapshot.docs.map((doc) => [doc.id, doc.data().stock])
+        );
+
+        let adjusted = false;
+        const syncedCart = storedCart
+          .map((item) => {
+            const stock = stockById[item.id];
+            const quantity = Math.min(item.quantity, stock ?? Infinity);
+            if (quantity !== item.quantity) adjusted = true;
+            return { ...item, stock, quantity };
+          })
+          .filter((item) => item.quantity > 0);
+
+        updateCart(syncedCart);
+        setStockAdjusted(adjusted);
+      } catch (error) {
+        console.error("Error al sincronizar stock:", error);
+      }
+    };
+
+    syncStock();
+  }, []);
+
   const increaseQty = (id) => {
     const updatedCart = cart.map(item =>
-      item.id === id
+      item.id === id && item.quantity < getStock(item)
         ? { ...item, quantity: item.quantity + 1 }
         : item
     );
@@ -59,9 +93,16 @@ export default function Cart() {
     window.open(url, "_blank");
   };
 
+  const stockNotice = stockAdjusted && (
+    <p className="text-orange-300 text-sm text-center mb-6">
+      Algunos productos se ajustaron según el stock disponible.
+    </p>
+  );
+
   if (cart.length === 0) {
     return (
       <section className="w-full flex flex-col bg-gray-950 px-6 md:px-16 py-12 items-center justify-center min-h-[60vh]">
+        {stockNotice}
         <BiCartDownload className="text-8xl text-orange-500 mb-4" />
         <p className="text-white/50 font-semibold text-xl">
           Tu carrito está vacío
@@ -72,6 +113,7 @@ export default function Cart() {
 
   return (
     <section className="w-full bg-gray-950 px-2 md:px-24 py-12">
+      {stockNotice}
       <div className="flex flex-col md:flex-col lg:flex-row gap-8 items-center lg:items-start">
         <div className="flex flex-col gap-6 flex-1">
           {cart.map(item => (
@@ -108,7 +150,8 @@ export default function Cart() {
 
                 <button
                   onClick={() => increaseQty(item.id)}
-                  className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 cursor-pointer"
+                  disabled={item.quantity >= getStock(item)}
+                  className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-700"
                 >
                   <FaPlus />
                 </button>
