@@ -43,10 +43,15 @@ function Ubicacion() {
           <div className="mt-8 flex items-start gap-4 bg-gray-900 border border-gray-800 rounded-2xl p-5 max-w-md">
             <FaClock className="text-orange-500 text-2xl mt-1 shrink-0" />
             <div>
-              <p className="text-white font-semibold mb-1">Horario de atención</p>
-              {BUSINESS_HOURS.map((range) => (
-                <p key={range} className="text-gray-400">{range} hs</p>
-              ))}
+              <p className="text-white font-semibold mb-2">Horario de atención</p>
+              <dl className="space-y-2">
+                {BUSINESS_HOURS.map(({ days, ranges }) => (
+                  <div key={days}>
+                    <dt className="text-gray-300 text-sm">{days}</dt>
+                    <dd className="text-gray-400">{ranges.join(" y ")} hs</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
           </div>
 
