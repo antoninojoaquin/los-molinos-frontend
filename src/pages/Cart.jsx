@@ -69,6 +69,17 @@ export default function Cart() {
                 <p className="text-gray-400 text-sm">
                   {formatPrice(item.price)}
                 </p>
+                {Number.isFinite(getStock(item)) && (
+                  <p
+                    className={`text-xs mt-1 ${
+                      item.quantity >= getStock(item) ? "text-orange-400" : "text-gray-500"
+                    }`}
+                  >
+                    {item.quantity >= getStock(item)
+                      ? `Llevás todo el stock (${getStock(item)})`
+                      : `Stock disponible: ${getStock(item)}`}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center scale-80 gap-3 border-gray-950 border-2 rounded-full">
