@@ -1,90 +1,60 @@
-import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+import { useEffect, useRef, useState } from "react";
 import Lottie from "lottie-react";
 import { FaHeart, FaHeartBroken } from "react-icons/fa";
 import loadingAnimation from "../assets/loading.json";
 import cartAnimation from "../assets/shopping-cart.json";
+import { useCart } from "../context/cartContext";
+import { fetchProducts } from "../services/products";
+import { formatPrice } from "../utils/formatPrice";
+import { readStorage, writeStorage } from "../utils/storage";
+import { getStock } from "../utils/stock";
 
 const FAVORITES_KEY = "favorites";
-const CART_KEY = "cart";
+const LOW_STOCK_THRESHOLD = 2;
+const CART_BUTTON_LABELS = ["Agregar al carrito", "Máximo en carrito", "Sin stock"];
 
-export default function ProductList({ showOnlyFavorites = false, triggerCartSuccess }) {
+export default function ProductList({ showOnlyFavorites = false }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [favorites, setFavorites] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [error, setError] = useState(false);
+  const [favorites, setFavorites] = useState(() => readStorage(FAVORITES_KEY, []));
   const [cooldownId, setCooldownId] = useState(null);
+  const cooldownTimeout = useRef(null);
+  const { addToCart, getQuantity, syncStock } = useCart();
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const loadProducts = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "products"));
-        const data = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const data = await fetchProducts();
         setProducts(data);
+        syncStock(data);
       } catch (error) {
         console.error("Error al traer productos:", error);
+        setError(true);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
-  }, []);
+    loadProducts();
+  }, [syncStock]);
 
-  useEffect(() => {
-    const storedFavorites =
-      JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
-    setFavorites(storedFavorites);
-  }, []);
+  useEffect(() => () => clearTimeout(cooldownTimeout.current), []);
 
-  useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
-    setCart(storedCart);
-  }, []);
-
-  const addToCart = (product) => {
-    const existingProduct = cart.find((item) => item.id === product.id);
-
-    let updatedCart;
-
-    if (existingProduct) {
-      updatedCart = cart.map((item) =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      );
-    } else {
-      updatedCart = [
-        ...cart,
-        {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          quantity: 1,
-        },
-      ];
-    }
-
-    setCart(updatedCart);
-    localStorage.setItem(CART_KEY, JSON.stringify(updatedCart));
+  const handleAddToCart = (product) => {
+    if (!addToCart(product)) return;
+    setCooldownId(product.id);
+    clearTimeout(cooldownTimeout.current);
+    cooldownTimeout.current = setTimeout(() => setCooldownId(null), 2000);
   };
 
   const toggleFavorite = (productId) => {
-    let updatedFavorites;
-
-    if (favorites.includes(productId)) {
-      updatedFavorites = favorites.filter((id) => id !== productId);
-    } else {
-      updatedFavorites = [...favorites, productId];
-    }
+    const updatedFavorites = favorites.includes(productId)
+      ? favorites.filter((id) => id !== productId)
+      : [...favorites, productId];
 
     setFavorites(updatedFavorites);
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(updatedFavorites));
+    writeStorage(FAVORITES_KEY, updatedFavorites);
   };
 
   const displayedProducts = products.filter(
@@ -99,8 +69,18 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
     );
   }
 
+  if (error) {
+    return (
+      <section className="w-full flex items-center justify-center bg-gray-950 px-6 py-20 min-h-[50vh]">
+        <p className="text-white/50 text-xl font-semibold text-center">
+          No pudimos cargar los productos. Intentá de nuevo más tarde.
+        </p>
+      </section>
+    );
+  }
+
   return (
-    <section className="w-full bg-gray-950 px-6 md:px-16 py-12 min-h-[50vh]">
+    <section className="w-full bg-gray-950 px-3 sm:px-6 md:px-16 py-12 min-h-[50vh]">
       {showOnlyFavorites && displayedProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center w-full py-20 text-white/50">
           <FaHeartBroken className="text-6xl text-orange-500 mb-4" />
@@ -109,76 +89,114 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          {displayedProducts.map((product) => (
-            <div
-              key={product.id} 
-              className="relative overflow-hidden p-1 md:p-2 bg-gray-800 rounded-3xl shadow flex flex-col h-96"
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-5">
+          {displayedProducts.map((product) => {
+            const stock = getStock(product);
+            const outOfStock = stock <= 0;
+            const maxInCart = !outOfStock && getQuantity(product.id) >= stock;
+            const lowStock = !outOfStock && stock <= LOW_STOCK_THRESHOLD;
+            const inCooldown = cooldownId === product.id;
+            const isFavorite = favorites.includes(product.id);
+            const buttonLabel = outOfStock
+              ? "Sin stock"
+              : maxInCart
+                ? "Máximo en carrito"
+                : "Agregar al carrito";
+
+            return (
+            <article
+              key={product.id}
+              className="group relative overflow-hidden bg-gray-800 rounded-3xl shadow-lg flex flex-col h-80 sm:h-96 xl:h-[28rem]"
             >
               <img
-                className="absolute inset-0 object-cover h-full w-full rounded-3xl"
+                className={`absolute inset-0 object-cover h-full w-full transition-transform duration-500 group-hover:scale-105 ${outOfStock ? "grayscale" : ""}`}
                 src={product.imageUrl}
                 alt={product.name}
+                loading="lazy"
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-0" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-45% to-transparent" />
 
-              <FaHeart
+              {(outOfStock || lowStock) && (
+                <span
+                  className={`absolute top-2.5 left-2.5 md:top-3 md:left-3 z-10 max-w-[calc(100%-3.75rem)] truncate text-white text-[11px] md:text-xs font-semibold md:uppercase md:tracking-wide px-2 md:px-2.5 py-1 rounded-full shadow
+                    ${outOfStock ? "bg-gray-600" : "bg-orange-500"}
+                  `}
+                >
+                  {outOfStock
+                    ? "Sin stock"
+                    : stock === 1
+                      ? "¡Queda 1!"
+                      : `¡Quedan ${stock}!`}
+                </span>
+              )}
+
+              <button
                 onClick={() => toggleFavorite(product.id)}
-                className={`absolute top-2 right-2 text-[40px] z-10 cursor-pointer transition-colors p-2 bg-black/50 rounded-4xl duration-200
-                  ${
-                    favorites.includes(product.id)
-                      ? "hover:text-orange-300 text-orange-500"
-                      : "hover:text-orange-300 text-white"
-                  }
+                aria-label={isFavorite ? `Quitar ${product.name} de favoritos` : `Agregar ${product.name} a favoritos`}
+                aria-pressed={isFavorite}
+                className={`absolute top-2.5 right-2.5 md:top-3 md:right-3 z-10 p-1.5 md:p-2 rounded-full bg-black/40 backdrop-blur-sm cursor-pointer transition-colors duration-200 hover:text-orange-300
+                  ${isFavorite ? "text-orange-500" : "text-white"}
                 `}
-              />
-              <div className="relative z-10 mt-auto w-full p-2 ">
-                <p className="relative z-10 text-orange-300 uppercase mb-2 text-[11px] md:text-xs">
+              >
+                <FaHeart className="text-base md:text-xl" />
+              </button>
+
+              <div className="relative z-10 mt-auto w-full p-3 md:p-4 flex flex-col gap-1">
+                <p className="text-orange-300 uppercase tracking-wide text-[10px] md:text-xs truncate">
                   {product.category}
                 </p>
 
-                <p className="relative z-10 text-white font-bold text-md md:text-xl">
+                <h3 className="text-white font-bold text-sm md:text-lg leading-tight line-clamp-2 min-h-[2lh]">
                   {product.name}
+                </h3>
+
+                <p className="text-white font-extrabold text-lg md:text-2xl mt-1">
+                  {formatPrice(product.price)}
                 </p>
 
-                <div className="gap-2 flex items-center justify-between mt-auto">
-                  <p className="relative z-10 text-white bg-white/30 text-center rounded-full mt-2 py-2 px-1 w-auto">
-                    ${product.price}
-                  </p>
+                <button
+                  disabled={inCooldown || outOfStock || maxInCart}
+                  onClick={() => handleAddToCart(product)}
+                  className={`relative mt-2 w-full text-white text-xs md:text-sm font-semibold px-3 py-2.5 rounded-full transition-colors
+                    ${
+                      inCooldown
+                        ? "bg-gray-500"
+                        : outOfStock || maxInCart
+                          ? "bg-gray-600 cursor-not-allowed"
+                          : "bg-orange-500 hover:bg-orange-400 cursor-pointer"
+                    }
+                  `}
+                >
+                  {/* Todas las etiquetas ocupan la misma celda: el botón siempre mide lo que la más larga */}
+                  <span className="grid justify-items-center">
+                    {CART_BUTTON_LABELS.map((label) => (
+                      <span
+                        key={label}
+                        aria-hidden={label !== buttonLabel || inCooldown}
+                        className={`[grid-area:1/1] text-center leading-tight ${
+                          label === buttonLabel && !inCooldown ? "" : "invisible"
+                        }`}
+                      >
+                        {label}
+                      </span>
+                    ))}
+                  </span>
 
-                  <button
-                    disabled={cooldownId === product.id}
-                    onClick={() => {
-                      addToCart(product);
-                      triggerCartSuccess && triggerCartSuccess();
-                      setCooldownId(product.id);
-                      setTimeout(() => setCooldownId(null), 2000);
-                    }}
-                    className={`relative z-10 mt-2 mb-0.5 w-auto text-white text-xs md:text-sm px-1 md:px-9 py-2 border-1 border-orange-500 rounded-full transition-colors cursor-pointer
-                      ${
-                        cooldownId === product.id
-                          ? "bg-gray-500 border-gray-500 w-full items-center  justify-center flex"
-                          : "bg-orange-500 border-orange-500 hover:bg-orange-400 hover:border-orange-400"
-                      }
-                    `}
-                  >
-                    {cooldownId === product.id ? (
-                    <div className="w-5 h-5 flex items-center justify-center">
+                  {inCooldown && (
+                    <span className="absolute inset-0 flex items-center justify-center">
                       <Lottie
                         animationData={cartAnimation}
                         loop={false}
-                        className="scale-[2]"
+                        className="w-5 h-5 scale-[2]"
                       />
-                    </div>
-                    ) : (
-                      "Agregar al carrito"
-                    )}
-                  </button>
-                </div>
+                    </span>
+                  )}
+                </button>
               </div>
-            </div>
-          ))}
+            </article>
+            );
+          })}
         </div>
       )}
     </section>

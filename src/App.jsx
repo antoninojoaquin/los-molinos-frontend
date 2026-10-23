@@ -10,41 +10,31 @@ import ProductList from "./pages/ProductList.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import Favorites from "./pages/Favorites.jsx";
 import Cart from "./pages/Cart.jsx";
-
-import { useState } from "react";
+import CartProvider from "./context/CartProvider.jsx";
 
 function App() {
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  const triggerCartSuccess = () => {
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 1500);
-  };
-
   return (
-    <Router>
-      <ScrollToTop />
-      <div className="pt-24 min-h-screen flex flex-col justify-between overflow-x-hidden bg-gray-950">
-        <Header showSuccess={showSuccess} />
-        <main className="flex">
-          <Routes>
-            <Route path="/" element={<Hero />} />
-            <Route path="/nosotros" element={<About />} />
-            <Route path="/ubicacion" element={<Ubication />} />
-            <Route path="/contacto" element={<Contact />} />
-            <Route
-              path="/productos"
-              element={<ProductList triggerCartSuccess={triggerCartSuccess} />}
-            />
+    <CartProvider>
+      <Router>
+        <ScrollToTop />
+        <div className="pt-24 min-h-screen flex flex-col justify-between overflow-x-hidden bg-gray-950">
+          <Header />
+          <main className="flex">
+            <Routes>
+              <Route path="/" element={<Hero />} />
+              <Route path="/nosotros" element={<About />} />
+              <Route path="/ubicacion" element={<Ubication />} />
+              <Route path="/contacto" element={<Contact />} />
+              <Route path="/productos" element={<ProductList />} />
+              <Route path="/favoritos" element={<Favorites />} />
+              <Route path="/carrito" element={<Cart />} />
+            </Routes>
+          </main>
 
-            <Route path="/favoritos" element={<Favorites triggerCartSuccess={triggerCartSuccess} />} />
-            <Route path="/carrito" element={<Cart />} />
-          </Routes>
-        </main>
-
-        <Footer />
-      </div>
-    </Router>
+          <Footer />
+        </div>
+      </Router>
+    </CartProvider>
   );
 }
 

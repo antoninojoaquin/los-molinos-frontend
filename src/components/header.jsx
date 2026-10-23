@@ -1,23 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FaHeart, FaShoppingCart } from "react-icons/fa";
 import Logo from "../assets/logo.png";
+import { useCart } from "../context/cartContext";
 
 function Header() {
   const [open, setOpen] = useState(false);
   const closeMenu = () => setOpen(false);
-
-  useEffect(() => {
-    const updateFavorites = () => {
-      const storedFavorites =
-        JSON.parse(localStorage.getItem("favorites")) || [];
-    };
-
-    updateFavorites();
-
-    window.addEventListener("storage", updateFavorites);
-    return () => window.removeEventListener("storage", updateFavorites);
-  }, []);
+  const { totalItems, justAdded } = useCart();
 
   return (
     <header className="bg-gray-800 fixed w-full top-0 z-50 ">
@@ -68,8 +58,18 @@ function Header() {
             <Link to="/favoritos" onClick={closeMenu} className="relative group">
               <FaHeart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
             </Link>
-            <Link to="/carrito" onClick={closeMenu} className="relative group">
+            <Link
+              to="/carrito"
+              onClick={closeMenu}
+              aria-label={`Carrito (${totalItems} productos)`}
+              className={`relative group block transition-transform duration-300 ${justAdded ? "scale-125" : ""}`}
+            >
               <FaShoppingCart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-3 min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-white text-gray-900 text-xs font-bold leading-none">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
             </Link>
           </div>
 
