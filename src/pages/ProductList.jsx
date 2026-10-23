@@ -97,7 +97,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
   return (
     <section className="w-full bg-gray-950 px-3 sm:px-6 md:px-16 py-12 min-h-[50vh]">
       {showOnlyFavorites && displayedProducts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center w-full py-20 text-white/50">
+        <div className="flex flex-col items-center justify-center w-full py-60 text-white/50">
           <FaHeartBroken className="text-6xl text-orange-500 mb-4" />
           <p className="text-xl font-semibold text-center">
             No tenés nada en favoritos
