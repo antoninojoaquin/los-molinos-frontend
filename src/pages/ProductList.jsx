@@ -89,13 +89,14 @@ export default function ProductList({ showOnlyFavorites = false }) {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
           {displayedProducts.map((product) => {
             const stock = getStock(product);
             const outOfStock = stock <= 0;
             const maxInCart = !outOfStock && getQuantity(product.id) >= stock;
             const lowStock = !outOfStock && stock <= LOW_STOCK_THRESHOLD;
             const inCooldown = cooldownId === product.id;
+            const isFavorite = favorites.includes(product.id);
             const buttonLabel = outOfStock
               ? "Sin stock"
               : maxInCart
@@ -103,21 +104,22 @@ export default function ProductList({ showOnlyFavorites = false }) {
                 : "Agregar al carrito";
 
             return (
-            <div
+            <article
               key={product.id}
-              className="relative overflow-hidden p-1 md:p-2 bg-gray-800 rounded-3xl shadow flex flex-col h-96"
+              className="group relative overflow-hidden bg-gray-800 rounded-3xl shadow-lg flex flex-col aspect-[3/4] min-h-80"
             >
               <img
-                className={`absolute inset-0 object-cover h-full w-full rounded-3xl ${outOfStock ? "grayscale" : ""}`}
+                className={`absolute inset-0 object-cover h-full w-full transition-transform duration-500 group-hover:scale-105 ${outOfStock ? "grayscale" : ""}`}
                 src={product.imageUrl}
                 alt={product.name}
+                loading="lazy"
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-0" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-45% to-transparent" />
 
               {(outOfStock || lowStock) && (
                 <span
-                  className={`absolute top-3 left-3 z-10 text-white text-[11px] md:text-xs font-semibold uppercase px-3 py-1 rounded-full
+                  className={`absolute top-3 left-3 z-10 text-white text-[10px] md:text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full shadow
                     ${outOfStock ? "bg-gray-600" : "bg-orange-500"}
                   `}
                 >
@@ -129,71 +131,70 @@ export default function ProductList({ showOnlyFavorites = false }) {
                 </span>
               )}
 
-              <FaHeart
+              <button
                 onClick={() => toggleFavorite(product.id)}
-                className={`absolute top-2 right-2 text-[40px] z-10 cursor-pointer transition-colors p-2 bg-black/50 rounded-4xl duration-200
-                  ${
-                    favorites.includes(product.id)
-                      ? "hover:text-orange-300 text-orange-500"
-                      : "hover:text-orange-300 text-white"
-                  }
+                aria-label={isFavorite ? `Quitar ${product.name} de favoritos` : `Agregar ${product.name} a favoritos`}
+                aria-pressed={isFavorite}
+                className={`absolute top-3 right-3 z-10 p-2 rounded-full bg-black/40 backdrop-blur-sm cursor-pointer transition-colors duration-200 hover:text-orange-300
+                  ${isFavorite ? "text-orange-500" : "text-white"}
                 `}
-              />
-              <div className="relative z-10 mt-auto w-full p-2 ">
-                <p className="relative z-10 text-orange-300 uppercase mb-2 text-[11px] md:text-xs">
+              >
+                <FaHeart className="text-lg md:text-xl" />
+              </button>
+
+              <div className="relative z-10 mt-auto w-full p-3 md:p-4 flex flex-col gap-1">
+                <p className="text-orange-300 uppercase tracking-wide text-[10px] md:text-xs truncate">
                   {product.category}
                 </p>
 
-                <p className="relative z-10 text-white font-bold text-md md:text-xl">
+                <h3 className="text-white font-bold text-sm md:text-lg leading-tight line-clamp-2 min-h-[2lh]">
                   {product.name}
+                </h3>
+
+                <p className="text-white font-extrabold text-lg md:text-2xl mt-1">
+                  {formatPrice(product.price)}
                 </p>
 
-                <div className="gap-2 flex items-center justify-between mt-auto">
-                  <p className="relative z-10 text-white bg-white/30 text-center rounded-full mt-2 py-2 px-1 w-auto">
-                    {formatPrice(product.price)}
-                  </p>
-
-                  <button
-                    disabled={inCooldown || outOfStock || maxInCart}
-                    onClick={() => handleAddToCart(product)}
-                    className={`relative z-10 mt-2 mb-0.5 text-white text-xs md:text-sm px-3 md:px-6 py-2 border-1 rounded-full transition-colors
-                      ${
-                        inCooldown
-                          ? "bg-gray-500 border-gray-500"
-                          : outOfStock || maxInCart
-                            ? "bg-gray-600 border-gray-600 cursor-not-allowed"
-                            : "bg-orange-500 border-orange-500 hover:bg-orange-400 hover:border-orange-400 cursor-pointer"
-                      }
-                    `}
-                  >
-                    {/* Todas las etiquetas ocupan la misma celda: el botón siempre mide lo que la más larga */}
-                    <span className="grid">
-                      {CART_BUTTON_LABELS.map((label) => (
-                        <span
-                          key={label}
-                          aria-hidden={label !== buttonLabel || inCooldown}
-                          className={`[grid-area:1/1] whitespace-nowrap ${
-                            label === buttonLabel && !inCooldown ? "" : "invisible"
-                          }`}
-                        >
-                          {label}
-                        </span>
-                      ))}
-                    </span>
-
-                    {inCooldown && (
-                      <span className="absolute inset-0 flex items-center justify-center">
-                        <Lottie
-                          animationData={cartAnimation}
-                          loop={false}
-                          className="w-5 h-5 scale-[2]"
-                        />
+                <button
+                  disabled={inCooldown || outOfStock || maxInCart}
+                  onClick={() => handleAddToCart(product)}
+                  className={`relative mt-2 w-full text-white text-xs md:text-sm font-semibold px-3 py-2.5 rounded-full transition-colors
+                    ${
+                      inCooldown
+                        ? "bg-gray-500"
+                        : outOfStock || maxInCart
+                          ? "bg-gray-600 cursor-not-allowed"
+                          : "bg-orange-500 hover:bg-orange-400 cursor-pointer"
+                    }
+                  `}
+                >
+                  {/* Todas las etiquetas ocupan la misma celda: el botón siempre mide lo que la más larga */}
+                  <span className="grid justify-items-center">
+                    {CART_BUTTON_LABELS.map((label) => (
+                      <span
+                        key={label}
+                        aria-hidden={label !== buttonLabel || inCooldown}
+                        className={`[grid-area:1/1] whitespace-nowrap ${
+                          label === buttonLabel && !inCooldown ? "" : "invisible"
+                        }`}
+                      >
+                        {label}
                       </span>
-                    )}
-                  </button>
-                </div>
+                    ))}
+                  </span>
+
+                  {inCooldown && (
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <Lottie
+                        animationData={cartAnimation}
+                        loop={false}
+                        className="w-5 h-5 scale-[2]"
+                      />
+                    </span>
+                  )}
+                </button>
               </div>
-            </div>
+            </article>
             );
           })}
         </div>
