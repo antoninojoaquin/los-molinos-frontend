@@ -5,6 +5,7 @@ import { useCart } from "../context/cartContext";
 import { fetchProducts } from "../services/products";
 import { formatPrice } from "../utils/formatPrice";
 import { getStock } from "../utils/stock";
+import { getWhatsAppUrl } from "../utils/whatsapp";
 
 export default function Cart() {
   const { cart, totalPrice, increaseQty, decreaseQty, removeItem, syncStock } = useCart();
@@ -24,8 +25,7 @@ export default function Cart() {
 
     const message = `¡Hola! estoy interesado en:\n${productList}\n\nPrecio total: ${formatPrice(totalPrice)}\n¿Podemos coordinar los detalles?`;
 
-    const url = `https://wa.me/542245502977?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(getWhatsAppUrl(message), "_blank", "noopener,noreferrer");
   };
 
   const stockNotice = stockAdjusted && (
