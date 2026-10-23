@@ -1,101 +1,60 @@
-import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+import { useEffect, useRef, useState } from "react";
 import Lottie from "lottie-react";
 import { FaHeart, FaHeartBroken } from "react-icons/fa";
 import loadingAnimation from "../assets/loading.json";
 import cartAnimation from "../assets/shopping-cart.json";
+import { useCart } from "../context/cartContext";
+import { fetchProducts } from "../services/products";
+import { formatPrice } from "../utils/formatPrice";
+import { readStorage, writeStorage } from "../utils/storage";
+import { getStock } from "../utils/stock";
 
 const FAVORITES_KEY = "favorites";
-const CART_KEY = "cart";
 const LOW_STOCK_THRESHOLD = 2;
+const CART_BUTTON_LABELS = ["Agregar al carrito", "Máximo en carrito", "Sin stock"];
 
-// Si un producto no tiene el campo stock en Firestore, no se limita la compra
-const getStock = (product) => product.stock ?? Infinity;
-
-export default function ProductList({ showOnlyFavorites = false, triggerCartSuccess }) {
+export default function ProductList({ showOnlyFavorites = false }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [favorites, setFavorites] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [error, setError] = useState(false);
+  const [favorites, setFavorites] = useState(() => readStorage(FAVORITES_KEY, []));
   const [cooldownId, setCooldownId] = useState(null);
+  const cooldownTimeout = useRef(null);
+  const { addToCart, getQuantity, syncStock } = useCart();
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const loadProducts = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "products"));
-        const data = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const data = await fetchProducts();
         setProducts(data);
+        syncStock(data);
       } catch (error) {
         console.error("Error al traer productos:", error);
+        setError(true);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
-  }, []);
+    loadProducts();
+  }, [syncStock]);
 
-  useEffect(() => {
-    const storedFavorites =
-      JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
-    setFavorites(storedFavorites);
-  }, []);
+  useEffect(() => () => clearTimeout(cooldownTimeout.current), []);
 
-  useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
-    setCart(storedCart);
-  }, []);
-
-  const getCartQuantity = (productId) =>
-    cart.find((item) => item.id === productId)?.quantity ?? 0;
-
-  const addToCart = (product) => {
-    const existingProduct = cart.find((item) => item.id === product.id);
-
-    if (getCartQuantity(product.id) >= getStock(product)) return false;
-
-    let updatedCart;
-
-    if (existingProduct) {
-      updatedCart = cart.map((item) =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1, stock: product.stock }
-          : item
-      );
-    } else {
-      updatedCart = [
-        ...cart,
-        {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          stock: product.stock,
-          quantity: 1,
-        },
-      ];
-    }
-
-    setCart(updatedCart);
-    localStorage.setItem(CART_KEY, JSON.stringify(updatedCart));
-    return true;
+  const handleAddToCart = (product) => {
+    if (!addToCart(product)) return;
+    setCooldownId(product.id);
+    clearTimeout(cooldownTimeout.current);
+    cooldownTimeout.current = setTimeout(() => setCooldownId(null), 2000);
   };
 
   const toggleFavorite = (productId) => {
-    let updatedFavorites;
-
-    if (favorites.includes(productId)) {
-      updatedFavorites = favorites.filter((id) => id !== productId);
-    } else {
-      updatedFavorites = [...favorites, productId];
-    }
+    const updatedFavorites = favorites.includes(productId)
+      ? favorites.filter((id) => id !== productId)
+      : [...favorites, productId];
 
     setFavorites(updatedFavorites);
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(updatedFavorites));
+    writeStorage(FAVORITES_KEY, updatedFavorites);
   };
 
   const displayedProducts = products.filter(
@@ -107,6 +66,16 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
       <div className="flex bg-gray-950 justify-center items-center h-128 w-full">
         <Lottie animationData={loadingAnimation} loop className="w-64 h-64" />
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="w-full flex items-center justify-center bg-gray-950 px-6 py-20 min-h-[50vh]">
+        <p className="text-white/50 text-xl font-semibold text-center">
+          No pudimos cargar los productos. Intentá de nuevo más tarde.
+        </p>
+      </section>
     );
   }
 
@@ -124,8 +93,14 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
           {displayedProducts.map((product) => {
             const stock = getStock(product);
             const outOfStock = stock <= 0;
-            const maxInCart = !outOfStock && getCartQuantity(product.id) >= stock;
+            const maxInCart = !outOfStock && getQuantity(product.id) >= stock;
             const lowStock = !outOfStock && stock <= LOW_STOCK_THRESHOLD;
+            const inCooldown = cooldownId === product.id;
+            const buttonLabel = outOfStock
+              ? "Sin stock"
+              : maxInCart
+                ? "Máximo en carrito"
+                : "Agregar al carrito";
 
             return (
             <div
@@ -175,41 +150,45 @@ export default function ProductList({ showOnlyFavorites = false, triggerCartSucc
 
                 <div className="gap-2 flex items-center justify-between mt-auto">
                   <p className="relative z-10 text-white bg-white/30 text-center rounded-full mt-2 py-2 px-1 w-auto">
-                    ${product.price}
+                    {formatPrice(product.price)}
                   </p>
 
                   <button
-                    disabled={cooldownId === product.id || outOfStock || maxInCart}
-                    onClick={() => {
-                      if (!addToCart(product)) return;
-                      triggerCartSuccess && triggerCartSuccess();
-                      setCooldownId(product.id);
-                      setTimeout(() => setCooldownId(null), 2000);
-                    }}
-                    className={`relative z-10 mt-2 mb-0.5 w-auto text-white text-xs md:text-sm px-1 md:px-9 py-2 border-1 border-orange-500 rounded-full transition-colors
+                    disabled={inCooldown || outOfStock || maxInCart}
+                    onClick={() => handleAddToCart(product)}
+                    className={`relative z-10 mt-2 mb-0.5 text-white text-xs md:text-sm px-3 md:px-6 py-2 border-1 rounded-full transition-colors
                       ${
-                        cooldownId === product.id
-                          ? "bg-gray-500 border-gray-500 w-full items-center  justify-center flex"
+                        inCooldown
+                          ? "bg-gray-500 border-gray-500"
                           : outOfStock || maxInCart
                             ? "bg-gray-600 border-gray-600 cursor-not-allowed"
                             : "bg-orange-500 border-orange-500 hover:bg-orange-400 hover:border-orange-400 cursor-pointer"
                       }
                     `}
                   >
-                    {cooldownId === product.id ? (
-                    <div className="w-5 h-5 flex items-center justify-center">
-                      <Lottie
-                        animationData={cartAnimation}
-                        loop={false}
-                        className="scale-[2]"
-                      />
-                    </div>
-                    ) : outOfStock ? (
-                      "Sin stock"
-                    ) : maxInCart ? (
-                      "Máximo en carrito"
-                    ) : (
-                      "Agregar al carrito"
+                    {/* Todas las etiquetas ocupan la misma celda: el botón siempre mide lo que la más larga */}
+                    <span className="grid">
+                      {CART_BUTTON_LABELS.map((label) => (
+                        <span
+                          key={label}
+                          aria-hidden={label !== buttonLabel || inCooldown}
+                          className={`[grid-area:1/1] whitespace-nowrap ${
+                            label === buttonLabel && !inCooldown ? "" : "invisible"
+                          }`}
+                        >
+                          {label}
+                        </span>
+                      ))}
+                    </span>
+
+                    {inCooldown && (
+                      <span className="absolute inset-0 flex items-center justify-center">
+                        <Lottie
+                          animationData={cartAnimation}
+                          loop={false}
+                          className="w-5 h-5 scale-[2]"
+                        />
+                      </span>
                     )}
                   </button>
                 </div>
