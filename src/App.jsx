@@ -5,12 +5,12 @@ import Hero from "./components/hero.jsx";
 import Header from "./components/header.jsx";
 import About from "./pages/About.jsx";
 import Ubication from "./pages/Ubication.jsx";
-import Contact from "./pages/Contact.jsx";
 import ProductList from "./pages/ProductList.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import Favorites from "./pages/Favorites.jsx";
 import Cart from "./pages/Cart.jsx";
 import CartProvider from "./context/CartProvider.jsx";
+import WhatsAppButton from "./components/WhatsAppButton.jsx";
 
 function App() {
   return (
@@ -24,7 +24,6 @@ function App() {
               <Route path="/" element={<Hero />} />
               <Route path="/nosotros" element={<About />} />
               <Route path="/ubicacion" element={<Ubication />} />
-              <Route path="/contacto" element={<Contact />} />
               <Route path="/productos/:productId?" element={<ProductList />} />
               <Route path="/favoritos/:productId?" element={<Favorites />} />
               <Route path="/carrito" element={<Cart />} />
@@ -32,6 +31,7 @@ function App() {
           </main>
 
           <Footer />
+          <WhatsAppButton />
         </div>
       </Router>
     </CartProvider>

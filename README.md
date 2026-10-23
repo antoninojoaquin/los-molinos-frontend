@@ -13,7 +13,7 @@ Incluye un **checkout automatizado vía WhatsApp**, optimizando el flujo de conv
 - **Productos:** Catálogo sincronizado en tiempo real desde Firestore.  
 - **Ubicación:** Información para visitar o contactar físicamente al negocio.  
 - **Nosotros:** Historia y presentación del emprendimiento.  
-- **Contacto:** Medios para comunicarse rápidamente (WhatsApp, redes, etc.).  
+- **WhatsApp:** Botón flotante en todo el sitio para consultas rápidas.  
 - **Carrito & Favoritos:** Funcionalidades de e-commerce para mejorar la experiencia de compra.
 
 

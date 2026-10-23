@@ -29,7 +29,6 @@ function Header() {
             { to: "/productos", label: "Productos" },
             { to: "/ubicacion", label: "Ubicación" },
             { to: "/nosotros", label: "Nosotros" },
-            { to: "/contacto", label: "Contacto" },
           ].map((item) => (
             <NavLink
               key={item.to}
@@ -91,7 +90,6 @@ function Header() {
           <Link to="/productos" onClick={closeMenu} className="block border-b-1 border-orange-300 text-lg hover:text-orange-400 transition-colors duration-200">Productos</Link>
           <Link to="/ubicacion" onClick={closeMenu} className="block border-b-1 border-orange-300 text-lg hover:text-orange-400 transition-colors duration-200">Ubicación</Link>
           <Link to="/nosotros" onClick={closeMenu} className="block border-b-1 border-orange-300 text-lg hover:text-orange-400 transition-colors duration-200">Nosotros</Link>
-          <Link to="/contacto" onClick={closeMenu} className="block border-b-1 border-orange-300 text-lg hover:text-orange-400 transition-colors duration-200">Contacto</Link>
         </nav>
       )}
     </header>
