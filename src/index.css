@@ -70,3 +70,9 @@ h1, h2 {
 .animate-slideUp {
   animation: slideUp 0.3s ease-out;
 }
+
+/* Reserva el lugar del scrollbar: al bloquear el scroll (detalle de producto) la grilla no se re-acomoda */
+:root {
+  scrollbar-gutter: stable;
+  background-color: #030712;
+}

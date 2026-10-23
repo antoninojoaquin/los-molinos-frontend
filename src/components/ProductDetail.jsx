@@ -5,52 +5,83 @@ import { useCart } from "../context/cartContext";
 import { formatPrice } from "../utils/formatPrice";
 import { getStock } from "../utils/stock";
 import { getWhatsAppUrl } from "../utils/whatsapp";
+import { optimizeImage } from "../utils/image";
 
 const ZOOM_SCALE = 2.5;
 
+// El zoom se aplica directo sobre el DOM (sin re-render de React) y solo con transform,
+// que lo resuelve la GPU sin repintar: así el paneo sigue fluido en celulares.
 function ZoomableImage({ src, alt, grayscale }) {
   const [zoomed, setZoomed] = useState(false);
-  const [origin, setOrigin] = useState("50% 50%");
+  const containerRef = useRef(null);
+  const imgRef = useRef(null);
+  const rectRef = useRef(null);
+  const frameRef = useRef(0);
 
-  // El punto de zoom sigue al mouse o al dedo
-  const updateOrigin = (event) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = Math.min(100, Math.max(0, ((event.clientX - rect.left) / rect.width) * 100));
-    const y = Math.min(100, Math.max(0, ((event.clientY - rect.top) / rect.height) * 100));
-    setOrigin(`${x}% ${y}%`);
+  useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
+
+  // Con transform-origin 0 0, trasladar -(escala - 1) * punto deja ese punto fijo bajo el cursor
+  const applyTransform = (scale, x, y, duration) => {
+    const img = imgRef.current;
+    if (!img) return;
+    img.style.transition = `transform ${duration}ms ease-out`;
+    img.style.transform =
+      scale === 1
+        ? "none"
+        : `translate(${-(scale - 1) * x * 100}%, ${-(scale - 1) * y * 100}%) scale(${scale})`;
+  };
+
+  const getPoint = (clientX, clientY) => {
+    const rect = rectRef.current ?? containerRef.current.getBoundingClientRect();
+    return {
+      x: Math.min(1, Math.max(0, (clientX - rect.left) / rect.width)),
+      y: Math.min(1, Math.max(0, (clientY - rect.top) / rect.height)),
+    };
+  };
+
+  const toggleZoom = (point) => {
+    const next = !zoomed;
+    rectRef.current = containerRef.current.getBoundingClientRect();
+    applyTransform(next ? ZOOM_SCALE : 1, point.x, point.y, 300);
+    setZoomed(next);
+  };
+
+  const handlePointerMove = (event) => {
+    if (!zoomed) return;
+    const { x, y } = getPoint(event.clientX, event.clientY);
+    cancelAnimationFrame(frameRef.current);
+    frameRef.current = requestAnimationFrame(() => applyTransform(ZOOM_SCALE, x, y, 120));
   };
 
   return (
     <div
+      ref={containerRef}
       role="button"
       tabIndex={0}
       aria-label={zoomed ? "Alejar imagen" : "Acercar imagen"}
-      onClick={(event) => {
-        updateOrigin(event);
-        setZoomed((prev) => !prev);
-      }}
+      onClick={(event) => toggleZoom(getPoint(event.clientX, event.clientY))}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          setOrigin("50% 50%");
-          setZoomed((prev) => !prev);
+          toggleZoom({ x: 0.5, y: 0.5 });
         }
       }}
-      onPointerMove={(event) => zoomed && updateOrigin(event)}
+      onPointerMove={handlePointerMove}
       className={`relative h-full w-full overflow-hidden select-none
         ${zoomed ? "cursor-zoom-out touch-none" : "cursor-zoom-in"}
       `}
     >
       <img
-        src={src}
+        ref={imgRef}
+        src={optimizeImage(src)}
         alt={alt}
         draggable={false}
-        style={{ transformOrigin: origin, transform: zoomed ? `scale(${ZOOM_SCALE})` : undefined }}
-        className={`h-full w-full object-cover transition-transform duration-300 ${grayscale ? "grayscale" : ""}`}
+        decoding="async"
+        className={`h-full w-full object-cover origin-top-left ${zoomed ? "will-change-transform" : ""} ${grayscale ? "grayscale" : ""}`}
       />
 
       {!zoomed && (
-        <span className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-black/50 backdrop-blur-sm px-3 py-1 text-xs text-white">
+        <span className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-xs text-white">
           <FaSearchPlus />
           <span className="md:hidden">Tocá para hacer zoom</span>
           <span className="hidden md:inline">Hacé clic para hacer zoom</span>
@@ -102,7 +133,7 @@ export default function ProductDetail({ product, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/80 backdrop-blur-sm md:p-6 animate-fadeIn"
+      className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/85 md:p-6 animate-fadeIn"
       onClick={onClose}
     >
       <div
@@ -116,7 +147,7 @@ export default function ProductDetail({ product, onClose }) {
           ref={closeButtonRef}
           onClick={onClose}
           aria-label="Cerrar detalle"
-          className="absolute top-3 right-3 z-20 p-2.5 rounded-full bg-black/50 backdrop-blur-sm text-white hover:text-orange-300 transition-colors cursor-pointer"
+          className="absolute top-3 right-3 z-20 p-2.5 rounded-full bg-black/60 text-white hover:text-orange-300 transition-colors cursor-pointer"
         >
           <FaTimes className="text-lg" />
         </button>

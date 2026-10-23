@@ -6,6 +6,7 @@ import { fetchProducts } from "../services/products";
 import { formatPrice } from "../utils/formatPrice";
 import { getStock } from "../utils/stock";
 import { getWhatsAppUrl } from "../utils/whatsapp";
+import { optimizeImage } from "../utils/image";
 
 export default function Cart() {
   const { cart, totalPrice, increaseQty, decreaseQty, removeItem, syncStock } = useCart();
@@ -57,7 +58,7 @@ export default function Cart() {
               className="flex items-center gap-4 bg-gray-800 p-4 rounded-lg shadow"
             >
               <img
-                src={item.imageUrl}
+                src={optimizeImage(item.imageUrl, 300)}
                 alt={item.name}
                 className="w-24 h-24 object-cover rounded"
               />

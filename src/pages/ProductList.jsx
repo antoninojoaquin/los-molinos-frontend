@@ -10,6 +10,7 @@ import { fetchProducts } from "../services/products";
 import { formatPrice } from "../utils/formatPrice";
 import { readStorage, writeStorage } from "../utils/storage";
 import { getStock } from "../utils/stock";
+import { optimizeImage } from "../utils/image";
 
 const FAVORITES_KEY = "favorites";
 const LOW_STOCK_THRESHOLD = 2;
@@ -111,9 +112,12 @@ export default function ProductList({ showOnlyFavorites = false }) {
             >
               <img
                 className={`absolute inset-0 object-cover h-full w-full transition-transform duration-500 group-hover:scale-105 ${outOfStock ? "grayscale" : ""}`}
-                src={product.imageUrl}
+                src={optimizeImage(product.imageUrl, 800)}
+                srcSet={`${optimizeImage(product.imageUrl, 400)} 400w, ${optimizeImage(product.imageUrl, 800)} 800w`}
+                sizes="(min-width: 1024px) 25vw, 50vw"
                 alt={product.name}
                 loading="lazy"
+                decoding="async"
               />
 
               <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-45% to-transparent" />
@@ -144,7 +148,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
                 onClick={() => toggleFavorite(product.id)}
                 aria-label={isFavorite ? `Quitar ${product.name} de favoritos` : `Agregar ${product.name} a favoritos`}
                 aria-pressed={isFavorite}
-                className={`absolute top-2.5 right-2.5 md:top-3 md:right-3 z-10 p-1.5 md:p-2 rounded-full bg-black/40 backdrop-blur-sm cursor-pointer transition-colors duration-200 hover:text-orange-300
+                className={`absolute top-2.5 right-2.5 md:top-3 md:right-3 z-10 p-1.5 md:p-2 rounded-full bg-black/55 cursor-pointer transition-colors duration-200 hover:text-orange-300
                   ${isFavorite ? "text-orange-500" : "text-white"}
                 `}
               >
