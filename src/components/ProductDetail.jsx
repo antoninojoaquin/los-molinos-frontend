@@ -149,7 +149,8 @@ export default function ProductDetail({ product, onClose }) {
     `¡Hola! quería consultar por "${product.name}" (${formatPrice(product.price)}).\n${productUrl}`
   );
 
-  // Menú nativo de compartir en celular; donde no existe, copia el link
+  // En celular abre el menú nativo de compartir. En PC copia el link: el menú de Windows
+  // manda a WhatsApp Desktop, y la mayoría usa WhatsApp Web.
   const handleShare = async () => {
     const shareData = {
       title: product.name,
@@ -157,7 +158,7 @@ export default function ProductDetail({ product, onClose }) {
       url: productUrl,
     };
 
-    if (navigator.share) {
+    if (navigator.share && isTouchDevice()) {
       try {
         await navigator.share(shareData);
       } catch {

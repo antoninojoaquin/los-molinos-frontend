@@ -54,15 +54,6 @@ function Ubicacion() {
               </dl>
             </div>
           </div>
-
-          <a
-            href="https://www.google.com/maps/place/Arist%C3%B3bulo+del+Valle+178,+B7100+Dolores,+Provincia+de+Buenos+Aires/@-36.3166699,-57.6791062,15.5z/data=!4m6!3m5!1s0x95999e42c33ed273:0x59b33785e775e2f8!8m2!3d-36.3172659!4d-57.6767455!16s%2Fg%2F11rg691ghs?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D"
-            target="_blank"
-            rel="noreferrer"
-            className="!text-gray-900 inline-block mt-8 px-6 py-3 rounded-full bg-orange-500 font-semibold hover:bg-orange-400 transition-all duration-200"
-          >
-            Cómo llegar
-          </a>
         </div>
 
         <div className="relative">

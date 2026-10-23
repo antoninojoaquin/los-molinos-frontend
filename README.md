@@ -12,7 +12,6 @@ Incluye un **checkout automatizado vía WhatsApp**, optimizando el flujo de conv
 - **Inicio:** Presentación visual con Hero e ingreso directo al catálogo.  
 - **Productos:** Catálogo sincronizado en tiempo real desde Firestore.  
 - **Ubicación:** Información para visitar o contactar físicamente al negocio.  
-- **Nosotros:** Historia y presentación del emprendimiento.  
 - **WhatsApp:** Botón flotante en todo el sitio para consultas rápidas.  
 - **Carrito & Favoritos:** Funcionalidades de e-commerce para mejorar la experiencia de compra.
 
