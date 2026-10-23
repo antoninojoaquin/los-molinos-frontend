@@ -80,7 +80,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
   }
 
   return (
-    <section className="w-full bg-gray-950 px-6 md:px-16 py-12 min-h-[50vh]">
+    <section className="w-full bg-gray-950 px-3 sm:px-6 md:px-16 py-12 min-h-[50vh]">
       {showOnlyFavorites && displayedProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center w-full py-20 text-white/50">
           <FaHeartBroken className="text-6xl text-orange-500 mb-4" />
@@ -89,7 +89,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-5">
           {displayedProducts.map((product) => {
             const stock = getStock(product);
             const outOfStock = stock <= 0;
@@ -106,7 +106,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
             return (
             <article
               key={product.id}
-              className="group relative overflow-hidden bg-gray-800 rounded-3xl shadow-lg flex flex-col min-w-0 aspect-[3/4] min-h-80"
+              className="group relative overflow-hidden bg-gray-800 rounded-3xl shadow-lg flex flex-col h-80 sm:h-96 xl:h-[28rem]"
             >
               <img
                 className={`absolute inset-0 object-cover h-full w-full transition-transform duration-500 group-hover:scale-105 ${outOfStock ? "grayscale" : ""}`}
@@ -119,15 +119,15 @@ export default function ProductList({ showOnlyFavorites = false }) {
 
               {(outOfStock || lowStock) && (
                 <span
-                  className={`absolute top-3 left-3 z-10 text-white text-[10px] md:text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full shadow
+                  className={`absolute top-2.5 left-2.5 md:top-3 md:left-3 z-10 max-w-[calc(100%-3.75rem)] truncate text-white text-[11px] md:text-xs font-semibold md:uppercase md:tracking-wide px-2 md:px-2.5 py-1 rounded-full shadow
                     ${outOfStock ? "bg-gray-600" : "bg-orange-500"}
                   `}
                 >
                   {outOfStock
                     ? "Sin stock"
                     : stock === 1
-                      ? "¡Última unidad!"
-                      : `¡Últimas ${stock}!`}
+                      ? "¡Queda 1!"
+                      : `¡Quedan ${stock}!`}
                 </span>
               )}
 
@@ -135,11 +135,11 @@ export default function ProductList({ showOnlyFavorites = false }) {
                 onClick={() => toggleFavorite(product.id)}
                 aria-label={isFavorite ? `Quitar ${product.name} de favoritos` : `Agregar ${product.name} a favoritos`}
                 aria-pressed={isFavorite}
-                className={`absolute top-3 right-3 z-10 p-2 rounded-full bg-black/40 backdrop-blur-sm cursor-pointer transition-colors duration-200 hover:text-orange-300
+                className={`absolute top-2.5 right-2.5 md:top-3 md:right-3 z-10 p-1.5 md:p-2 rounded-full bg-black/40 backdrop-blur-sm cursor-pointer transition-colors duration-200 hover:text-orange-300
                   ${isFavorite ? "text-orange-500" : "text-white"}
                 `}
               >
-                <FaHeart className="text-lg md:text-xl" />
+                <FaHeart className="text-base md:text-xl" />
               </button>
 
               <div className="relative z-10 mt-auto w-full p-3 md:p-4 flex flex-col gap-1">
