@@ -1,6 +1,30 @@
+import { FaClock, FaWhatsapp, FaMoneyBillWave, FaMapMarkerAlt } from "react-icons/fa";
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import { BUSINESS_HOURS } from "../utils/business";
+
+const PURCHASE_STEPS = [
+  {
+    icon: FaWhatsapp,
+    title: "Hacé tu pedido",
+    text: "Armá tu carrito en la web y envianos el pedido por WhatsApp. Te confirmamos disponibilidad al toque.",
+  },
+  {
+    icon: FaMoneyBillWave,
+    title: "Pagá como te quede cómodo",
+    text: "Transferencia si coordinamos por WhatsApp, o efectivo si retirás en el local.",
+  },
+  {
+    icon: FaMapMarkerAlt,
+    title: "Retirá o recibí",
+    text: "Pasá por el local en nuestro horario o coordinamos la entrega. Por ahora, entregas solo en Dolores.",
+  },
+];
+
 function Ubicacion() {
+  useDocumentTitle("Ubicación");
+
   return (
-    <section className="w-screen bg-gray-950 py-24 px-6 md:px-12">
+    <section className="w-full bg-gray-950 py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div>
           <h2 className="text-orange-500 font-semibold tracking-wide">
@@ -15,6 +39,16 @@ function Ubicacion() {
             Nuestro punto de encuentro con la cultura del asado.
             Pasá, conocenos y llevate lo que hace falta para prender el fuego.
           </p>
+
+          <div className="mt-8 flex items-start gap-4 bg-gray-900 border border-gray-800 rounded-2xl p-5 max-w-md">
+            <FaClock className="text-orange-500 text-2xl mt-1 shrink-0" />
+            <div>
+              <p className="text-white font-semibold mb-1">Horario de atención</p>
+              {BUSINESS_HOURS.map((range) => (
+                <p key={range} className="text-gray-400">{range} hs</p>
+              ))}
+            </div>
+          </div>
 
           <a
             href="https://www.google.com/maps/place/Arist%C3%B3bulo+del+Valle+178,+B7100+Dolores,+Provincia+de+Buenos+Aires/@-36.3166699,-57.6791062,15.5z/data=!4m6!3m5!1s0x95999e42c33ed273:0x59b33785e775e2f8!8m2!3d-36.3172659!4d-57.6767455!16s%2Fg%2F11rg691ghs?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D"
@@ -39,6 +73,30 @@ function Ubicacion() {
           </div>
         </div>
 
+      </div>
+
+      <div className="max-w-6xl mx-auto mt-24">
+        <h2 className="text-orange-500 font-semibold tracking-wide">
+          CÓMO COMPRAR
+        </h2>
+        <h2 className="text-3xl md:text-4xl text-white mt-3 mb-10">
+          Simple y sin vueltas
+        </h2>
+
+        <ol className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {PURCHASE_STEPS.map((step, index) => (
+            <li key={step.title} className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="flex items-center justify-center w-10 h-10 rounded-full bg-orange-500/15 text-orange-500 text-lg">
+                  <step.icon />
+                </span>
+                <span className="text-gray-500 font-semibold">Paso {index + 1}</span>
+              </div>
+              <p className="text-white font-semibold text-lg mb-2">{step.title}</p>
+              <p className="text-gray-400 leading-relaxed">{step.text}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );

@@ -13,13 +13,16 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #F97316;
-  text-decoration: none;
-}
-a:hover {
-  color: #fb923c;
+/* En la capa base para que las clases de Tailwind (text-*, hover:text-*) puedan pisarlo */
+@layer base {
+  a {
+    font-weight: 500;
+    color: #F97316;
+    text-decoration: none;
+  }
+  a:hover {
+    color: #fb923c;
+  }
 }
 
 body {
@@ -41,9 +44,6 @@ h1, h2 {
   :root {
     color: #213547;
     background-color: #ffffff;
-  }
-  a:hover {
-    color: #fb923c;
   }
 }
 

@@ -1,10 +1,12 @@
-import React from 'react'
 import { FaShieldAlt, FaHandshake } from "react-icons/fa";
 import { GiBarbecue } from "react-icons/gi";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 function Nosotros() {
+  useDocumentTitle("Nosotros");
+
   return (
-    <section className="w-screen bg-gray-950 py-20 px-6 md:px-12 flex justify-center">
+    <section className="w-full bg-gray-950 py-20 px-6 md:px-12 flex justify-center">
       <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div>
           <h2 className="text-orange-500 mt-3 font-semibold tracking-wide">

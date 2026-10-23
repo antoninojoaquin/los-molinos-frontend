@@ -11,6 +11,7 @@ import { formatPrice } from "../utils/formatPrice";
 import { readStorage, writeStorage } from "../utils/storage";
 import { getStock } from "../utils/stock";
 import { optimizeImage } from "../utils/image";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 const FAVORITES_KEY = "favorites";
 const LOW_STOCK_THRESHOLD = 2;
@@ -60,11 +61,16 @@ export default function ProductList({ showOnlyFavorites = false }) {
     writeStorage(FAVORITES_KEY, updatedFavorites);
   };
 
-  const displayedProducts = products.filter(
-    (product) => !showOnlyFavorites || favorites.includes(product.id)
-  );
+  // Los productos sin stock van al final (sort es estable: el resto mantiene su orden)
+  const displayedProducts = products
+    .filter((product) => !showOnlyFavorites || favorites.includes(product.id))
+    .sort((a, b) => (getStock(a) <= 0) - (getStock(b) <= 0));
 
   const selectedProduct = productId && products.find((product) => product.id === productId);
+
+  useDocumentTitle(
+    selectedProduct ? selectedProduct.name : showOnlyFavorites ? "Favoritos" : "Productos"
+  );
 
   if (loading) {
     return (
@@ -94,7 +100,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
         <div className="flex flex-col items-center justify-center w-full py-20 text-white/50">
           <FaHeartBroken className="text-6xl text-orange-500 mb-4" />
           <p className="text-xl font-semibold text-center">
-            No tienes nada en favoritos
+            No tenés nada en favoritos
           </p>
         </div>
       ) : (
