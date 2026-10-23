@@ -106,7 +106,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
             return (
             <article
               key={product.id}
-              className="group relative overflow-hidden bg-gray-800 rounded-3xl shadow-lg flex flex-col aspect-[3/4] min-h-80"
+              className="group relative overflow-hidden bg-gray-800 rounded-3xl shadow-lg flex flex-col min-w-0 aspect-[3/4] min-h-80"
             >
               <img
                 className={`absolute inset-0 object-cover h-full w-full transition-transform duration-500 group-hover:scale-105 ${outOfStock ? "grayscale" : ""}`}
@@ -174,7 +174,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
                       <span
                         key={label}
                         aria-hidden={label !== buttonLabel || inCooldown}
-                        className={`[grid-area:1/1] whitespace-nowrap ${
+                        className={`[grid-area:1/1] text-center leading-tight ${
                           label === buttonLabel && !inCooldown ? "" : "invisible"
                         }`}
                       >
