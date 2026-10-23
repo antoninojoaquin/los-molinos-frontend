@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { FaTimes, FaWhatsapp, FaSearchPlus } from "react-icons/fa";
 import AddToCartButton from "./AddToCartButton";
 import { useCart } from "../context/cartContext";
@@ -9,10 +10,17 @@ import { optimizeImage } from "../utils/image";
 
 const ZOOM_SCALE = 2.5;
 
+// Solo se descarga en celulares, al abrir la imagen
+const ImageViewer = lazy(() => import("./ImageViewer"));
+
+const isTouchDevice = () => window.matchMedia("(pointer: coarse)").matches;
+
 // El zoom se aplica directo sobre el DOM (sin re-render de React) y solo con transform,
 // que lo resuelve la GPU sin repintar: así el paneo sigue fluido en celulares.
 function ZoomableImage({ src, alt, grayscale }) {
   const [zoomed, setZoomed] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [isTouch] = useState(isTouchDevice);
   const containerRef = useRef(null);
   const imgRef = useRef(null);
   const rectRef = useRef(null);
@@ -54,40 +62,54 @@ function ZoomableImage({ src, alt, grayscale }) {
   };
 
   return (
-    <div
-      ref={containerRef}
-      role="button"
-      tabIndex={0}
-      aria-label={zoomed ? "Alejar imagen" : "Acercar imagen"}
-      onClick={(event) => toggleZoom(getPoint(event.clientX, event.clientY))}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          toggleZoom({ x: 0.5, y: 0.5 });
-        }
-      }}
-      onPointerMove={handlePointerMove}
-      className={`relative h-full w-full overflow-hidden select-none
-        ${zoomed ? "cursor-zoom-out touch-none" : "cursor-zoom-in"}
-      `}
-    >
-      <img
-        ref={imgRef}
-        src={optimizeImage(src)}
-        alt={alt}
-        draggable={false}
-        decoding="async"
-        className={`h-full w-full object-cover origin-top-left ${zoomed ? "will-change-transform" : ""} ${grayscale ? "grayscale" : ""}`}
-      />
+    <>
+      <div
+        ref={containerRef}
+        role="button"
+        tabIndex={0}
+        aria-label={isTouch ? "Ver imagen en pantalla completa" : zoomed ? "Alejar imagen" : "Acercar imagen"}
+        onClick={(event) => {
+          // En celular el zoom se hace en el visor a pantalla completa (pellizco, doble toque)
+          if (isTouch) setViewerOpen(true);
+          else toggleZoom(getPoint(event.clientX, event.clientY));
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            toggleZoom({ x: 0.5, y: 0.5 });
+          }
+        }}
+        onPointerMove={handlePointerMove}
+        className={`relative h-full w-full overflow-hidden select-none bg-black
+          ${zoomed ? "cursor-zoom-out touch-none" : "cursor-zoom-in"}
+        `}
+      >
+        <img
+          ref={imgRef}
+          src={optimizeImage(src)}
+          alt={alt}
+          draggable={false}
+          decoding="async"
+          className={`h-full w-full object-contain origin-top-left ${zoomed ? "will-change-transform" : ""} ${grayscale ? "grayscale" : ""}`}
+        />
 
-      {!zoomed && (
-        <span className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-xs text-white">
-          <FaSearchPlus />
-          <span className="md:hidden">Tocá para hacer zoom</span>
-          <span className="hidden md:inline">Hacé clic para hacer zoom</span>
-        </span>
-      )}
-    </div>
+        {!zoomed && (
+          <span className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-xs text-white">
+            <FaSearchPlus />
+            {isTouch ? "Tocá para ampliar" : "Hacé clic para hacer zoom"}
+          </span>
+        )}
+      </div>
+
+      {/* Fuera del contenedor (si no, el clic en cerrar burbujea y lo reabre) y montado en body */}
+      {viewerOpen &&
+        createPortal(
+          <Suspense fallback={null}>
+            <ImageViewer src={optimizeImage(src)} alt={alt} onClose={() => setViewerOpen(false)} />
+          </Suspense>,
+          document.body
+        )}
+    </>
   );
 }
 
@@ -152,7 +174,7 @@ export default function ProductDetail({ product, onClose }) {
           <FaTimes className="text-lg" />
         </button>
 
-        <div className="aspect-[4/3] md:aspect-auto md:h-full md:max-h-[85vh] bg-gray-800">
+        <div className="h-[50dvh] md:h-full md:max-h-[85vh] bg-black">
           <ZoomableImage src={product.imageUrl} alt={product.name} grayscale={outOfStock} />
         </div>
 
