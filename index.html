@@ -1,23 +1,63 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image" href="./src/assets/favicon.png" />
+    <link rel="icon" type="image/png" href="./src/assets/favicon-192.png" />
+    <link rel="apple-touch-icon" href="./src/assets/favicon-192.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta property="og:image" content="https://lmregionales.vercel.app/meta.png" />
+    <meta name="theme-color" content="#1f2937" />
     <title>Los Molinos Regionales</title>
+    <meta name="description" content="Accesorios para parrilla en Dolores, Buenos Aires: sets de asador, tablas de madera y planchetas. Pedidos por WhatsApp, retiro en el local o entrega en Dolores." />
+    <link rel="canonical" href="https://lmregionales.vercel.app/" />
+
+    <!-- Vista previa al compartir el link (WhatsApp, Facebook, etc.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:site_name" content="Los Molinos Regionales" />
+    <meta property="og:title" content="Los Molinos Regionales | Accesorios para tu parrilla" />
+    <meta property="og:description" content="Sets de asador, tablas de madera y planchetas en Dolores. Pedí por WhatsApp." />
+    <meta property="og:url" content="https://lmregionales.vercel.app/" />
+    <meta property="og:image" content="https://lmregionales.vercel.app/meta.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Datos del negocio para Google (búsquedas locales) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Store",
+        "name": "Los Molinos Regionales",
+        "description": "Accesorios para parrilla: sets de asador, tablas de madera y planchetas.",
+        "url": "https://lmregionales.vercel.app/",
+        "image": "https://lmregionales.vercel.app/meta.png",
+        "telephone": "+5492245502977",
+        "email": "lmregionales@gmail.com",
+        "paymentAccepted": "Transferencia bancaria, Efectivo",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Aristóbulo del Valle 178",
+          "addressLocality": "Dolores",
+          "addressRegion": "Buenos Aires",
+          "postalCode": "B7100",
+          "addressCountry": "AR"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": -36.3172659,
+          "longitude": -57.6767455
+        },
+        "areaServed": "Dolores, Buenos Aires",
+        "sameAs": [
+          "https://www.instagram.com/lmregionales/",
+          "https://www.facebook.com/listo.elpollo.54"
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <form name="contacto" data-netlify="true" hidden>
-    <input type="text" name="nombre" />
-    <input type="email" name="email" />
-    <textarea name="mensaje"></textarea>
-  </form>
   </body>
 </html>
