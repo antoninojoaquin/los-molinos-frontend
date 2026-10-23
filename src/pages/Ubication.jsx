@@ -1,6 +1,6 @@
 import { FaClock, FaWhatsapp, FaMoneyBillWave, FaMapMarkerAlt } from "react-icons/fa";
 import useDocumentTitle from "../hooks/useDocumentTitle";
-import { BUSINESS_HOURS } from "../utils/business";
+import { BUSINESS_HOURS, formatRange } from "../utils/business";
 
 const PURCHASE_STEPS = [
   {
@@ -48,7 +48,7 @@ function Ubicacion() {
                 {BUSINESS_HOURS.map(({ days, ranges }) => (
                   <div key={days}>
                     <dt className="text-gray-300 text-sm">{days}</dt>
-                    <dd className="text-gray-400">{ranges.join(" y ")} hs</dd>
+                    <dd className="text-gray-400">{ranges.map(formatRange).join(" y ")} hs</dd>
                   </div>
                 ))}
               </dl>
