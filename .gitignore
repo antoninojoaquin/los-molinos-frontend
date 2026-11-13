@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Catálogo generado (npm run catalog)
+public/catalog.json
+
+# Variables locales con credenciales
+.env*.local

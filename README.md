@@ -2,7 +2,7 @@
 
 Código fuente de **[lmregionales.vercel.app](https://lmregionales.vercel.app)**, la tienda online de un negocio de accesorios para parrilla de Dolores, Buenos Aires. Digitaliza un catálogo tradicional con una experiencia de compra moderna, pensada sobre todo para celular.
 
-Es una **SPA en React** con **Tailwind CSS**, que lee productos y stock desde **Firestore** y cierra cada venta con un **pedido armado automáticamente por WhatsApp**: el canal donde el negocio ya atiende a sus clientes.
+Es una **SPA en React** con **Tailwind CSS**, con el catálogo en **Firestore**, publicado como un archivo estático en cada build, y cierra cada venta con un **pedido armado automáticamente por WhatsApp**: el canal donde el negocio ya atiende a sus clientes.
 
 ![Catálogo de productos](docs/screenshots/catalogo.webp)
 
@@ -15,8 +15,9 @@ Es una **SPA en React** con **Tailwind CSS**, que lee productos y stock desde **
 
 **Catálogo y stock**
 - Productos, precios y stock cargados desde Firestore; el negocio los actualiza sin tocar código.
-- Etiquetas de stock bajo ("¡Quedan 2!") y de "Sin stock"; los productos agotados van al final.
-- El carrito nunca permite superar el stock disponible y se re-sincroniza con Firestore al abrirlo (stock, precios y productos dados de baja).
+- En cada build el catálogo se genera como `catalog.json`: los visitantes no leen Firestore, así el plan gratuito no se agota con el tráfico ni con abusos.
+- Stock simple de disponible / sin stock: los productos agotados se muestran en gris, con la etiqueta "Sin stock", y van al final.
+- El carrito se re-sincroniza con el catálogo al abrirlo: actualiza precios y quita los productos sin stock o dados de baja.
 
 **Detalle de producto**
 - Cada producto tiene su propia URL (`/productos/:id`) que abre un detalle sobre el catálogo, sin perder la posición del scroll.
@@ -29,7 +30,7 @@ Es una **SPA en React** con **Tailwind CSS**, que lee productos y stock desde **
 - Botón flotante de WhatsApp en todo el sitio, información de horarios, medios de pago y zona de entrega.
 
 **Rendimiento y SEO**
-- Rutas con carga diferida: la página de inicio no descarga Firebase ni las animaciones (bundle inicial ~80 KB gzip).
+- Rutas con carga diferida: la tienda no descarga Firebase y la página de inicio no carga las animaciones (bundle inicial ~80 KB gzip).
 - Imágenes servidas por Cloudinary en WebP/AVIF, con tamaños responsive y carga diferida.
 - Metadatos Open Graph para la vista previa al compartir y datos estructurados de negocio local (`schema.org/Store`) para búsquedas en Google.
 
@@ -41,7 +42,7 @@ Es una **SPA en React** con **Tailwind CSS**, que lee productos y stock desde **
 | Datos | Firebase Firestore |
 | Imágenes | Cloudinary |
 | Extras | lottie-react (animaciones), react-zoom-pan-pinch (zoom táctil), react-icons |
-| Build y deploy | Vite, Vercel |
+| Build y deploy | Vite, Cloudflare Pages |
 
 ## 📁 Estructura
 
@@ -51,8 +52,10 @@ src/
 ├── context/      Estado global del carrito (CartProvider + useCart)
 ├── hooks/        useDocumentTitle
 ├── pages/        Productos/Favoritos, Carrito, Ubicación, 404
-├── services/     Acceso a Firestore
+├── services/     Lectura del catálogo (catalog.json)
 └── utils/        Precios, stock, imágenes, WhatsApp y datos del negocio
+scripts/
+└── build-catalog.mjs   Genera catalog.json desde Firestore en cada build
 ```
 
 ## 🚀 Correr el proyecto
@@ -61,25 +64,28 @@ Requiere Node.js 24.
 
 ```bash
 npm install
+npm run catalog   # genera public/catalog.json (hace falta para npm run dev)
 npm run dev       # servidor de desarrollo
-npm run build     # build de producción en dist/
+npm run build     # build de producción en dist/, con el catálogo incluido
 npm run lint
 ```
 
-La app usa el proyecto de Firestore del negocio. Para conectarla a uno propio, reemplazá la configuración en `src/firebase.js` y creá una colección `products` con documentos de esta forma:
+La app usa el proyecto de Firestore del negocio. Para conectarla a uno propio, reemplazá la configuración en `src/firebaseConfig.js` y creá una colección `products` con documentos de esta forma:
 
 ```js
 {
   name: "Set Asador con Estuche de Cuero",
   category: "Sets de Asador",
   price: 28500,          // número, en pesos
-  stock: 2,              // número; si falta, no se limita la compra
+  inStock: true,         // booleano; si falta, el producto se considera disponible
   imageUrl: "https://res.cloudinary.com/...",
   description: "Utensilios de calidad para la parrilla..."
 }
 ```
 
-> La configuración de Firebase del frontend es pública por diseño: la base de datos está protegida por reglas de seguridad que solo permiten leer el catálogo.
+El build lee Firestore con una cuenta lectora: definí `CATALOG_READER_EMAIL` y `CATALOG_READER_PASSWORD` en `.env.local` y en las variables del proyecto de Cloudflare Pages. Sin ellas, intenta leer sin login, lo que solo funciona si las reglas dejan leer `products` a cualquiera.
+
+> La configuración de Firebase del frontend es pública por diseño: la base de datos está protegida por las reglas de `firestore.rules`.
 
 ---
 

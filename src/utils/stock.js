@@ -1,2 +1,4 @@
-// Si un producto no tiene el campo stock en Firestore, no se limita la compra
-export const getStock = (product) => product.stock ?? Infinity;
+// El stock se maneja como disponible / sin stock con el campo booleano `inStock` de Firestore.
+// Si falta, se usa el campo numérico viejo `stock` (> 0 = disponible); si no hay ninguno, está disponible.
+export const isInStock = (product) =>
+  product.inStock ?? (product.stock == null || product.stock > 0);

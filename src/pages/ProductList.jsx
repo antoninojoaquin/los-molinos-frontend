@@ -9,12 +9,11 @@ import { useCart } from "../context/cartContext";
 import { fetchProducts } from "../services/products";
 import { formatPrice } from "../utils/formatPrice";
 import { readStorage, writeStorage } from "../utils/storage";
-import { getStock } from "../utils/stock";
+import { isInStock } from "../utils/stock";
 import { optimizeImage } from "../utils/image";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 
 const FAVORITES_KEY = "favorites";
-const LOW_STOCK_THRESHOLD = 2;
 
 export default function ProductList({ showOnlyFavorites = false }) {
   const [products, setProducts] = useState([]);
@@ -64,7 +63,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
   // Los productos sin stock van al final (sort es estable: el resto mantiene su orden)
   const displayedProducts = products
     .filter((product) => !showOnlyFavorites || favorites.includes(product.id))
-    .sort((a, b) => (getStock(a) <= 0) - (getStock(b) <= 0));
+    .sort((a, b) => isInStock(b) - isInStock(a));
 
   const selectedProduct = productId && products.find((product) => product.id === productId);
 
@@ -106,9 +105,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-5">
           {displayedProducts.map((product) => {
-            const stock = getStock(product);
-            const outOfStock = stock <= 0;
-            const lowStock = !outOfStock && stock <= LOW_STOCK_THRESHOLD;
+            const outOfStock = !isInStock(product);
             const isFavorite = favorites.includes(product.id);
 
             return (
@@ -136,17 +133,13 @@ export default function ProductList({ showOnlyFavorites = false }) {
                 className="absolute inset-0 z-[5] rounded-3xl focus-visible:outline-2 focus-visible:outline-orange-400 focus-visible:-outline-offset-2"
               />
 
-              {(outOfStock || lowStock) && (
+              {outOfStock && (
                 <span
                   className={`absolute top-2.5 left-2.5 md:top-3 md:left-3 z-10 max-w-[calc(100%-3.75rem)] truncate text-white text-[11px] md:text-xs font-semibold md:uppercase md:tracking-wide px-2 md:px-2.5 py-1 rounded-full shadow
-                    ${outOfStock ? "bg-gray-600" : "bg-orange-500"}
+                    bg-gray-600
                   `}
                 >
-                  {outOfStock
-                    ? "Sin stock"
-                    : stock === 1
-                      ? "¡Queda 1!"
-                      : `¡Quedan ${stock}!`}
+                  Sin stock
                 </span>
               )}
 

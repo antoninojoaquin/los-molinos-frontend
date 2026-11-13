@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CartContext } from "./cartContext";
 import { readStorage, writeStorage } from "../utils/storage";
-import { getStock } from "../utils/stock";
+import { isInStock } from "../utils/stock";
 
 const CART_KEY = "cart";
 
@@ -30,13 +30,13 @@ export default function CartProvider({ children }) {
     cart.find((item) => item.id === productId)?.quantity ?? 0;
 
   const addToCart = (product) => {
-    if (getQuantity(product.id) >= getStock(product)) return false;
+    if (!isInStock(product)) return false;
 
     setCart((prev) =>
       prev.some((item) => item.id === product.id)
         ? prev.map((item) =>
             item.id === product.id
-              ? { ...item, quantity: item.quantity + 1, stock: product.stock }
+              ? { ...item, quantity: item.quantity + 1 }
               : item
           )
         : [
@@ -46,7 +46,6 @@ export default function CartProvider({ children }) {
               name: product.name,
               price: product.price,
               imageUrl: product.imageUrl,
-              stock: product.stock,
               quantity: 1,
             },
           ]
@@ -61,7 +60,7 @@ export default function CartProvider({ children }) {
   const increaseQty = (id) => {
     setCart((prev) =>
       prev.map((item) =>
-        item.id === id && item.quantity < getStock(item)
+        item.id === id
           ? { ...item, quantity: item.quantity + 1 }
           : item
       )
@@ -82,24 +81,18 @@ export default function CartProvider({ children }) {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
-  // Ajusta el carrito al catálogo real de Firestore (stock y precio). Devuelve true si cambió alguna cantidad.
+  // Ajusta el carrito al catálogo real de Firestore: actualiza precios y quita los productos
+  // sin stock o dados de baja. Devuelve true si se quitó alguno.
   const syncStock = useCallback((products) => {
     const productsById = Object.fromEntries(products.map((p) => [p.id, p]));
     const current = readStorage(CART_KEY, []);
-    let adjusted = false;
 
     const synced = current
-      .map((item) => {
-        const product = productsById[item.id];
-        // Producto eliminado del catálogo
-        const quantity = product ? Math.min(item.quantity, getStock(product)) : 0;
-        if (quantity !== item.quantity) adjusted = true;
-        return { ...item, price: product.price, stock: product.stock, quantity };
-      })
-      .filter((item) => item.quantity > 0);
+      .filter((item) => productsById[item.id] && isInStock(productsById[item.id]))
+      .map((item) => ({ ...item, price: productsById[item.id].price }));
 
     setCart(synced);
-    return adjusted;
+    return synced.length !== current.length;
   }, []);
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);

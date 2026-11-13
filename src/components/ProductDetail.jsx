@@ -4,7 +4,7 @@ import { FaTimes, FaWhatsapp, FaSearchPlus, FaShareAlt, FaCheck } from "react-ic
 import AddToCartButton from "./AddToCartButton";
 import { useCart } from "../context/cartContext";
 import { formatPrice } from "../utils/formatPrice";
-import { getStock } from "../utils/stock";
+import { isInStock } from "../utils/stock";
 import { getWhatsAppUrl } from "../utils/whatsapp";
 import { optimizeImage } from "../utils/image";
 
@@ -117,8 +117,7 @@ export default function ProductDetail({ product, onClose }) {
   const { getQuantity } = useCart();
   const closeButtonRef = useRef(null);
 
-  const stock = getStock(product);
-  const outOfStock = stock <= 0;
+  const outOfStock = !isInStock(product);
   const inCart = getQuantity(product.id);
   const [linkCopied, setLinkCopied] = useState(false);
   const copiedTimeout = useRef(null);
@@ -215,11 +214,9 @@ export default function ProductDetail({ product, onClose }) {
             {formatPrice(product.price)}
           </p>
 
-          {Number.isFinite(stock) && (
-            <p className={`text-sm ${outOfStock ? "text-gray-400" : stock <= 2 ? "text-orange-400" : "text-gray-400"}`}>
-              {outOfStock
-                ? "Sin stock por el momento"
-                : `Stock disponible: ${stock}${inCart > 0 ? ` · ${inCart} en tu carrito` : ""}`}
+          {(outOfStock || inCart > 0) && (
+            <p className="text-sm text-gray-400">
+              {outOfStock ? "Sin stock por el momento" : `${inCart} en tu carrito`}
             </p>
           )}
 

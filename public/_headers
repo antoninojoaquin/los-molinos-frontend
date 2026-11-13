@@ -1,0 +1,15 @@
+# Cloudflare Pages: encabezados de seguridad y caché
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# Archivos de Vite con hash en el nombre: nunca cambian
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# El catálogo cambia con cada publicación: el navegador siempre pregunta si hay uno nuevo
+/catalog.json
+  Cache-Control: no-cache

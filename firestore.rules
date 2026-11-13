@@ -1,0 +1,14 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Catálogo público: cualquiera puede leer los productos, nadie puede escribir desde la app.
+    // Los cambios de productos se hacen desde la consola de Firebase (que ignora estas reglas).
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Todo lo demás queda cerrado por defecto.
+  }
+}
