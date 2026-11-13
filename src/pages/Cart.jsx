@@ -4,7 +4,6 @@ import { BiCartDownload } from "react-icons/bi";
 import { useCart } from "../context/cartContext";
 import { fetchProducts } from "../services/products";
 import { formatPrice } from "../utils/formatPrice";
-import { getStock } from "../utils/stock";
 import { getWhatsAppUrl } from "../utils/whatsapp";
 import { optimizeImage } from "../utils/image";
 import useDocumentTitle from "../hooks/useDocumentTitle";
@@ -33,7 +32,7 @@ export default function Cart() {
 
   const stockNotice = stockAdjusted && (
     <p className="text-orange-300 text-sm text-center mb-6">
-      Algunos productos se ajustaron según el stock disponible.
+      Quitamos del carrito algunos productos que ya no tienen stock.
     </p>
   );
 
@@ -72,17 +71,6 @@ export default function Cart() {
                 <p className="text-gray-400 text-sm">
                   {formatPrice(item.price)}
                 </p>
-                {Number.isFinite(getStock(item)) && (
-                  <p
-                    className={`text-xs mt-1 ${
-                      item.quantity >= getStock(item) ? "text-orange-400" : "text-gray-500"
-                    }`}
-                  >
-                    {item.quantity >= getStock(item)
-                      ? `Llevás todo el stock (${getStock(item)})`
-                      : `Stock disponible: ${getStock(item)}`}
-                  </p>
-                )}
               </div>
 
               {/* En celular, cantidad, subtotal y borrar van en una fila aparte debajo */}
@@ -103,7 +91,6 @@ export default function Cart() {
 
                   <button
                     onClick={() => increaseQty(item.id)}
-                    disabled={item.quantity >= getStock(item)}
                     aria-label={`Agregar una unidad de ${item.name}`}
                     className="p-2 bg-gray-700 text-white rounded-full hover:bg-gray-600 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-700"
                   >

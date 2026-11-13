@@ -2,25 +2,19 @@ import { useEffect, useRef, useState } from "react";
 import Lottie from "lottie-react";
 import cartAnimation from "../assets/shopping-cart.json";
 import { useCart } from "../context/cartContext";
-import { getStock } from "../utils/stock";
+import { isInStock } from "../utils/stock";
 
-const LABELS = ["Agregar al carrito", "Máximo en carrito", "Sin stock"];
+const LABELS = ["Agregar al carrito", "Sin stock"];
 
 export default function AddToCartButton({ product, className = "" }) {
-  const { addToCart, getQuantity } = useCart();
+  const { addToCart } = useCart();
   const [cooldown, setCooldown] = useState(false);
   const cooldownTimeout = useRef(null);
 
   useEffect(() => () => clearTimeout(cooldownTimeout.current), []);
 
-  const stock = getStock(product);
-  const outOfStock = stock <= 0;
-  const maxInCart = !outOfStock && getQuantity(product.id) >= stock;
-  const currentLabel = outOfStock
-    ? "Sin stock"
-    : maxInCart
-      ? "Máximo en carrito"
-      : "Agregar al carrito";
+  const outOfStock = !isInStock(product);
+  const currentLabel = outOfStock ? "Sin stock" : "Agregar al carrito";
 
   const handleClick = () => {
     if (!addToCart(product)) return;
@@ -31,13 +25,13 @@ export default function AddToCartButton({ product, className = "" }) {
 
   return (
     <button
-      disabled={cooldown || outOfStock || maxInCart}
+      disabled={cooldown || outOfStock}
       onClick={handleClick}
       className={`relative w-full text-white font-semibold px-3 rounded-full transition-colors
         ${
           cooldown
             ? "bg-gray-500"
-            : outOfStock || maxInCart
+            : outOfStock
               ? "bg-gray-600 cursor-not-allowed"
               : "bg-orange-500 hover:bg-orange-400 cursor-pointer"
         }
