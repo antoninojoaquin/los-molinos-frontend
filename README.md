@@ -29,6 +29,12 @@ Es una **SPA en React** con **Tailwind CSS**, con el catálogo en **Firestore**,
 - Checkout por WhatsApp: el mensaje se arma con el detalle del pedido y el total.
 - Botón flotante de WhatsApp en todo el sitio, información de horarios, medios de pago y zona de entrega.
 
+**Panel de administración (`/admin`)**
+- Login con Google; solo entran las cuentas con un documento `admins/{uid}` en Firestore.
+- Crear, editar y borrar productos, cambiar el stock con un toque y subir fotos a Cloudinary con subida firmada.
+- "Publicar cambios" dispara un build en Cloudflare Pages que regenera el catálogo; el panel avisa si hay cambios sin publicar.
+- Las reglas de Firestore validan cada producto y no dejan leer la base al público.
+
 **Rendimiento y SEO**
 - Rutas con carga diferida: la tienda no descarga Firebase y la página de inicio no carga las animaciones (bundle inicial ~80 KB gzip).
 - Imágenes servidas por Cloudinary en WebP/AVIF, con tamaños responsive y carga diferida.
@@ -49,6 +55,7 @@ Es una **SPA en React** con **Tailwind CSS**, con el catálogo en **Firestore**,
 ```
 src/
 ├── components/   Header, footer, detalle de producto, visor de imágenes, botones reutilizables
+├── admin/      Panel de administración (se descarga solo al entrar a /admin)
 ├── context/      Estado global del carrito (CartProvider + useCart)
 ├── hooks/        useDocumentTitle
 ├── pages/        Productos/Favoritos, Carrito, Ubicación, 404
@@ -56,6 +63,9 @@ src/
 └── utils/        Precios, stock, imágenes, WhatsApp y datos del negocio
 scripts/
 └── build-catalog.mjs   Genera catalog.json desde Firestore en cada build
+functions/api/          Funciones de Cloudflare que usa solo el panel: firma de fotos y publicación
+server/admin.js         Lógica compartida por esas funciones y el servidor de desarrollo
+firestore.rules         Reglas de la base (se publican con firebase deploy --only firestore:rules)
 ```
 
 ## 🚀 Correr el proyecto
@@ -83,7 +93,7 @@ La app usa el proyecto de Firestore del negocio. Para conectarla a uno propio, r
 }
 ```
 
-El build lee Firestore con una cuenta lectora: definí `CATALOG_READER_EMAIL` y `CATALOG_READER_PASSWORD` en `.env.local` y en las variables del proyecto de Cloudflare Pages. Sin ellas, intenta leer sin login, lo que solo funciona si las reglas dejan leer `products` a cualquiera.
+Las variables de entorno están documentadas en `.env.example`: van en `.env.local` para desarrollo y como variables del proyecto en Cloudflare Pages. El build lee Firestore con una cuenta lectora (`CATALOG_READER_EMAIL` y `CATALOG_READER_PASSWORD`). Sin ellas, intenta leer sin login, lo que solo funciona si las reglas dejan leer `products` a cualquiera.
 
 > La configuración de Firebase del frontend es pública por diseño: la base de datos está protegida por las reglas de `firestore.rules`.
 

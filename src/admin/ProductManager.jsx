@@ -1,0 +1,234 @@
+import { useCallback, useEffect, useState } from "react";
+import { FaEdit, FaPlus, FaTrash, FaUpload } from "react-icons/fa";
+import { formatPrice } from "../utils/formatPrice";
+import { optimizeImage } from "../utils/image";
+import { isInStock } from "../utils/stock";
+import { deleteProduct, fetchAllProducts, fetchPublishState, publish, saveProduct } from "./api";
+import ConfirmDialog from "./ConfirmDialog";
+import ProductForm from "./ProductForm";
+
+const formatTime = (date) =>
+  date.toLocaleString("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+
+function PublishBar({ state, publishing, justPublished, onPublish }) {
+  return (
+    <div
+      className={`rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 ${
+        state.pending ? "bg-orange-500/15 border border-orange-500/40" : "bg-gray-800"
+      }`}
+    >
+      <div className="flex-1 text-sm">
+        {justPublished ? (
+          <p className="text-green-400">
+            Publicando. La tienda se actualiza en 1 o 2 minutos.
+          </p>
+        ) : state.pending ? (
+          <p className="text-orange-200">
+            Hay cambios sin publicar: la tienda todavía muestra la versión anterior.
+          </p>
+        ) : (
+          <p className="text-gray-400">
+            La tienda está al día
+            {state.publishedAt && ` · última publicación: ${formatTime(state.publishedAt)}`}
+          </p>
+        )}
+      </div>
+      <button
+        onClick={onPublish}
+        disabled={!state.pending || publishing}
+        className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-400 text-white font-semibold cursor-pointer disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed"
+      >
+        <FaUpload />
+        {publishing ? "Publicando…" : "Publicar cambios"}
+      </button>
+    </div>
+  );
+}
+
+export default function ProductManager() {
+  const [products, setProducts] = useState([]);
+  const [publishState, setPublishState] = useState({ pending: false, publishedAt: null });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [editing, setEditing] = useState(null); // producto, "new" o null
+  const [pendingId, setPendingId] = useState(null); // producto que se está guardando
+  const [removing, setRemoving] = useState(null);
+  const [publishing, setPublishing] = useState(false);
+  const [justPublished, setJustPublished] = useState(false);
+
+  const refresh = useCallback(async () => {
+    const [all, state] = await Promise.all([fetchAllProducts(), fetchPublishState()]);
+    setProducts(all);
+    setPublishState(state);
+  }, []);
+
+  useEffect(() => {
+    refresh()
+      .catch(() => setError("No se pudieron cargar los productos."))
+      .finally(() => setLoading(false));
+  }, [refresh]);
+
+  // Corre un cambio y recarga la lista; si falla, avisa sin perder lo que hay en pantalla
+  async function run(id, action) {
+    if (pendingId) return;
+    setPendingId(id);
+    try {
+      await action();
+      await refresh();
+      setJustPublished(false);
+      setError("");
+    } catch {
+      setError("No se pudo guardar el cambio. Revisá tu conexión y probá de nuevo.");
+    } finally {
+      setPendingId(null);
+    }
+  }
+
+  async function handlePublish() {
+    setPublishing(true);
+    setError("");
+    try {
+      await publish();
+      setPublishState(await fetchPublishState());
+      setJustPublished(true);
+    } catch (err) {
+      setError(`No se pudo publicar: ${err.message}`);
+    } finally {
+      setPublishing(false);
+    }
+  }
+
+  if (editing) {
+    return (
+      <ProductForm
+        product={editing === "new" ? null : editing}
+        categories={[...new Set(products.map((p) => p.category))]}
+        onDone={(saved) => {
+          setEditing(null);
+          if (saved) {
+            setJustPublished(false);
+            refresh().catch(() => setError("No se pudo recargar la lista."));
+          }
+        }}
+      />
+    );
+  }
+
+  const outCount = products.filter((p) => !isInStock(p)).length;
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-white text-3xl">Productos</h1>
+          {!loading && (
+            <p className="text-gray-400 text-sm mt-1">
+              {products.length} productos{outCount > 0 && ` · ${outCount} sin stock`}
+            </p>
+          )}
+        </div>
+        <button
+          onClick={() => setEditing("new")}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-400 text-white font-semibold cursor-pointer"
+        >
+          <FaPlus />
+          Nuevo producto
+        </button>
+      </div>
+
+      {!loading && (
+        <PublishBar
+          state={publishState}
+          publishing={publishing}
+          justPublished={justPublished}
+          onPublish={handlePublish}
+        />
+      )}
+
+      {error && <p className="text-red-400" role="alert">{error}</p>}
+
+      {loading ? (
+        <p className="text-gray-400">Cargando productos…</p>
+      ) : products.length === 0 ? (
+        <p className="text-gray-400">Todavía no hay productos. Creá el primero.</p>
+      ) : (
+        <ul className="flex flex-col gap-3">
+          {products.map((product) => {
+            const inStock = isInStock(product);
+            const busy = pendingId === product.id;
+            return (
+              <li
+                key={product.id}
+                className={`flex flex-wrap sm:flex-nowrap items-center gap-x-4 gap-y-3 bg-gray-800 rounded-2xl p-3 ${
+                  busy ? "opacity-60" : ""
+                }`}
+              >
+                <img
+                  src={optimizeImage(product.imageUrl, 300)}
+                  alt=""
+                  className={`w-16 h-16 rounded-lg object-cover shrink-0 ${inStock ? "" : "grayscale"}`}
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-medium truncate">{product.name}</p>
+                  <p className="text-gray-400 text-sm truncate">
+                    {product.category} · {formatPrice(product.price)}
+                  </p>
+                </div>
+
+                <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-2">
+                  <button
+                    onClick={() => run(product.id, () => saveProduct({ ...product, inStock: !inStock }))}
+                    disabled={!!pendingId}
+                    title={inStock ? "Marcar sin stock" : "Marcar con stock"}
+                    aria-label={`${product.name}: ${inStock ? "con stock. Marcar sin stock" : "sin stock. Marcar con stock"}`}
+                    className={`w-28 py-1.5 rounded-full text-sm font-semibold cursor-pointer disabled:cursor-wait ${
+                      inStock
+                        ? "bg-green-600/20 text-green-400 hover:bg-green-600/30"
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    {inStock ? "Con stock" : "Sin stock"}
+                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setEditing(product)}
+                      disabled={!!pendingId}
+                      aria-label={`Editar ${product.name}`}
+                      title="Editar"
+                      className="p-2.5 rounded-full text-gray-300 hover:text-orange-400 hover:bg-gray-700 cursor-pointer"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      onClick={() => setRemoving(product)}
+                      disabled={!!pendingId}
+                      aria-label={`Eliminar ${product.name}`}
+                      title="Eliminar"
+                      className="p-2.5 rounded-full text-gray-300 hover:text-red-400 hover:bg-gray-700 cursor-pointer"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      <ConfirmDialog
+        open={!!removing}
+        title="Eliminar producto"
+        confirmLabel="Eliminar"
+        onCancel={() => setRemoving(null)}
+        onConfirm={() => {
+          const { id } = removing;
+          setRemoving(null);
+          run(id, () => deleteProduct(id));
+        }}
+      >
+        Vas a eliminar <b>{removing?.name}</b>. Esta acción no se puede deshacer.
+      </ConfirmDialog>
+    </div>
+  );
+}
