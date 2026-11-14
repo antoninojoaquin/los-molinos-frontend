@@ -85,7 +85,7 @@ export default function ProductCard({ product, to, isFavorite, onToggleFavorite,
         {/* Precio y botón comparten la fila: el botón ocupa el resto del ancho.
             @container: si la tarjeta es angosta, el botón muestra solo el ícono */}
         <div className="@container mt-auto pt-2 flex items-center gap-3 md:gap-4">
-          <p className={`shrink-0 font-bold text-base md:text-xl ${outOfStock ? "text-stone-500" : "text-orange-400"}`}>
+          <p className={`shrink-0 font-bold text-base md:text-xl ${outOfStock ? "text-stone-400" : "text-orange-400"}`}>
             {formatPrice(product.price)}
           </p>
           <div className="pointer-events-auto flex-1 min-w-0">

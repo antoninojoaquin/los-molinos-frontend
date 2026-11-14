@@ -48,7 +48,7 @@ export default function Cart() {
         {stockNotice}
         <BiCartDownload className="text-6xl text-stone-600 mb-4" />
         <p className="text-stone-200 font-semibold text-xl">Tu carrito está vacío</p>
-        <p className="text-stone-500 mt-1">Agregá productos desde el catálogo y mandanos el pedido por WhatsApp.</p>
+        <p className="text-stone-400 mt-1">Agregá productos desde el catálogo y mandanos el pedido por WhatsApp.</p>
         <Link
           to="/productos"
           className="mt-6 px-6 py-3 rounded-full bg-orange-500 hover:bg-orange-400 text-white hover:text-white font-semibold transition-colors"
