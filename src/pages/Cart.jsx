@@ -20,12 +20,17 @@ export default function Cart() {
       .catch((error) => console.error("Error al sincronizar stock:", error));
   }, [syncStock]);
 
+  // Cada producto va con su subtotal y el link a su página, así el negocio ve exactamente qué le piden
+  // (con foto), sin confusiones entre productos parecidos
   const handleCheckout = () => {
     const productList = cart
-      .map(item => `• ${item.name} x${item.quantity}`)
-      .join("\n");
+      .map(
+        (item) =>
+          `• ${item.name} x${item.quantity} (${formatPrice(item.price * item.quantity)})\n  ${window.location.origin}/productos/${item.id}`
+      )
+      .join("\n\n");
 
-    const message = `¡Hola! estoy interesado en:\n${productList}\n\nPrecio total: ${formatPrice(totalPrice)}\n¿Podemos coordinar los detalles?`;
+    const message = `¡Hola! Quiero hacer este pedido:\n\n${productList}\n\nTotal: ${formatPrice(totalPrice)}\n¿Podemos coordinar los detalles?`;
 
     window.open(getWhatsAppUrl(message), "_blank", "noopener,noreferrer");
   };
