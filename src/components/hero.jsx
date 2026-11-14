@@ -104,8 +104,8 @@ function Hero() {
         {/* Tres tamaños (public/images): el celular baja el chico. La misma lista se precarga en index.html.
             La foto ya viene desenfocada y oscurecida: aplicar blur/brightness con CSS es muy caro en celulares */}
         <img
-          src="/images/hero-1024.webp"
-          srcSet="/images/hero-640.webp 640w, /images/hero-1024.webp 1024w, /images/hero-1600.webp 1600w"
+          src="/images/hero-blur-1024.webp"
+          srcSet="/images/hero-blur-640.webp 640w, /images/hero-blur-1024.webp 1024w, /images/hero-blur-1600.webp 1600w"
           sizes="100vw"
           width="1600"
           height="1142"
