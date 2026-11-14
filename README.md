@@ -4,6 +4,8 @@ Código fuente de **[losmolinos-2zn.pages.dev](https://losmolinos-2zn.pages.dev)
 
 Es una **SPA en React** con **Tailwind CSS**, con el catálogo en **Firestore**, publicado como un archivo estático en cada build, y cierra cada venta con un **pedido armado automáticamente por WhatsApp**: el canal donde el negocio ya atiende a sus clientes.
 
+![Inicio con buscador y categorías](docs/screenshots/inicio.webp)
+
 ![Catálogo de productos](docs/screenshots/catalogo.webp)
 
 <p align="center">
