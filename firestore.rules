@@ -15,18 +15,34 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/readers/$(request.auth.uid));
     }
 
+    // Solo fotos de la cuenta de Cloudinary del negocio
+    function isImage(url) {
+      return url is string && url.matches('^https://res[.]cloudinary[.]com/dq0fdjwiy/image/upload/.*');
+    }
+
+    // De 1 a 8 fotos (la primera es la principal). Las reglas no tienen bucles: se revisa cada posición.
+    function hasValidImages(images) {
+      return images is list && images.size() >= 1 && images.size() <= 8
+        && isImage(images[0])
+        && (images.size() < 2 || isImage(images[1]))
+        && (images.size() < 3 || isImage(images[2]))
+        && (images.size() < 4 || isImage(images[3]))
+        && (images.size() < 5 || isImage(images[4]))
+        && (images.size() < 6 || isImage(images[5]))
+        && (images.size() < 7 || isImage(images[6]))
+        && (images.size() < 8 || isImage(images[7]));
+    }
+
     // Valida el documento completo que queda guardado (mismos límites que el formulario del panel)
     function isValidProduct(p) {
-      return p.keys().hasAll(['name', 'category', 'description', 'price', 'inStock', 'imageUrl'])
-        && p.keys().hasOnly(['name', 'category', 'description', 'price', 'inStock', 'imageUrl'])
+      return p.keys().hasAll(['name', 'category', 'description', 'price', 'inStock', 'images'])
+        && p.keys().hasOnly(['name', 'category', 'description', 'price', 'inStock', 'images'])
         && p.name is string && p.name.size() > 0 && p.name.size() <= 120
         && p.category is string && p.category.size() > 0 && p.category.size() <= 60
         && p.description is string && p.description.size() <= 1000
         && p.price is int && p.price >= 0
         && p.inStock is bool
-        // Solo fotos de la cuenta de Cloudinary del negocio
-        && p.imageUrl is string
-        && p.imageUrl.matches('^https://res[.]cloudinary[.]com/dq0fdjwiy/image/upload/.*');
+        && hasValidImages(p.images);
     }
 
     // Productos: no son públicos. La tienda lee catalog.json, que se genera en el build,

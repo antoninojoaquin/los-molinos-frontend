@@ -6,7 +6,7 @@ import { useCart } from "../context/cartContext";
 import { formatPrice } from "../utils/formatPrice";
 import { isInStock } from "../utils/stock";
 import { getWhatsAppUrl } from "../utils/whatsapp";
-import { optimizeImage } from "../utils/image";
+import { getImages, optimizeImage } from "../utils/image";
 
 const ZOOM_SCALE = 2.5;
 
@@ -119,6 +119,9 @@ export default function ProductDetail({ product, onClose }) {
 
   const outOfStock = !isInStock(product);
   const inCart = getQuantity(product.id);
+  const images = getImages(product);
+  const [selected, setSelected] = useState(0);
+  const currentImage = images[selected] ?? images[0];
   const [linkCopied, setLinkCopied] = useState(false);
   const copiedTimeout = useRef(null);
 
@@ -197,8 +200,34 @@ export default function ProductDetail({ product, onClose }) {
           <FaTimes className="text-lg" />
         </button>
 
-        <div className="h-[50dvh] md:h-full md:max-h-[85vh] bg-black">
-          <ZoomableImage src={product.imageUrl} alt={product.name} grayscale={outOfStock} />
+        <div className="flex flex-col md:h-full md:max-h-[85vh] bg-black">
+          <div className={images.length > 1 ? "h-[42dvh] md:h-auto md:flex-1 md:min-h-0" : "h-[50dvh] md:h-full"}>
+            {/* key: al cambiar de foto el zoom arranca de cero */}
+            <ZoomableImage key={currentImage} src={currentImage} alt={product.name} grayscale={outOfStock} />
+          </div>
+
+          {images.length > 1 && (
+            <div className="flex gap-2 p-2 overflow-x-auto bg-gray-950" role="group" aria-label="Fotos del producto">
+              {images.map((image, index) => (
+                <button
+                  key={image}
+                  onClick={() => setSelected(index)}
+                  aria-label={`Ver foto ${index + 1} de ${images.length}`}
+                  aria-pressed={index === selected}
+                  className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 cursor-pointer transition-colors ${
+                    index === selected ? "border-orange-500" : "border-transparent opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <img
+                    src={optimizeImage(image, 300)}
+                    alt=""
+                    loading="lazy"
+                    className={`w-full h-full object-cover ${outOfStock ? "grayscale" : ""}`}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-3 p-5 md:p-8 md:overflow-y-auto md:max-h-[85vh]">
