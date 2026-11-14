@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { FaEdit, FaPlus, FaRegStar, FaSearch, FaStar, FaTimes, FaTrash, FaUpload } from "react-icons/fa";
+import { FaChevronDown, FaEdit, FaPlus, FaRegStar, FaSearch, FaStar, FaTimes, FaTrash, FaUpload } from "react-icons/fa";
 import { normalize } from "../utils/catalogFilters";
 import { formatPrice } from "../utils/formatPrice";
 import { mainImage, optimizeImage } from "../utils/image";
@@ -58,12 +58,13 @@ function ListFilters({ query, onQuery, category, onCategory, categories, status,
             </button>
           )}
         </label>
-        <label className="sm:w-64">
+        {/* Flecha propia (la del navegador queda pegada al borde redondeado), igual que el orden de la tienda */}
+        <label className="relative sm:w-64 flex items-center">
           <span className="sr-only">Categoría</span>
           <select
             value={category}
             onChange={(event) => onCategory(event.target.value)}
-            className="w-full h-11 rounded-full bg-stone-900 border border-stone-700 px-4 text-white focus:outline-none focus:border-orange-500 cursor-pointer"
+            className="w-full h-11 appearance-none rounded-full bg-stone-900 border border-stone-700 pl-4 pr-10 text-white focus:outline-none focus:border-orange-500 cursor-pointer"
           >
             <option value="">Todas las categorías</option>
             {categories.map((c) => (
@@ -72,6 +73,7 @@ function ListFilters({ query, onQuery, category, onCategory, categories, status,
               </option>
             ))}
           </select>
+          <FaChevronDown className="pointer-events-none absolute right-4 text-xs text-stone-400" />
         </label>
       </div>
       <div className="flex flex-wrap gap-2" role="group" aria-label="Estado">
