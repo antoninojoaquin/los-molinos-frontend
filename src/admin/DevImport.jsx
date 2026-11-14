@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { FaFileImport } from "react-icons/fa";
+import { getImages } from "../utils/image";
 import { replaceAllProducts } from "./api";
 import ConfirmDialog from "./ConfirmDialog";
 
 // Solo en desarrollo (npm run dev): reemplaza todo el catálogo por los productos de un archivo JSON.
 // Usa la sesión del admin, así que pasa por las mismas reglas y validaciones que el resto del panel.
-// Formato: [{ name, category, price, description, inStock, imageUrl }, ...]
+// Formato: [{ name, category, price, description, inStock, images: [url, ...] }, ...]
 export default function DevImport({ currentCount, onDone }) {
   const [products, setProducts] = useState(null);
   const [status, setStatus] = useState("");
@@ -14,8 +15,8 @@ export default function DevImport({ currentCount, onDone }) {
     setStatus("");
     try {
       const data = JSON.parse(await file.text());
-      if (!Array.isArray(data) || data.some((p) => !p.name || !p.category || !p.imageUrl || p.price == null)) {
-        throw new Error("Cada producto necesita name, category, price e imageUrl");
+      if (!Array.isArray(data) || data.some((p) => !p.name || !p.category || !getImages(p).length || p.price == null)) {
+        throw new Error("Cada producto necesita name, category, price e images");
       }
       setProducts(data);
     } catch (err) {

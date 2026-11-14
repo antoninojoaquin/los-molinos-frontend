@@ -8,3 +8,9 @@ export const optimizeImage = (url, width) => {
 
   return url.replace("/upload/", `/upload/${transforms}/`);
 };
+
+// Fotos de un producto: `images` (la primera es la principal). Los productos viejos tienen una sola, en `imageUrl`.
+export const getImages = (product) =>
+  product.images?.length ? product.images : product.imageUrl ? [product.imageUrl] : [];
+
+export const mainImage = (product) => getImages(product)[0];

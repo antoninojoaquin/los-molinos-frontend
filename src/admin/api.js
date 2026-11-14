@@ -12,6 +12,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { firebaseConfig } from "../firebaseConfig.js";
+import { getImages } from "../utils/image.js";
 import { isInStock } from "../utils/stock.js";
 
 const app = initializeApp(firebaseConfig);
@@ -28,15 +29,17 @@ export async function isAdmin(uid) {
   return (await getDoc(doc(db, "admins", uid))).exists();
 }
 
-// Deja solo los campos que acepta firestore.rules. Los documentos viejos (con stock numérico
-// o featured) quedan limpios la primera vez que se guardan desde el panel.
+export const MAX_IMAGES = 8;
+
+// Deja solo los campos que acepta firestore.rules. Los documentos viejos (con stock numérico,
+// featured o una sola foto en imageUrl) quedan limpios la primera vez que se guardan desde el panel.
 const toDoc = (product) => ({
   name: product.name.trim(),
   category: product.category.trim(),
   description: (product.description ?? "").trim(),
   price: Math.round(Number(product.price)),
   inStock: isInStock(product),
-  imageUrl: product.imageUrl,
+  images: getImages(product),
 });
 
 export async function fetchAllProducts() {

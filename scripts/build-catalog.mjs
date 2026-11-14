@@ -60,11 +60,13 @@ async function fetchAllProducts(idToken) {
   } while (pageToken);
 
   return documents.map((doc) => {
-    // stock (numérico viejo) y featured (nunca se usó) no llegan a la tienda
-    const { stock, inStock, featured, ...data } = decodeFields(doc.fields);
+    // stock (numérico viejo), featured (nunca se usó) e imageUrl (una sola foto, formato viejo) no llegan a la tienda
+    const { stock, inStock, featured, imageUrl, images, ...data } = decodeFields(doc.fields);
     return {
       id: doc.name.split("/").pop(),
       ...data,
+      // Mismo criterio que getImages (src/utils/image.js): la lista nueva, o la foto única vieja
+      images: images?.length ? images : imageUrl ? [imageUrl] : [],
       // Mismo criterio que src/utils/stock.js: booleano nuevo, o el stock numérico viejo, o disponible
       inStock: inStock ?? (stock == null || stock > 0),
     };

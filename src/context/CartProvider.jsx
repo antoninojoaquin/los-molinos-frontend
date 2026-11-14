@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CartContext } from "./cartContext";
 import { readStorage, writeStorage } from "../utils/storage";
 import { isInStock } from "../utils/stock";
+import { mainImage } from "../utils/image";
 
 const CART_KEY = "cart";
 
@@ -45,7 +46,7 @@ export default function CartProvider({ children }) {
               id: product.id,
               name: product.name,
               price: product.price,
-              imageUrl: product.imageUrl,
+              imageUrl: mainImage(product),
               quantity: 1,
             },
           ]

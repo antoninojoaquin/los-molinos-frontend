@@ -10,7 +10,7 @@ import { fetchProducts } from "../services/products";
 import { formatPrice } from "../utils/formatPrice";
 import { readStorage, writeStorage } from "../utils/storage";
 import { isInStock } from "../utils/stock";
-import { optimizeImage } from "../utils/image";
+import { mainImage, optimizeImage } from "../utils/image";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 
 const FAVORITES_KEY = "favorites";
@@ -106,6 +106,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-5">
           {displayedProducts.map((product) => {
             const outOfStock = !isInStock(product);
+            const image = mainImage(product);
             const isFavorite = favorites.includes(product.id);
 
             return (
@@ -115,8 +116,8 @@ export default function ProductList({ showOnlyFavorites = false }) {
             >
               <img
                 className={`absolute inset-0 object-cover h-full w-full transition-transform duration-500 group-hover:scale-105 ${outOfStock ? "grayscale" : ""}`}
-                src={optimizeImage(product.imageUrl, 800)}
-                srcSet={`${optimizeImage(product.imageUrl, 400)} 400w, ${optimizeImage(product.imageUrl, 800)} 800w`}
+                src={optimizeImage(image, 800)}
+                srcSet={`${optimizeImage(image, 400)} 400w, ${optimizeImage(image, 800)} 800w`}
                 sizes="(min-width: 1024px) 25vw, 50vw"
                 alt={product.name}
                 loading="lazy"
@@ -178,7 +179,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
       )}
 
       {selectedProduct && (
-        <ProductDetail product={selectedProduct} onClose={closeDetail} />
+        <ProductDetail key={selectedProduct.id} product={selectedProduct} onClose={closeDetail} />
       )}
     </section>
   );

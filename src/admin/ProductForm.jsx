@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { FaArrowLeft, FaCheck, FaUpload } from "react-icons/fa";
-import { optimizeImage } from "../utils/image";
+import { useEffect, useRef, useState } from "react";
+import { FaArrowLeft, FaCheck, FaStar, FaTimes, FaUpload } from "react-icons/fa";
+import { getImages, optimizeImage } from "../utils/image";
 import { isInStock } from "../utils/stock";
-import { MAX_IMAGE_BYTES, saveProduct, uploadImage } from "./api";
+import { MAX_IMAGE_BYTES, MAX_IMAGES, saveProduct, uploadImage } from "./api";
 
 // Límites iguales a los de firestore.rules
 const MAX_NAME = 120;
@@ -12,50 +12,117 @@ const MAX_DESCRIPTION = 1000;
 const fieldClass =
   "w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-orange-500";
 
+let nextKey = 0;
+
+// Cada foto es { key, url } si ya está en Cloudinary, o { key, file, preview } si es nueva (se sube al guardar)
+const fromUrl = (url) => ({ key: url, url, preview: optimizeImage(url, 400) });
+
+function PhotoTile({ photo, index, onRemove, onMakeMain, disabled }) {
+  return (
+    <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-800 group">
+      <img src={photo.preview} alt={`Foto ${index + 1}`} className="w-full h-full object-cover" />
+      {index === 0 && (
+        <span className="absolute top-2 left-2 text-xs font-semibold bg-orange-500 text-white px-2 py-0.5 rounded-full">
+          Principal
+        </span>
+      )}
+      <div className="absolute top-2 right-2 flex gap-1">
+        {index > 0 && (
+          <button
+            type="button"
+            onClick={onMakeMain}
+            disabled={disabled}
+            title="Usar como foto principal"
+            aria-label={`Usar la foto ${index + 1} como principal`}
+            className="p-1.5 rounded-full bg-black/70 text-white hover:text-orange-400 cursor-pointer"
+          >
+            <FaStar className="text-xs" />
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={onRemove}
+          disabled={disabled}
+          title="Quitar foto"
+          aria-label={`Quitar la foto ${index + 1}`}
+          className="p-1.5 rounded-full bg-black/70 text-white hover:text-red-400 cursor-pointer"
+        >
+          <FaTimes className="text-xs" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function ProductForm({ product, categories, onDone }) {
   const [name, setName] = useState(product?.name ?? "");
   const [category, setCategory] = useState(product?.category ?? "");
   const [description, setDescription] = useState(product?.description ?? "");
   const [price, setPrice] = useState(product ? String(product.price) : "");
   const [inStock, setInStock] = useState(product ? isInStock(product) : true);
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(product ? optimizeImage(product.imageUrl, 400) : "");
+  const [photos, setPhotos] = useState(() => (product ? getImages(product).map(fromUrl) : []));
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false); // false | "upload" | "save"
+  const [busy, setBusy] = useState(""); // texto del paso en curso al guardar, o vacío
 
-  // Libera la URL temporal de la vista previa al cambiar de archivo o salir
+  // Libera las vistas previas temporales de fotos nuevas al salir
+  const photosRef = useRef(photos);
+  photosRef.current = photos;
   useEffect(
-    () => () => {
-      if (preview.startsWith("blob:")) URL.revokeObjectURL(preview);
-    },
-    [preview]
+    () => () => photosRef.current.forEach((p) => p.file && URL.revokeObjectURL(p.preview)),
+    []
   );
 
-  function pickFile(selected) {
-    if (!selected) return;
-    if (!selected.type.startsWith("image/")) return setError("El archivo tiene que ser una imagen.");
-    if (selected.size > MAX_IMAGE_BYTES) return setError("La imagen pesa más de 5 MB.");
+  function addFiles(fileList) {
+    const files = [...(fileList ?? [])];
+    if (!files.length) return;
+    if (files.some((f) => !f.type.startsWith("image/"))) return setError("Los archivos tienen que ser imágenes.");
+    if (files.some((f) => f.size > MAX_IMAGE_BYTES)) return setError("Cada foto puede pesar hasta 5 MB.");
+    if (photos.length + files.length > MAX_IMAGES) return setError(`Podés cargar hasta ${MAX_IMAGES} fotos.`);
     setError("");
-    setFile(selected);
-    setPreview(URL.createObjectURL(selected));
+    setPhotos((prev) => [
+      ...prev,
+      ...files.map((file) => ({ key: `new-${nextKey++}`, file, preview: URL.createObjectURL(file) })),
+    ]);
   }
+
+  function removePhoto(index) {
+    setPhotos((prev) => {
+      const removed = prev[index];
+      if (removed.file) URL.revokeObjectURL(removed.preview);
+      return prev.filter((_, i) => i !== index);
+    });
+  }
+
+  const makeMain = (index) =>
+    setPhotos((prev) => [prev[index], ...prev.filter((_, i) => i !== index)]);
 
   async function handleSubmit(event) {
     event.preventDefault();
     if (!price) return setError("Ingresá el precio.");
-    if (!product && !file) return setError("Subí una foto del producto.");
+    if (!photos.length) return setError("Subí al menos una foto del producto.");
 
     setError("");
     try {
-      setBusy(file ? "upload" : "save");
-      const imageUrl = file ? await uploadImage(file) : product.imageUrl;
-      setBusy("save");
-      await saveProduct({ id: product?.id, name, category, description, price: Number(price), inStock, imageUrl });
+      // Sube las fotos nuevas en orden; las que ya estaban en Cloudinary se mantienen
+      const pending = photos.filter((p) => !p.url).length;
+      let uploaded = 0;
+      const images = [];
+      for (const photo of photos) {
+        if (photo.url) {
+          images.push(photo.url);
+          continue;
+        }
+        uploaded++;
+        setBusy(pending > 1 ? `Subiendo foto ${uploaded} de ${pending}…` : "Subiendo foto…");
+        images.push(await uploadImage(photo.file));
+      }
+      setBusy("Guardando…");
+      await saveProduct({ id: product?.id, name, category, description, price: Number(price), inStock, images });
       onDone(true);
     } catch (err) {
       setError(err.message || "No se pudo guardar el producto.");
-      setBusy(false);
+      setBusy("");
     }
   }
 
@@ -74,46 +141,59 @@ export default function ProductForm({ product, categories, onDone }) {
         <h1 className="text-white text-3xl">{product ? "Editar producto" : "Nuevo producto"}</h1>
       </div>
 
-      <div className="grid md:grid-cols-[18rem_1fr] gap-6">
-        <label
-          onDragOver={(event) => {
-            event.preventDefault();
-            setDragging(true);
-          }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={(event) => {
-            event.preventDefault();
-            setDragging(false);
-            pickFile(event.dataTransfer.files[0]);
-          }}
-          className={`relative aspect-square rounded-2xl overflow-hidden border-2 border-dashed cursor-pointer flex items-center justify-center bg-gray-800 ${
-            dragging ? "border-orange-500" : "border-gray-600 hover:border-gray-400"
-          }`}
-        >
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            hidden
-            onChange={(event) => pickFile(event.target.files?.[0])}
-          />
-          {preview ? (
-            <>
-              <img src={preview} alt="Vista previa" className="absolute inset-0 w-full h-full object-cover" />
-              <span className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/70 text-white text-sm px-3 py-1.5 rounded-full whitespace-nowrap">
-                <FaUpload />
-                Cambiar foto
-              </span>
-            </>
-          ) : (
-            <span className="flex flex-col items-center gap-2 text-gray-400 text-center px-4">
-              <FaUpload className="text-2xl text-orange-500" />
-              <b className="text-gray-200">Arrastrá una foto o hacé clic</b>
-              <small>JPG, PNG o WEBP · hasta 5 MB</small>
-            </span>
-          )}
-        </label>
+      <div className="grid md:grid-cols-[20rem_1fr] gap-6">
+        <div className="flex flex-col gap-3">
+          <p className="text-sm text-gray-300">
+            Fotos <span className="text-gray-500">({photos.length}/{MAX_IMAGES})</span>
+          </p>
+          <div className="grid grid-cols-3 md:grid-cols-2 gap-3">
+            {photos.map((photo, index) => (
+              <PhotoTile
+                key={photo.key}
+                photo={photo}
+                index={index}
+                disabled={!!busy}
+                onRemove={() => removePhoto(index)}
+                onMakeMain={() => makeMain(index)}
+              />
+            ))}
+            {photos.length < MAX_IMAGES && (
+              <label
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  setDragging(true);
+                }}
+                onDragLeave={() => setDragging(false)}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  setDragging(false);
+                  addFiles(event.dataTransfer.files);
+                }}
+                className={`aspect-square rounded-xl border-2 border-dashed cursor-pointer flex flex-col items-center justify-center gap-1 text-center px-2 text-gray-400 bg-gray-800 ${
+                  dragging ? "border-orange-500" : "border-gray-600 hover:border-gray-400"
+                }`}
+              >
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  hidden
+                  onChange={(event) => {
+                    addFiles(event.target.files);
+                    event.target.value = "";
+                  }}
+                />
+                <FaUpload className="text-xl text-orange-500" />
+                <span className="text-xs">Agregar fotos</span>
+              </label>
+            )}
+          </div>
+          <small className="text-gray-500">
+            JPG, PNG o WEBP, hasta 5 MB cada una. La principal es la que se ve en el catálogo; con la estrella elegís otra.
+          </small>
+        </div>
 
-        <div className="bg-gray-800 rounded-2xl p-5 flex flex-col gap-4">
+        <div className="bg-gray-800 rounded-2xl p-5 flex flex-col gap-4 self-start">
           <label className="flex flex-col gap-1">
             <span className="text-sm text-gray-300">Nombre</span>
             <input
@@ -214,7 +294,7 @@ export default function ProductForm({ product, categories, onDone }) {
           className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-400 disabled:bg-gray-600 text-white font-semibold cursor-pointer disabled:cursor-wait"
         >
           <FaCheck />
-          {busy === "upload" ? "Subiendo foto…" : busy === "save" ? "Guardando…" : "Guardar"}
+          {busy || "Guardar"}
         </button>
       </div>
     </form>

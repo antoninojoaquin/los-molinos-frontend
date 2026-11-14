@@ -1,7 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { FaEdit, FaPlus, FaTrash, FaUpload } from "react-icons/fa";
 import { formatPrice } from "../utils/formatPrice";
-import { optimizeImage } from "../utils/image";
+import { mainImage, optimizeImage } from "../utils/image";
 import { isInStock } from "../utils/stock";
 import { deleteProduct, fetchAllProducts, fetchPublishState, publish, saveProduct } from "./api";
 import ConfirmDialog from "./ConfirmDialog";
@@ -176,7 +176,7 @@ export default function ProductManager() {
                 }`}
               >
                 <img
-                  src={optimizeImage(product.imageUrl, 300)}
+                  src={optimizeImage(mainImage(product), 300)}
                   alt=""
                   className={`w-16 h-16 rounded-lg object-cover shrink-0 ${inStock ? "" : "grayscale"}`}
                 />
