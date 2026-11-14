@@ -41,7 +41,10 @@ function replaceTag(html, pattern, replacement) {
 
 // Saca la precarga de la foto de portada: solo sirve en el inicio
 const HERO_PRELOAD = /\s*<!-- Foto de la portada:[^\n]*\n\s*<link [^>]*data-hero-preload[^>]*>/;
-const withoutHeroPreload = (html) => replaceTag(html, HERO_PRELOAD, "");
+// La foto de portada que viene en el HTML (se pinta antes que React) también es solo del inicio
+const STATIC_HERO = /\s*<!-- La foto de portada ya está en el HTML:[\s\S]*?-->\n(\s*)<div id="root"><img data-static-hero[^>]*><\/div>/;
+const withoutHeroPreload = (html) =>
+  replaceTag(replaceTag(html, HERO_PRELOAD, ""), STATIC_HERO, '\n$1<div id="root"></div>');
 
 // Misma URL que pide el detalle de producto (optimizeImage(url, 1000) en src/utils/image.js):
 // precargarla hace que la foto aparezca antes
