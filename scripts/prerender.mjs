@@ -31,7 +31,7 @@ function describe(product) {
 const previewImage = (url) =>
   url?.includes("res.cloudinary.com/")
     ? url.replace("/upload/", "/upload/f_jpg,q_auto,c_pad,b_auto:border,w_1200,h_630/")
-    : `${site}/meta.png`;
+    : `${site}/og-image.jpg`;
 
 // Reemplaza una etiqueta del <head>; si no la encuentra, corta el build (mejor que publicar vistas previas rotas)
 function replaceTag(html, pattern, replacement) {
@@ -100,8 +100,10 @@ function productPage(product) {
   html = replaceTag(
     html,
     /<meta property="og:image" content="[^"]*" \/>/,
-    `<meta property="og:image" content="${image}" />\n    <meta property="og:image:width" content="1200" />\n    <meta property="og:image:height" content="630" />\n    <meta property="og:image:alt" content="${escapeHtml(product.name)}" />`
+    `<meta property="og:image" content="${image}" />`
   );
+  // El ancho y alto (1200×630) ya están en index.html: la foto del producto se pide con ese tamaño
+  html = replaceTag(html, /<meta property="og:image:alt" content="[^"]*" \/>/, `<meta property="og:image:alt" content="${escapeHtml(product.name)}" />`);
   // "<" escapado para que un texto del producto no pueda cerrar el <script>
   const json = JSON.stringify(structuredData).replace(/</g, "\\u003c");
   const preload = product.images?.[0]
