@@ -80,7 +80,7 @@ function ZoomableImage({ src, alt, grayscale }) {
           }
         }}
         onPointerMove={handlePointerMove}
-        className={`relative h-full w-full overflow-hidden select-none bg-black
+        className={`relative h-full w-full overflow-hidden select-none bg-photo
           ${zoomed ? "cursor-zoom-out touch-none" : "cursor-zoom-in"}
         `}
       >
@@ -200,7 +200,7 @@ export default function ProductDetail({ product, onClose }) {
           <FaTimes className="text-lg" />
         </button>
 
-        <div className="flex flex-col md:h-full md:max-h-[85vh] bg-black">
+        <div className="flex flex-col md:h-full md:max-h-[85vh] bg-photo">
           <div className={images.length > 1 ? "h-[42dvh] md:h-auto md:flex-1 md:min-h-0" : "h-[50dvh] md:h-full"}>
             {/* key: al cambiar de foto el zoom arranca de cero */}
             <ZoomableImage key={currentImage} src={currentImage} alt={product.name} grayscale={outOfStock} />

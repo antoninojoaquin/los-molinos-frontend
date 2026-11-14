@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Fondo de las fotos de producto: el mismo crema con el que se procesaron (fotos/listas). Clase bg-photo */
+@theme {
+  --color-photo: #f1ece4;
+}
+
 :root {
   font-family:'Roboto Slab', Arial, sans-serif;
   line-height: 1.5;
