@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { FaEdit, FaPlus, FaSearch, FaTimes, FaTrash, FaUpload } from "react-icons/fa";
+import { FaEdit, FaPlus, FaRegStar, FaSearch, FaStar, FaTimes, FaTrash, FaUpload } from "react-icons/fa";
 import { normalize } from "../utils/catalogFilters";
 import { formatPrice } from "../utils/formatPrice";
 import { mainImage, optimizeImage } from "../utils/image";
@@ -19,6 +19,7 @@ const STATUSES = [
   { key: "visible", label: "Visibles" },
   { key: "hidden", label: "Ocultos" },
   { key: "out", label: "Sin stock" },
+  { key: "featured", label: "Destacados" },
 ];
 
 const matchesStatus = (product, status) =>
@@ -28,7 +29,9 @@ const matchesStatus = (product, status) =>
       ? product.visible === false
       : status === "out"
         ? !isInStock(product)
-        : true;
+        : status === "featured"
+          ? product.featured === true
+          : true;
 
 // Buscador del panel: por nombre, categoría y estado (visible, oculto o sin stock)
 function ListFilters({ query, onQuery, category, onCategory, categories, status, onStatus, products }) {
@@ -357,6 +360,18 @@ export default function ProductManager() {
                     {inStock ? "Con stock" : "Sin stock"}
                   </button>
                   <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => run(product.id, () => saveProduct({ ...product, featured: !product.featured }))}
+                      disabled={!!pendingId}
+                      aria-pressed={product.featured === true}
+                      aria-label={product.featured ? `Quitar ${product.name} de destacados` : `Destacar ${product.name} en el inicio`}
+                      title={product.featured ? "Quitar de destacados" : "Destacar en el inicio"}
+                      className={`p-2.5 rounded-full hover:bg-gray-700 cursor-pointer ${
+                        product.featured ? "text-yellow-400" : "text-gray-500 hover:text-yellow-400"
+                      }`}
+                    >
+                      {product.featured ? <FaStar /> : <FaRegStar />}
+                    </button>
                     <button
                       onClick={() => openEditor(product)}
                       disabled={!!pendingId}

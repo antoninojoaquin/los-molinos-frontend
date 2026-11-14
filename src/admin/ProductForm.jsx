@@ -73,6 +73,7 @@ export default function ProductForm({ product, categories, onDone }) {
   const [price, setPrice] = useState(product ? String(product.price) : "");
   const [inStock, setInStock] = useState(product ? isInStock(product) : true);
   const [visible, setVisible] = useState(product ? product.visible !== false : true);
+  const [featured, setFeatured] = useState(product?.featured === true);
   const [photos, setPhotos] = useState(() => (product ? getImages(product).map(fromUrl) : []));
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
@@ -132,7 +133,7 @@ export default function ProductForm({ product, categories, onDone }) {
         images.push(await uploadImage(photo.file));
       }
       setBusy("Guardando…");
-      await saveProduct({ id: product?.id, name, category, description, price: Number(price), inStock, visible, images });
+      await saveProduct({ id: product?.id, name, category, description, price: Number(price), inStock, visible, featured, images });
       onDone(true);
     } catch (err) {
       setError(err.message || "No se pudo guardar el producto.");
@@ -285,6 +286,19 @@ export default function ProductForm({ product, categories, onDone }) {
               <small className="block text-gray-400">
                 Si lo destildás, queda guardado acá pero no se muestra en la tienda. Sirve para cargarlo de a poco.
               </small>
+            </span>
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={featured}
+              onChange={(event) => setFeatured(event.target.checked)}
+              className="w-5 h-5 accent-orange-500"
+            />
+            <span>
+              <b className="text-white font-medium">Destacado en el inicio</b>
+              <small className="block text-gray-400">Aparece en la sección "Destacados" de la página de inicio.</small>
             </span>
           </label>
 

@@ -31,8 +31,8 @@ export async function isAdmin(uid) {
 
 export const MAX_IMAGES = 8;
 
-// Deja solo los campos que acepta firestore.rules. Los documentos viejos (con stock numérico,
-// featured o una sola foto en imageUrl) quedan limpios la primera vez que se guardan desde el panel.
+// Deja solo los campos que acepta firestore.rules. Los documentos viejos (con stock numérico
+// o una sola foto en imageUrl) quedan limpios la primera vez que se guardan desde el panel.
 const toDoc = (product) => ({
   name: product.name.trim(),
   category: product.category.trim(),
@@ -41,6 +41,7 @@ const toDoc = (product) => ({
   inStock: isInStock(product),
   images: getImages(product),
   visible: product.visible !== false,
+  featured: product.featured === true,
 });
 
 export async function fetchAllProducts() {
