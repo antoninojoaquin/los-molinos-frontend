@@ -118,7 +118,9 @@ function ZoomableImage({ src, alt, grayscale }) {
   );
 }
 
-export default function ProductDetail({ product, onClose }) {
+// animate: entrada animada solo al abrirlo desde el catálogo. Si se entra directo al link del producto,
+// aparece de una: se ve antes, y el navegador lo cuenta como lo primero pintado (no la grilla de fondo)
+export default function ProductDetail({ product, onClose, animate = true }) {
   const { getQuantity } = useCart();
   const closeButtonRef = useRef(null);
 
@@ -186,7 +188,7 @@ export default function ProductDetail({ product, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/85 md:p-6 animate-fadeIn"
+      className={`fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/85 md:p-6 ${animate ? "animate-fadeIn" : ""}`}
       onClick={onClose}
     >
       <div
@@ -194,7 +196,7 @@ export default function ProductDetail({ product, onClose }) {
         aria-modal="true"
         aria-labelledby="product-detail-title"
         onClick={(event) => event.stopPropagation()}
-        className="relative w-full md:max-w-4xl max-h-[92dvh] md:max-h-[85vh] overflow-y-auto md:overflow-hidden bg-stone-900 rounded-t-3xl md:rounded-3xl shadow-2xl md:grid md:grid-cols-2 animate-slideUp"
+        className={`relative w-full md:max-w-4xl max-h-[92dvh] md:max-h-[85vh] overflow-y-auto md:overflow-hidden bg-stone-900 rounded-t-3xl md:rounded-3xl shadow-2xl md:grid md:grid-cols-2 ${animate ? "animate-slideUp" : ""}`}
       >
         <button
           ref={closeButtonRef}
