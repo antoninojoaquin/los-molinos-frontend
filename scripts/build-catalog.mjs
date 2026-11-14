@@ -59,10 +59,11 @@ async function fetchAllProducts(idToken) {
     pageToken = page.nextPageToken ?? "";
   } while (pageToken);
 
-  return documents.map((doc) => {
+  const all = documents.map((doc) => {
     // stock (numérico viejo), featured (nunca se usó) e imageUrl (una sola foto, formato viejo) no llegan a la tienda
     const { stock, inStock, featured, imageUrl, images, ...data } = decodeFields(doc.fields);
     return {
+      hidden: data.visible === false,
       id: doc.name.split("/").pop(),
       ...data,
       // Mismo criterio que getImages (src/utils/image.js): la lista nueva, o la foto única vieja
@@ -71,6 +72,10 @@ async function fetchAllProducts(idToken) {
       inStock: inStock ?? (stock == null || stock > 0),
     };
   });
+  // Los productos ocultos desde el panel no llegan a la tienda (ni a las páginas de producto ni al sitemap)
+  const published = all.filter((p) => !p.hidden).map(({ hidden, visible, ...product }) => product);
+  if (all.length > published.length) console.log(`catalog: ${all.length - published.length} productos ocultos no se publican`);
+  return published;
 }
 
 if (!email || !password) {

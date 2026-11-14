@@ -40,6 +40,7 @@ const toDoc = (product) => ({
   price: Math.round(Number(product.price)),
   inStock: isInStock(product),
   images: getImages(product),
+  visible: product.visible !== false,
 });
 
 export async function fetchAllProducts() {
