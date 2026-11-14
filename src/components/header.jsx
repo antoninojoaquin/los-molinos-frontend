@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { FaHeart, FaShoppingCart, FaHome, FaThLarge, FaMapMarkerAlt, FaChevronRight } from "react-icons/fa";
-import Logo from "../assets/logo.png";
+import Logo from "../assets/logo.webp";
 import { useCart } from "../context/cartContext";
 import { useFavorites } from "../context/favoritesContext";
 import { BUSINESS_HOURS, formatRange, isOpenNow } from "../utils/business";
@@ -52,6 +52,8 @@ function Header() {
               src={Logo}
               onClick={closeMenu}
               alt="Los Molinos Regionales"
+              width="366"
+              height="256"
               className="h-24 md:h-32 w-auto object-contain"
             />
           </Link>

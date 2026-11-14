@@ -39,6 +39,28 @@ function replaceTag(html, pattern, replacement) {
   return html.replace(pattern, replacement);
 }
 
+// Saca la precarga de la foto de portada: solo sirve en el inicio
+const HERO_PRELOAD = /\s*<!-- Foto de la portada:[^\n]*\n\s*<link [^>]*data-hero-preload[^>]*>/;
+const withoutHeroPreload = (html) => replaceTag(html, HERO_PRELOAD, "");
+
+// Misma URL que pide el detalle de producto (optimizeImage(url, 1000) en src/utils/image.js):
+// precargarla hace que la foto aparezca antes
+const detailImage = (url) =>
+  url?.includes("res.cloudinary.com/") ? url.replace("/upload/", "/upload/f_auto,q_auto,w_1000,c_limit/") : url;
+
+// Páginas con su propio título, descripción y link canónico (antes todas decían ser el inicio)
+function sectionPage({ path, title, description, noindex = false }) {
+  const url = `${site}${path}`;
+  let html = withoutHeroPreload(shell);
+  html = replaceTag(html, /<title>[^<]*<\/title>/, `<title>${escapeHtml(title)}</title>`);
+  html = replaceTag(html, /<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${escapeHtml(description)}" />`);
+  html = replaceTag(html, /<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${url}" />`);
+  html = replaceTag(html, /<meta property="og:url" content="[^"]*" \/>/, `<meta property="og:url" content="${url}" />`);
+  // Carrito y favoritos son de cada visitante: no tienen que aparecer en Google
+  if (noindex) html = html.replace("</head>", `    <meta name="robots" content="noindex" />\n  </head>`);
+  return html;
+}
+
 function productPage(product) {
   const url = `${site}/productos/${product.id}`;
   const title = escapeHtml(`${product.name} | ${SITE_NAME}`);
@@ -63,7 +85,7 @@ function productPage(product) {
     },
   };
 
-  let html = shell;
+  let html = withoutHeroPreload(shell);
   html = replaceTag(html, /<title>[^<]*<\/title>/, `<title>${title}</title>`);
   html = replaceTag(html, /<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${description}" />`);
   html = replaceTag(html, /<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${url}" />`);
@@ -78,8 +100,30 @@ function productPage(product) {
   );
   // "<" escapado para que un texto del producto no pueda cerrar el <script>
   const json = JSON.stringify(structuredData).replace(/</g, "\\u003c");
-  return html.replace("</head>", `    <script type="application/ld+json">${json}</script>\n  </head>`);
+  const preload = product.images?.[0]
+    ? `    <link rel="preload" as="image" href="${escapeHtml(detailImage(product.images[0]))}" fetchpriority="high" />\n`
+    : "";
+  return html.replace("</head>", `${preload}    <script type="application/ld+json">${json}</script>\n  </head>`);
 }
+
+// Cloudflare Pages sirve productos.html en /productos, ubicacion.html en /ubicacion, etc.
+const SECTIONS = [
+  {
+    file: "productos.html",
+    path: "/productos",
+    title: `Productos | ${SITE_NAME}`,
+    description: "Catálogo de accesorios para parrilla: sets de asador, tablas de madera, cazuelas de barro, parrillas y utensilios. Pedidos por WhatsApp en Dolores.",
+  },
+  {
+    file: "ubicacion.html",
+    path: "/ubicacion",
+    title: `Ubicación y horarios | ${SITE_NAME}`,
+    description: "Dónde estamos en Dolores, Buenos Aires, horarios de atención y cómo comprar.",
+  },
+  { file: "carrito.html", path: "/carrito", title: `Carrito | ${SITE_NAME}`, description: "Tu pedido de Los Molinos Regionales.", noindex: true },
+  { file: "favoritos.html", path: "/favoritos", title: `Favoritos | ${SITE_NAME}`, description: "Tus productos favoritos de Los Molinos Regionales.", noindex: true },
+];
+for (const section of SECTIONS) await writeFile(join(outDir, section.file), sectionPage(section));
 
 await mkdir(join(outDir, "productos"), { recursive: true });
 for (const product of products) {
@@ -98,4 +142,4 @@ const sitemap = [
 await writeFile(join(outDir, "sitemap.xml"), sitemap);
 await writeFile(join(outDir, "robots.txt"), `User-agent: *\nDisallow: /admin\n\nSitemap: ${site}/sitemap.xml\n`);
 
-console.log(`prerender: ${products.length} páginas de producto, sitemap.xml y robots.txt (${site})`);
+console.log(`prerender: ${SECTIONS.length} secciones, ${products.length} páginas de producto, sitemap.xml y robots.txt (${site})`);

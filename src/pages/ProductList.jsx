@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import Lottie from "lottie-react";
 import { FaHeartBroken, FaSearch } from "react-icons/fa";
-import loadingAnimation from "../assets/loading.json";
-import ProductCard from "../components/ProductCard";
+import ProductCard, { ProductCardSkeleton } from "../components/ProductCard";
 import { useFavorites } from "../context/favoritesContext";
 import CatalogFilters from "../components/CatalogFilters";
 import ProductDetail from "../components/ProductDetail";
@@ -74,11 +72,17 @@ export default function ProductList({ showOnlyFavorites = false }) {
     selectedProduct ? selectedProduct.name : showOnlyFavorites ? "Favoritos" : "Productos"
   );
 
+  // Esqueleto con el mismo tamaño que el catálogo real: al llegar los productos no salta nada
   if (loading) {
     return (
-      <div className="flex bg-stone-950 justify-center items-center h-128 w-full">
-        <Lottie animationData={loadingAnimation} loop className="w-64 h-64" />
-      </div>
+      <section aria-busy="true" aria-label="Cargando productos" className="w-full bg-stone-950 px-3 sm:px-6 md:px-16 py-12 min-h-[50vh]">
+        <div className="h-[8.5rem] md:h-[7.25rem] mb-8" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-5">
+          {Array.from({ length: 8 }, (_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
+      </section>
     );
   }
 
@@ -126,10 +130,11 @@ export default function ProductList({ showOnlyFavorites = false }) {
           </div>
         ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-5">
-          {displayedProducts.map((product) => (
+          {displayedProducts.map((product, index) => (
             <ProductCard
               key={product.id}
               product={product}
+              priority={index < 4}
               to={{ pathname: `${basePath}/${product.id}`, search: location.search }}
               isFavorite={favorites.includes(product.id)}
               onToggleFavorite={toggleFavorite}

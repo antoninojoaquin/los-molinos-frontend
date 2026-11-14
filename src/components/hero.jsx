@@ -1,7 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowRight, FaSearch } from "react-icons/fa";
-import HeroImage from "../assets/heroexample-2.webp";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import { fetchProducts } from "../services/products";
 import { getCategories } from "../utils/catalogFilters";
@@ -102,10 +101,15 @@ function Hero() {
   return (
     <div className="w-full flex flex-col">
       <section className="relative w-full h-[78dvh] min-h-[32rem] max-h-[48rem] flex items-center justify-center overflow-hidden">
+        {/* Tres tamaños (public/images): el celular baja el chico. La misma lista se precarga en index.html */}
         <img
-          src={HeroImage}
+          src="/images/hero-1024.webp"
+          srcSet="/images/hero-640.webp 640w, /images/hero-1024.webp 1024w, /images/hero-1600.webp 1600w"
+          sizes="100vw"
+          width="1600"
+          height="1142"
           alt=""
-          loading="eager"
+          fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover brightness-45 blur-[3px]"
         />
         <SearchHero categories={categories} />

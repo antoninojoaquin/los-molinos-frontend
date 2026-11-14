@@ -7,8 +7,24 @@ import { formatPrice } from "../utils/formatPrice";
 import { mainImage, optimizeImage } from "../utils/image";
 import { isInStock } from "../utils/stock";
 
-// Tarjeta de producto del catálogo y del inicio. `to` es a dónde lleva (el detalle del producto)
-export default function ProductCard({ product, to, isFavorite, onToggleFavorite }) {
+// Lugar reservado mientras carga el catálogo: mismo tamaño que una tarjeta real
+export function ProductCardSkeleton() {
+  return (
+    <div aria-hidden="true" className="rounded-2xl bg-stone-900 flex flex-col animate-pulse">
+      <div className="aspect-square rounded-t-2xl bg-stone-800/60" />
+      <div className="p-3 md:p-4 flex flex-col gap-2">
+        <div className="h-3 w-1/3 rounded bg-stone-800" />
+        <div className="h-4 w-4/5 rounded bg-stone-800" />
+        <div className="h-4 w-2/5 rounded bg-stone-800 mb-1" />
+        <div className="h-10 md:h-11 rounded-full bg-stone-800" />
+      </div>
+    </div>
+  );
+}
+
+// Tarjeta de producto del catálogo y del inicio. `to` es a dónde lleva (el detalle del producto).
+// priority: las primeras tarjetas del catálogo cargan la foto de inmediato (son lo primero que se ve)
+export default function ProductCard({ product, to, isFavorite, onToggleFavorite, priority = false }) {
   const outOfStock = !isInStock(product);
   const image = mainImage(product);
   const [heartBurst, fireHeartBurst] = useBurst();
@@ -23,7 +39,10 @@ export default function ProductCard({ product, to, isFavorite, onToggleFavorite 
           srcSet={`${optimizeImage(image, 400)} 400w, ${optimizeImage(image, 800)} 800w`}
           sizes="(min-width: 1024px) 25vw, 50vw"
           alt={product.name}
-          loading="lazy"
+          width="800"
+          height="800"
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
           decoding="async"
         />
       </div>
@@ -57,7 +76,7 @@ export default function ProductCard({ product, to, isFavorite, onToggleFavorite 
       </button>
 
       <div className="pointer-events-none relative z-10 flex-1 w-full p-3 md:p-4 flex flex-col gap-1">
-        <p className="text-stone-500 text-[11px] md:text-xs truncate">{product.category}</p>
+        <p className="text-stone-400 text-xs truncate">{product.category}</p>
 
         <h3 className="text-stone-100 font-semibold text-sm md:text-base leading-snug line-clamp-2 min-h-[2lh]">
           {product.name}

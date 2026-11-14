@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+/* Fuentes alojadas en el sitio (public/fonts, solo caracteres latinos). font-display: swap muestra el texto
+   enseguida con una fuente del sistema y la cambia cuando termina de cargar */
+@font-face {
+  font-family: "Roboto Slab";
+  src: url("/fonts/roboto-slab-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Archivo Black";
+  src: url("/fonts/archivo-black-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Fondo de las fotos de producto: el mismo crema con el que se procesaron (fotos/listas). Clase bg-photo */
 @theme {
   --color-photo: #f1ece4;
