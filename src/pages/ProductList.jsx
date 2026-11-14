@@ -134,7 +134,8 @@ export default function ProductList({ showOnlyFavorites = false }) {
             <ProductCard
               key={product.id}
               product={product}
-              priority={index < 4}
+              // Con un producto abierto, la prioridad es la foto del detalle (precargada), no la grilla de fondo
+              priority={index < 4 && !productId}
               to={{ pathname: `${basePath}/${product.id}`, search: location.search }}
               isFavorite={favorites.includes(product.id)}
               onToggleFavorite={toggleFavorite}
