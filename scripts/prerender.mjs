@@ -40,9 +40,10 @@ function replaceTag(html, pattern, replacement) {
 }
 
 // Saca la precarga de la foto de portada: solo sirve en el inicio
-const HERO_PRELOAD = /\s*<!-- Foto de la portada:[^\n]*\n\s*<link [^>]*data-hero-preload[^>]*>/;
+const HERO_PRELOAD = /\s*<!-- Foto de la portada:[^\n]*\r?\n\s*<link [^>]*data-hero-preload[^>]*>/;
 // La foto de portada que viene en el HTML (se pinta antes que React) también es solo del inicio
-const STATIC_HERO = /\s*<!-- La foto de portada ya está en el HTML:[\s\S]*?-->\n(\s*)<div id="root"><div data-static-hero[^>]*><img [^>]*><\/div><\/div>/;
+// \r?\n: en Windows, git puede dejar index.html con saltos de línea \r\n
+const STATIC_HERO = /\s*<!-- La foto de portada ya está en el HTML:[\s\S]*?-->\r?\n([ \t]*)<div id="root"><div data-static-hero[^>]*><img [^>]*><\/div><\/div>/;
 const withoutHeroPreload = (html) =>
   replaceTag(replaceTag(html, HERO_PRELOAD, ""), STATIC_HERO, '\n$1<div id="root"></div>');
 
