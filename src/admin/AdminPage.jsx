@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaGoogle, FaSignOutAlt, FaExternalLinkAlt } from "react-icons/fa";
-import Logo from "../assets/logo.png";
+import Logo from "../assets/logo.webp";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import { logOut, signIn } from "./api";
 import ProductManager from "./ProductManager";

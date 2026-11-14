@@ -67,7 +67,8 @@ function ZoomableImage({ src, alt, grayscale }) {
         ref={containerRef}
         role="button"
         tabIndex={0}
-        aria-label={isTouch ? "Ver imagen en pantalla completa" : zoomed ? "Alejar imagen" : "Acercar imagen"}
+        // Igual al texto visible del cartelito ("Tocá para ampliar" / "Hacé clic para hacer zoom")
+        aria-label={isTouch ? "Tocá para ampliar" : zoomed ? "Alejar imagen" : "Hacé clic para hacer zoom"}
         onClick={(event) => {
           // En celular el zoom se hace en el visor a pantalla completa (pellizco, doble toque)
           if (isTouch) setViewerOpen(true);
@@ -86,10 +87,14 @@ function ZoomableImage({ src, alt, grayscale }) {
       >
         <img
           ref={imgRef}
-          src={optimizeImage(src)}
+          // 1000 px: la misma URL que precarga la página del producto (scripts/prerender.mjs).
+          // El visor a pantalla completa sigue usando la foto en calidad completa
+          src={optimizeImage(src, 1000)}
           alt={alt}
+          width="1000"
+          height="1000"
           draggable={false}
-          decoding="async"
+          fetchPriority="high"
           className={`h-full w-full object-contain origin-top-left ${zoomed ? "will-change-transform" : ""} ${grayscale ? "grayscale" : ""}`}
         />
 

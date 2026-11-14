@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import Lottie from "lottie-react";
-import cartAnimation from "../assets/shopping-cart.json";
 import { useCart } from "../context/cartContext";
 import { FaCartPlus, FaCheck } from "react-icons/fa";
 import { isInStock } from "../utils/stock";
 import Burst from "./Burst";
 import useBurst from "../hooks/useBurst";
 
-const LABELS = ["Agregar al carrito", "Sin stock"];
+// Todas las etiquetas del botón del detalle: ocupan la misma celda, así el botón no cambia de tamaño
+const LABELS = ["Agregar al carrito", "Sin stock", "Agregado"];
 
 // Confirmación "agregado" breve: el botón no se bloquea, otro toque suma otra unidad al instante
 const FEEDBACK_MS = 900;
@@ -22,7 +21,7 @@ export default function AddToCartButton({ product, className = "", variant = "fu
   useEffect(() => () => clearTimeout(cooldownTimeout.current), []);
 
   const outOfStock = !isInStock(product);
-  const currentLabel = outOfStock ? "Sin stock" : "Agregar al carrito";
+  const currentLabel = outOfStock ? "Sin stock" : cooldown ? "Agregado" : "Agregar al carrito";
 
   const handleClick = () => {
     if (!addToCart(product)) return;
@@ -82,10 +81,10 @@ export default function AddToCartButton({ product, className = "", variant = "fu
     <button
       disabled={outOfStock}
       onClick={handleClick}
-      className={`relative w-full text-white font-semibold px-3 rounded-full transition-colors
+      className={`relative w-full text-white font-semibold px-3 rounded-full
         ${
           cooldown
-            ? "bg-stone-500"
+            ? "bg-orange-600"
             : outOfStock
               ? "bg-stone-600 cursor-not-allowed"
               : "bg-orange-500 hover:bg-orange-400 cursor-pointer"
@@ -98,25 +97,16 @@ export default function AddToCartButton({ product, className = "", variant = "fu
         {LABELS.map((label) => (
           <span
             key={label}
-            aria-hidden={label !== currentLabel || cooldown}
-            className={`[grid-area:1/1] text-center leading-tight ${
-              label === currentLabel && !cooldown ? "" : "invisible"
+            aria-hidden={label !== currentLabel}
+            className={`[grid-area:1/1] flex items-center gap-2 text-center leading-tight ${
+              label === currentLabel ? "" : "invisible"
             }`}
           >
+            {label === "Agregado" && <FaCheck />}
             {label}
           </span>
         ))}
       </span>
-
-      {cooldown && (
-        <span className="absolute inset-0 flex items-center justify-center">
-          <Lottie
-            animationData={cartAnimation}
-            loop={false}
-            className="w-5 h-5 scale-[2]"
-          />
-        </span>
-      )}
       <Burst kind="sparks" burstKey={sparks} />
     </button>
   );

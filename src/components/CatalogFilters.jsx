@@ -223,7 +223,7 @@ export default function CatalogFilters({ filters, onChange, onClear, categories,
         <div className="pointer-events-none absolute right-0 top-0 bottom-px w-10 bg-gradient-to-l from-stone-950 md:hidden" />
       </div>
 
-      <div className="flex items-center justify-between text-sm text-stone-500 -mt-1">
+      <div className="flex items-center justify-between text-sm text-stone-400 -mt-1">
         <p aria-live="polite">{active ? `${shown} de ${total} productos` : `${total} productos`}</p>
         {active && (
           <button onClick={onClear} className="text-orange-400 hover:text-orange-300 cursor-pointer">

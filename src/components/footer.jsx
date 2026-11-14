@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import { FaEnvelope, FaFacebookF, FaInstagram, FaMapMarkerAlt, FaPhoneAlt, FaWhatsapp } from "react-icons/fa";
-import Logo from "../assets/logofooter.png";
+import Logo from "../assets/logofooter.webp";
 import { WHATSAPP_NUMBER } from "../utils/whatsapp";
 
 const CONTACT = [
@@ -26,7 +26,7 @@ function Footer() {
     <footer className="border-t border-stone-800 bg-stone-950 text-stone-300">
       <div className="max-w-6xl mx-auto px-6 py-10 grid gap-8 md:grid-cols-[auto_1fr_auto] md:items-center">
         <div className="flex items-center gap-4">
-          <img src={Logo} alt="Los Molinos Regionales" className="h-20" />
+          <img src={Logo} alt="Los Molinos Regionales" width="160" height="160" loading="lazy" className="h-20 w-20" />
           <p className="text-stone-400 max-w-[14rem] leading-snug">Accesorios para la parrilla, en Dolores.</p>
         </div>
 

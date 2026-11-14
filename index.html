@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="./src/assets/favicon-192.png" />
     <link rel="apple-touch-icon" href="./src/assets/favicon-192.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Fuentes alojadas en el sitio (no bloquean la carga como las de Google) y fotos de Cloudinary -->
+    <link rel="preload" href="/fonts/roboto-slab-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/archivo-black-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preconnect" href="https://res.cloudinary.com" />
+    <!-- Foto de la portada: se pide de entrada (en las otras páginas, scripts/prerender.mjs saca esta línea) -->
+    <link rel="preload" as="image" href="/images/hero-1024.webp" imagesrcset="/images/hero-640.webp 640w, /images/hero-1024.webp 1024w, /images/hero-1600.webp 1600w" imagesizes="100vw" fetchpriority="high" data-hero-preload />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#1c1917" />
     <title>Los Molinos Regionales</title>
