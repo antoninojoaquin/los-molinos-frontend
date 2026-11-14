@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import ProductCard from "./ProductCard";
-import useFavorites from "../hooks/useFavorites";
+import { useFavorites } from "../context/favoritesContext";
 import { fetchProducts } from "../services/products";
 import { isInStock } from "../utils/stock";
 

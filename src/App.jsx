@@ -6,6 +6,7 @@ import Hero from "./components/hero.jsx";
 import Header from "./components/header.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import CartProvider from "./context/CartProvider.jsx";
+import FavoritesProvider from "./context/FavoritesProvider.jsx";
 import WhatsAppButton from "./components/WhatsAppButton.jsx";
 
 // El resto de las páginas se descarga al visitarlas: el inicio no carga Lottie,
@@ -36,6 +37,7 @@ function StoreLayout() {
 function App() {
   return (
     <CartProvider>
+      <FavoritesProvider>
       <Router>
         <ScrollToTop />
         <Routes>
@@ -58,6 +60,7 @@ function App() {
           </Route>
         </Routes>
       </Router>
+      </FavoritesProvider>
     </CartProvider>
   );
 }

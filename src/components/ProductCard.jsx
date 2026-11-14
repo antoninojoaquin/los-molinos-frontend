@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { FaHeart } from "react-icons/fa";
 import AddToCartButton from "./AddToCartButton";
+import Burst from "./Burst";
+import useBurst from "../hooks/useBurst";
 import { formatPrice } from "../utils/formatPrice";
 import { mainImage, optimizeImage } from "../utils/image";
 import { isInStock } from "../utils/stock";
@@ -9,11 +11,12 @@ import { isInStock } from "../utils/stock";
 export default function ProductCard({ product, to, isFavorite, onToggleFavorite }) {
   const outOfStock = !isInStock(product);
   const image = mainImage(product);
+  const [heartBurst, fireHeartBurst] = useBurst();
 
   return (
-    <article className="group relative overflow-hidden bg-stone-900 rounded-2xl flex flex-col">
+    <article className="group relative bg-stone-900 rounded-2xl flex flex-col">
       {/* Foto entera (las fotos son cuadradas, con fondo crema): no se recorta ningún producto */}
-      <div className="relative aspect-square overflow-hidden bg-photo">
+      <div className="relative aspect-square overflow-hidden rounded-t-2xl bg-photo">
         <img
           className={`h-full w-full object-contain transition-transform duration-500 group-hover:scale-105 ${outOfStock ? "grayscale opacity-70" : ""}`}
           src={optimizeImage(image, 800)}
@@ -40,7 +43,9 @@ export default function ProductCard({ product, to, isFavorite, onToggleFavorite 
       )}
 
       <button
-        onClick={() => onToggleFavorite(product.id)}
+        onClick={() => {
+          if (onToggleFavorite(product.id)) fireHeartBurst();
+        }}
         aria-label={isFavorite ? `Quitar ${product.name} de favoritos` : `Agregar ${product.name} a favoritos`}
         aria-pressed={isFavorite}
         className={`absolute top-2.5 right-2.5 md:top-3 md:right-3 z-10 p-2 rounded-full bg-stone-900/70 cursor-pointer transition-colors duration-200 hover:text-orange-300
@@ -48,6 +53,7 @@ export default function ProductCard({ product, to, isFavorite, onToggleFavorite 
         `}
       >
         <FaHeart className="text-sm md:text-base" />
+        <Burst kind="hearts" burstKey={heartBurst} />
       </button>
 
       <div className="pointer-events-none relative z-10 flex-1 w-full p-3 md:p-4 flex flex-col gap-1">

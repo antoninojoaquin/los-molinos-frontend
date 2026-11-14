@@ -4,7 +4,7 @@ import Lottie from "lottie-react";
 import { FaHeartBroken, FaSearch } from "react-icons/fa";
 import loadingAnimation from "../assets/loading.json";
 import ProductCard from "../components/ProductCard";
-import useFavorites from "../hooks/useFavorites";
+import { useFavorites } from "../context/favoritesContext";
 import CatalogFilters from "../components/CatalogFilters";
 import ProductDetail from "../components/ProductDetail";
 import { useCart } from "../context/cartContext";

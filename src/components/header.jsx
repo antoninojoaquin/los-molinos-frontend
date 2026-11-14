@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { FaHeart, FaShoppingCart, FaHome, FaThLarge, FaMapMarkerAlt, FaChevronRight } from "react-icons/fa";
 import Logo from "../assets/logo.png";
 import { useCart } from "../context/cartContext";
+import { useFavorites } from "../context/favoritesContext";
 import { BUSINESS_HOURS, formatRange, isOpenNow } from "../utils/business";
 
 const NAV_ITEMS = [
@@ -15,6 +16,7 @@ function Header() {
   const [open, setOpen] = useState(false);
   const closeMenu = () => setOpen(false);
   const { totalItems, justAdded } = useCart();
+  const { favorites, justAdded: justFavorited } = useFavorites();
   const { pathname } = useLocation();
 
   // Se cierra al navegar (incluye el botón "atrás")
@@ -81,14 +83,24 @@ function Header() {
 
         <div className="flex items-center space-x-6 md:space-x-8">
           <div className="flex items-center space-x-6 text-xl md:text-2xl">
-            <Link to="/favoritos" onClick={closeMenu} aria-label="Favoritos" className="relative group">
+            <Link
+              to="/favoritos"
+              onClick={closeMenu}
+              aria-label={`Favoritos (${favorites.length})`}
+              className={`relative group block ${justFavorited ? "animate-pop" : ""}`}
+            >
               <FaHeart className="text-stone-300 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
+              {favorites.length > 0 && (
+                <span className="absolute -top-2 -right-3 min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-orange-500 text-white text-xs font-bold leading-none">
+                  {favorites.length > 99 ? "99+" : favorites.length}
+                </span>
+              )}
             </Link>
             <Link
               to="/carrito"
               onClick={closeMenu}
               aria-label={`Carrito (${totalItems} productos)`}
-              className={`relative group block transition-transform duration-300 ${justAdded ? "scale-125" : ""}`}
+              className={`relative group block ${justAdded ? "animate-pop" : ""}`}
             >
               <FaShoppingCart className="text-stone-300 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
               {totalItems > 0 && (
