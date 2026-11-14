@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { FaArrowLeft, FaCheck, FaStar, FaTimes, FaUpload } from "react-icons/fa";
+import { FaArrowLeft, FaCheck, FaSearchPlus, FaStar, FaTimes, FaUpload } from "react-icons/fa";
 import { getImages, optimizeImage } from "../utils/image";
 import { isInStock } from "../utils/stock";
 import { MAX_IMAGE_BYTES, MAX_IMAGES, saveProduct, uploadImage } from "./api";
+import PhotoViewer from "./PhotoViewer";
 
 // Límites iguales a los de firestore.rules
 const MAX_NAME = 120;
@@ -17,10 +18,21 @@ let nextKey = 0;
 // Cada foto es { key, url } si ya está en Cloudinary, o { key, file, preview } si es nueva (se sube al guardar)
 const fromUrl = (url) => ({ key: url, url, preview: optimizeImage(url, 400) });
 
-function PhotoTile({ photo, index, onRemove, onMakeMain, disabled }) {
+function PhotoTile({ photo, index, onOpen, onRemove, onMakeMain, disabled }) {
   return (
     <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-800 group">
-      <img src={photo.preview} alt={`Foto ${index + 1}`} className="w-full h-full object-cover" />
+      {/* Tocar la foto la abre en grande para revisarla de cerca */}
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={`Ver la foto ${index + 1} en grande`}
+        className="block w-full h-full cursor-zoom-in"
+      >
+        <img src={photo.preview} alt={`Foto ${index + 1}`} className="w-full h-full object-cover" />
+        <span className="absolute bottom-2 right-2 p-1.5 rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+          <FaSearchPlus className="text-xs" />
+        </span>
+      </button>
       {index === 0 && (
         <span className="absolute top-2 left-2 text-xs font-semibold bg-orange-500 text-white px-2 py-0.5 rounded-full">
           Principal
@@ -64,6 +76,7 @@ export default function ProductForm({ product, categories, onDone }) {
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(""); // texto del paso en curso al guardar, o vacío
+  const [viewing, setViewing] = useState(null); // índice de la foto abierta en grande, o null
 
   // Libera las vistas previas temporales de fotos nuevas al salir
   const photosRef = useRef(photos);
@@ -153,6 +166,7 @@ export default function ProductForm({ product, categories, onDone }) {
                 photo={photo}
                 index={index}
                 disabled={!!busy}
+                onOpen={() => setViewing(index)}
                 onRemove={() => removePhoto(index)}
                 onMakeMain={() => makeMain(index)}
               />
@@ -297,6 +311,18 @@ export default function ProductForm({ product, categories, onDone }) {
           {busy || "Guardar"}
         </button>
       </div>
+      {viewing != null && photos[viewing] && (
+        <PhotoViewer
+          // Las fotos nuevas se ven desde el archivo local; las ya subidas, en calidad completa desde Cloudinary
+          photos={photos.map((photo, index) => ({
+            src: photo.file ? photo.preview : optimizeImage(photo.url),
+            alt: `${name || "Producto"} - foto ${index + 1}`,
+          }))}
+          index={viewing}
+          onChange={setViewing}
+          onClose={() => setViewing(null)}
+        />
+      )}
     </form>
   );
 }
