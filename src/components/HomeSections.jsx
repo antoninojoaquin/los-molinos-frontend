@@ -4,8 +4,6 @@ import { FaArrowRight } from "react-icons/fa";
 import ProductCard from "./ProductCard";
 import useFavorites from "../hooks/useFavorites";
 import { fetchProducts } from "../services/products";
-import { getCategories } from "../utils/catalogFilters";
-import { mainImage, optimizeImage } from "../utils/image";
 import { isInStock } from "../utils/stock";
 
 const MAX_FEATURED = 8;
@@ -18,13 +16,6 @@ function pickFeatured(products) {
   const oneEach = new Map();
   for (const p of products) if (isInStock(p) && !oneEach.has(p.category)) oneEach.set(p.category, p);
   return [...oneEach.values()].slice(0, 4);
-}
-
-// Foto de cada categoría: la de un producto destacado de esa categoría, o la del primero con stock
-function categoryImage(products, category) {
-  const inCategory = products.filter((p) => p.category === category);
-  const pick = inCategory.find((p) => p.featured) ?? inCategory.find(isInStock) ?? inCategory[0];
-  return pick && mainImage(pick);
 }
 
 function SectionTitle({ children, link }) {
@@ -41,7 +32,7 @@ function SectionTitle({ children, link }) {
   );
 }
 
-// Secciones del inicio debajo de la portada: destacados y categorías.
+// Sección del inicio debajo de la portada: destacados (las categorías están en la portada).
 // Se descargan aparte (lazy) para que la portada siga apareciendo al instante.
 export default function HomeSections() {
   const [products, setProducts] = useState(null);
@@ -56,7 +47,6 @@ export default function HomeSections() {
       });
   }, []);
 
-  const categories = products ? getCategories(products) : [];
   const featured = products ? pickFeatured(products) : [];
 
   return (
@@ -74,42 +64,6 @@ export default function HomeSections() {
                 onToggleFavorite={toggleFavorite}
               />
             ))}
-          </div>
-        </section>
-      )}
-
-      {categories.length > 0 && (
-        <section>
-          <SectionTitle>Categorías</SectionTitle>
-          <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-5">
-            {categories.map(({ name, count }) => {
-              const image = categoryImage(products, name);
-              return (
-                <Link
-                  key={name}
-                  to={{ pathname: "/productos", search: `?cat=${encodeURIComponent(name)}` }}
-                  className="group rounded-2xl overflow-hidden bg-stone-900 flex flex-col focus-visible:outline-2 focus-visible:outline-orange-400"
-                >
-                  <div className="aspect-square bg-photo overflow-hidden">
-                    {image && (
-                      <img
-                        src={optimizeImage(image, 400)}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
-                      />
-                    )}
-                  </div>
-                  <div className="p-2.5 md:p-4 flex-1">
-                    <p className="text-stone-100 font-semibold text-xs sm:text-sm md:text-base leading-tight group-hover:text-orange-400 transition-colors">{name}</p>
-                    <p className="text-stone-500 text-[11px] sm:text-sm mt-0.5">
-                      {count} {count === 1 ? "producto" : "productos"}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
           </div>
         </section>
       )}
