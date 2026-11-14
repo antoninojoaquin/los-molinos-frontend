@@ -147,7 +147,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
       )}
 
       {selectedProduct && (
-        <ProductDetail key={selectedProduct.id} product={selectedProduct} onClose={closeDetail} />
+        <ProductDetail key={selectedProduct.id} product={selectedProduct} onClose={closeDetail} animate={!!openedFromList} />
       )}
     </section>
   );
