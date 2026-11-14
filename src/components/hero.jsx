@@ -24,10 +24,10 @@ function useCategories() {
 function Headline() {
   return (
     <>
-      <h1 className="text-4xl md:text-6xl font-bold text-white drop-shadow-lg">
+      <h1 className="text-4xl md:text-6xl font-bold text-white [text-shadow:0_2px_16px_rgb(0_0_0/0.55)]">
         Bienvenido a<br />Los <span className="text-orange-500">Molinos</span> Regionales
       </h1>
-      <p className="mt-4 text-lg md:text-2xl text-stone-200 drop-shadow-md">
+      <p className="mt-4 text-lg md:text-2xl text-stone-200 [text-shadow:0_1px_8px_rgb(0_0_0/0.6)]">
         Accesorios para tu parrilla en Dolores y la zona
       </p>
     </>

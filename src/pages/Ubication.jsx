@@ -1,4 +1,5 @@
-import { FaClock, FaWhatsapp, FaMoneyBillWave, FaMapMarkerAlt } from "react-icons/fa";
+import { useState } from "react";
+import { FaClock, FaDirections, FaMap, FaWhatsapp, FaMoneyBillWave, FaMapMarkerAlt } from "react-icons/fa";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import { BUSINESS_HOURS, formatRange } from "../utils/business";
 
@@ -19,6 +20,53 @@ const PURCHASE_STEPS = [
     text: "Pasá por el local en nuestro horario o coordinamos la entrega. Por ahora, entregas solo en Dolores.",
   },
 ];
+
+const MAP_EMBED =
+  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5406.603341935121!2d-57.68058441618891!3d-36.317506178602855!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95999e42c33ed273%3A0x59b33785e775e2f8!2sArist%C3%B3bulo%20del%20Valle%20178%2C%20B7100%20Dolores%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1766184914228!5m2!1ses!2sar";
+// Abre la app de mapas del celular (o Google Maps en la compu) con la ruta hasta el local
+const DIRECTIONS_URL =
+  "https://www.google.com/maps/dir/?api=1&destination=Arist%C3%B3bulo+del+Valle+178,+Dolores,+Buenos+Aires";
+
+// El mapa de Google pesa ~500 KB y frena la página: se carga recién cuando la persona lo pide
+function MapPreview() {
+  const [showMap, setShowMap] = useState(false);
+
+  if (showMap) {
+    return (
+      <iframe title="Mapa: Aristóbulo del Valle 178, Dolores" src={MAP_EMBED} className="w-full h-full border-0" />
+    );
+  }
+
+  return (
+    <div className="w-full h-full bg-stone-900 flex flex-col items-center justify-center gap-5 p-6 text-center">
+      <span className="w-14 h-14 rounded-full bg-orange-500/15 text-orange-500 flex items-center justify-center text-2xl">
+        <FaMapMarkerAlt />
+      </span>
+      <div>
+        <p className="text-white font-semibold text-lg">Aristóbulo del Valle 178</p>
+        <p className="text-stone-400">Dolores, Buenos Aires</p>
+      </div>
+      <div className="flex flex-wrap justify-center gap-3">
+        <button
+          onClick={() => setShowMap(true)}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-100 font-semibold cursor-pointer"
+        >
+          <FaMap />
+          Ver mapa
+        </button>
+        <a
+          href={DIRECTIONS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-stone-700 hover:border-stone-500 text-stone-100 hover:text-white font-semibold"
+        >
+          <FaDirections />
+          Cómo llegar
+        </a>
+      </div>
+    </div>
+  );
+}
 
 function Ubicacion() {
   useDocumentTitle("Ubicación");
@@ -60,12 +108,7 @@ function Ubicacion() {
           <div className="absolute -inset-1 rounded-3xl"/>
           
           <div className="relative w-full h-80 md:h-96 rounded-3xl overflow-hidden border border-stone-800">
-            <iframe
-              title="Mapa Dolores Buenos Aires"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5406.603341935121!2d-57.68058441618891!3d-36.317506178602855!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95999e42c33ed273%3A0x59b33785e775e2f8!2sArist%C3%B3bulo%20del%20Valle%20178%2C%20B7100%20Dolores%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1766184914228!5m2!1ses!2sar"
-              className="w-full h-full border-0"
-              loading="lazy"
-            />
+            <MapPreview />
           </div>
         </div>
 
@@ -86,7 +129,7 @@ function Ubicacion() {
                 <span className="flex items-center justify-center w-10 h-10 rounded-full bg-orange-500/15 text-orange-500 text-lg">
                   <step.icon />
                 </span>
-                <span className="text-stone-500 font-semibold">Paso {index + 1}</span>
+                <span className="text-stone-400 font-semibold">Paso {index + 1}</span>
               </div>
               <p className="text-white font-semibold text-lg mb-2">{step.title}</p>
               <p className="text-stone-400 leading-relaxed">{step.text}</p>

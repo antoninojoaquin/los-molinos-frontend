@@ -16,7 +16,7 @@ const controlClass =
 function AmountInput({ label, value, onChange, className = "" }) {
   return (
     <label className={`flex items-center gap-1 min-w-0 ${className}`}>
-      <span className="text-stone-500">$</span>
+      <span className="text-stone-400">$</span>
       <input
         inputMode="numeric"
         autoComplete="off"
@@ -214,7 +214,7 @@ export default function CatalogFilters({ filters, onChange, onClear, categories,
                 }`}
               >
                 {label ?? name}
-                <span className={`ml-1.5 text-xs ${selected ? "text-orange-300" : "text-stone-600"}`}>{count}</span>
+                <span className={`ml-1.5 text-xs ${selected ? "text-orange-300" : "text-stone-400"}`}>{count}</span>
                 {selected && <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-orange-500" />}
               </button>
             );
