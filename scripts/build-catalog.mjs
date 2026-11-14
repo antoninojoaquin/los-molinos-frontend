@@ -60,7 +60,7 @@ async function fetchAllProducts(idToken) {
   } while (pageToken);
 
   const all = documents.map((doc) => {
-    // stock (numérico viejo), featured (nunca se usó) e imageUrl (una sola foto, formato viejo) no llegan a la tienda
+    // stock (numérico viejo) e imageUrl (una sola foto, formato viejo) no llegan a la tienda
     const { stock, inStock, featured, imageUrl, images, ...data } = decodeFields(doc.fields);
     return {
       hidden: data.visible === false,
@@ -70,6 +70,8 @@ async function fetchAllProducts(idToken) {
       images: images?.length ? images : imageUrl ? [imageUrl] : [],
       // Mismo criterio que src/utils/stock.js: booleano nuevo, o el stock numérico viejo, o disponible
       inStock: inStock ?? (stock == null || stock > 0),
+      // Destacado en el inicio: solo se incluye cuando es true, para no agrandar el archivo
+      ...(featured === true && { featured: true }),
     };
   });
   // Los productos ocultos desde el panel no llegan a la tienda (ni a las páginas de producto ni al sitemap)

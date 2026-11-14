@@ -6,12 +6,12 @@ export default function NotFound() {
   useDocumentTitle("Página no encontrada");
 
   return (
-    <section className="w-full flex flex-col items-center justify-center bg-gray-950 px-6 py-24 min-h-[60vh] text-center">
+    <section className="w-full flex flex-col items-center justify-center bg-stone-950 px-6 py-24 min-h-[60vh] text-center">
       <GiBarbecue className="text-7xl text-orange-500 mb-6" />
       <h1 className="text-3xl md:text-4xl text-white mb-3">
         Esta página no existe
       </h1>
-      <p className="text-gray-400 text-lg mb-8">
+      <p className="text-stone-400 text-lg mb-8">
         Puede que el link esté mal escrito o que la página ya no esté disponible.
       </p>
       <Link

@@ -11,7 +11,7 @@ const MAX_CATEGORY = 60;
 const MAX_DESCRIPTION = 1000;
 
 const fieldClass =
-  "w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-orange-500";
+  "w-full bg-stone-950 border border-stone-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-orange-500";
 
 let nextKey = 0;
 
@@ -20,7 +20,7 @@ const fromUrl = (url) => ({ key: url, url, preview: optimizeImage(url, 400) });
 
 function PhotoTile({ photo, index, onOpen, onRemove, onMakeMain, disabled }) {
   return (
-    <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-800 group">
+    <div className="relative aspect-square rounded-xl overflow-hidden bg-stone-800 group">
       {/* Tocar la foto la abre en grande para revisarla de cerca */}
       <button
         type="button"
@@ -73,6 +73,7 @@ export default function ProductForm({ product, categories, onDone }) {
   const [price, setPrice] = useState(product ? String(product.price) : "");
   const [inStock, setInStock] = useState(product ? isInStock(product) : true);
   const [visible, setVisible] = useState(product ? product.visible !== false : true);
+  const [featured, setFeatured] = useState(product?.featured === true);
   const [photos, setPhotos] = useState(() => (product ? getImages(product).map(fromUrl) : []));
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
@@ -132,7 +133,7 @@ export default function ProductForm({ product, categories, onDone }) {
         images.push(await uploadImage(photo.file));
       }
       setBusy("Guardando…");
-      await saveProduct({ id: product?.id, name, category, description, price: Number(price), inStock, visible, images });
+      await saveProduct({ id: product?.id, name, category, description, price: Number(price), inStock, visible, featured, images });
       onDone(true);
     } catch (err) {
       setError(err.message || "No se pudo guardar el producto.");
@@ -147,7 +148,7 @@ export default function ProductForm({ product, categories, onDone }) {
           type="button"
           onClick={() => onDone(false)}
           disabled={!!busy}
-          className="flex items-center gap-2 text-gray-400 hover:text-orange-400 cursor-pointer mb-2"
+          className="flex items-center gap-2 text-stone-400 hover:text-orange-400 cursor-pointer mb-2"
         >
           <FaArrowLeft />
           Volver a productos
@@ -157,8 +158,8 @@ export default function ProductForm({ product, categories, onDone }) {
 
       <div className="grid md:grid-cols-[20rem_1fr] gap-6">
         <div className="flex flex-col gap-3">
-          <p className="text-sm text-gray-300">
-            Fotos <span className="text-gray-500">({photos.length}/{MAX_IMAGES})</span>
+          <p className="text-sm text-stone-300">
+            Fotos <span className="text-stone-500">({photos.length}/{MAX_IMAGES})</span>
           </p>
           <div className="grid grid-cols-3 md:grid-cols-2 gap-3">
             {photos.map((photo, index) => (
@@ -184,8 +185,8 @@ export default function ProductForm({ product, categories, onDone }) {
                   setDragging(false);
                   addFiles(event.dataTransfer.files);
                 }}
-                className={`aspect-square rounded-xl border-2 border-dashed cursor-pointer flex flex-col items-center justify-center gap-1 text-center px-2 text-gray-400 bg-gray-800 ${
-                  dragging ? "border-orange-500" : "border-gray-600 hover:border-gray-400"
+                className={`aspect-square rounded-xl border-2 border-dashed cursor-pointer flex flex-col items-center justify-center gap-1 text-center px-2 text-stone-400 bg-stone-800 ${
+                  dragging ? "border-orange-500" : "border-stone-600 hover:border-stone-400"
                 }`}
               >
                 <input
@@ -203,14 +204,14 @@ export default function ProductForm({ product, categories, onDone }) {
               </label>
             )}
           </div>
-          <small className="text-gray-500">
+          <small className="text-stone-500">
             JPG, PNG o WEBP, hasta 5 MB cada una. La principal es la que se ve en el catálogo; con la estrella elegís otra.
           </small>
         </div>
 
-        <div className="bg-gray-800 rounded-2xl p-5 flex flex-col gap-4 self-start">
+        <div className="bg-stone-800 rounded-2xl p-5 flex flex-col gap-4 self-start">
           <label className="flex flex-col gap-1">
-            <span className="text-sm text-gray-300">Nombre</span>
+            <span className="text-sm text-stone-300">Nombre</span>
             <input
               value={name}
               onChange={(event) => setName(event.target.value)}
@@ -222,7 +223,7 @@ export default function ProductForm({ product, categories, onDone }) {
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-sm text-gray-300">Categoría</span>
+            <span className="text-sm text-stone-300">Categoría</span>
             <input
               value={category}
               onChange={(event) => setCategory(event.target.value)}
@@ -240,9 +241,9 @@ export default function ProductForm({ product, categories, onDone }) {
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-sm text-gray-300">Precio</span>
+            <span className="text-sm text-stone-300">Precio</span>
             <span className="flex items-center gap-2">
-              <span className="text-gray-400">$</span>
+              <span className="text-stone-400">$</span>
               {/* Texto y no number: sin flechitas, y con puntos de miles (13.500) */}
               <input
                 inputMode="numeric"
@@ -257,9 +258,9 @@ export default function ProductForm({ product, categories, onDone }) {
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="flex justify-between text-sm text-gray-300">
+            <span className="flex justify-between text-sm text-stone-300">
               Descripción
-              <small className="text-gray-500">
+              <small className="text-stone-500">
                 {description.length}/{MAX_DESCRIPTION}
               </small>
             </span>
@@ -282,9 +283,22 @@ export default function ProductForm({ product, categories, onDone }) {
             />
             <span>
               <b className="text-white font-medium">Visible en la tienda</b>
-              <small className="block text-gray-400">
+              <small className="block text-stone-400">
                 Si lo destildás, queda guardado acá pero no se muestra en la tienda. Sirve para cargarlo de a poco.
               </small>
+            </span>
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={featured}
+              onChange={(event) => setFeatured(event.target.checked)}
+              className="w-5 h-5 accent-orange-500"
+            />
+            <span>
+              <b className="text-white font-medium">Destacado en el inicio</b>
+              <small className="block text-stone-400">Aparece en la sección "Destacados" de la página de inicio.</small>
             </span>
           </label>
 
@@ -297,7 +311,7 @@ export default function ProductForm({ product, categories, onDone }) {
             />
             <span>
               <b className="text-white font-medium">Hay stock</b>
-              <small className="block text-gray-400">
+              <small className="block text-stone-400">
                 Si lo destildás, se muestra como "Sin stock" y no se puede agregar al carrito.
               </small>
             </span>
@@ -315,13 +329,13 @@ export default function ProductForm({ product, categories, onDone }) {
           type="button"
           onClick={() => onDone(false)}
           disabled={!!busy}
-          className="px-5 py-2.5 rounded-full bg-gray-700 hover:bg-gray-600 text-white cursor-pointer"
+          className="px-5 py-2.5 rounded-full bg-stone-700 hover:bg-stone-600 text-white cursor-pointer"
         >
           Cancelar
         </button>
         <button
           disabled={!!busy}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-400 disabled:bg-gray-600 text-white font-semibold cursor-pointer disabled:cursor-wait"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-400 disabled:bg-stone-600 text-white font-semibold cursor-pointer disabled:cursor-wait"
         >
           <FaCheck />
           {busy || "Guardar"}

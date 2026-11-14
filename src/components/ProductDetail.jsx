@@ -189,7 +189,7 @@ export default function ProductDetail({ product, onClose }) {
         aria-modal="true"
         aria-labelledby="product-detail-title"
         onClick={(event) => event.stopPropagation()}
-        className="relative w-full md:max-w-4xl max-h-[92dvh] md:max-h-[85vh] overflow-y-auto md:overflow-hidden bg-gray-900 rounded-t-3xl md:rounded-3xl shadow-2xl md:grid md:grid-cols-2 animate-slideUp"
+        className="relative w-full md:max-w-4xl max-h-[92dvh] md:max-h-[85vh] overflow-y-auto md:overflow-hidden bg-stone-900 rounded-t-3xl md:rounded-3xl shadow-2xl md:grid md:grid-cols-2 animate-slideUp"
       >
         <button
           ref={closeButtonRef}
@@ -207,7 +207,7 @@ export default function ProductDetail({ product, onClose }) {
           </div>
 
           {images.length > 1 && (
-            <div className="flex gap-2 p-2 overflow-x-auto bg-gray-950" role="group" aria-label="Fotos del producto">
+            <div className="flex gap-2 p-2 overflow-x-auto bg-stone-950" role="group" aria-label="Fotos del producto">
               {images.map((image, index) => (
                 <button
                   key={image}
@@ -231,7 +231,7 @@ export default function ProductDetail({ product, onClose }) {
         </div>
 
         <div className="flex flex-col gap-3 p-5 md:p-8 md:overflow-y-auto md:max-h-[85vh]">
-          <p className="text-orange-300 uppercase tracking-wide text-xs">
+          <p className="text-stone-400 text-sm">
             {product.category}
           </p>
 
@@ -239,18 +239,18 @@ export default function ProductDetail({ product, onClose }) {
             {product.name}
           </h2>
 
-          <p className="text-white font-extrabold text-3xl">
+          <p className="text-orange-400 font-bold text-3xl">
             {formatPrice(product.price)}
           </p>
 
           {(outOfStock || inCart > 0) && (
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-stone-400">
               {outOfStock ? "Sin stock por el momento" : `${inCart} en tu carrito`}
             </p>
           )}
 
           {product.description && (
-            <p className="text-gray-300 leading-relaxed whitespace-pre-line">
+            <p className="text-stone-300 leading-relaxed whitespace-pre-line">
               {product.description}
             </p>
           )}
@@ -268,7 +268,7 @@ export default function ProductDetail({ product, onClose }) {
 
             <button
               onClick={handleShare}
-              className="flex items-center justify-center gap-2 w-full py-2 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
+              className="flex items-center justify-center gap-2 w-full py-2 text-sm text-stone-400 hover:text-white transition-colors cursor-pointer"
             >
               {linkCopied ? <FaCheck className="text-green-400" /> : <FaShareAlt />}
               {linkCopied ? "¡Link copiado!" : "Compartir producto"}

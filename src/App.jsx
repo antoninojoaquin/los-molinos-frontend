@@ -6,6 +6,7 @@ import Hero from "./components/hero.jsx";
 import Header from "./components/header.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import CartProvider from "./context/CartProvider.jsx";
+import FavoritesProvider from "./context/FavoritesProvider.jsx";
 import WhatsAppButton from "./components/WhatsAppButton.jsx";
 
 // El resto de las páginas se descarga al visitarlas: el inicio no carga Lottie,
@@ -19,10 +20,10 @@ const AdminPage = lazy(() => import("./admin/AdminPage.jsx"));
 
 function StoreLayout() {
   return (
-    <div className="pt-24 min-h-screen flex flex-col justify-between overflow-x-hidden bg-gray-950">
+    <div className="pt-24 min-h-screen flex flex-col justify-between overflow-x-hidden bg-stone-950">
       <Header />
       <main className="flex">
-        <Suspense fallback={<div className="w-full min-h-[60vh] bg-gray-950" />}>
+        <Suspense fallback={<div className="w-full min-h-[60vh] bg-stone-950" />}>
           <Outlet />
         </Suspense>
       </main>
@@ -36,6 +37,7 @@ function StoreLayout() {
 function App() {
   return (
     <CartProvider>
+      <FavoritesProvider>
       <Router>
         <ScrollToTop />
         <Routes>
@@ -43,7 +45,7 @@ function App() {
           <Route
             path="/admin"
             element={
-              <Suspense fallback={<div className="min-h-screen bg-gray-950" />}>
+              <Suspense fallback={<div className="min-h-screen bg-stone-950" />}>
                 <AdminPage />
               </Suspense>
             }
@@ -58,6 +60,7 @@ function App() {
           </Route>
         </Routes>
       </Router>
+      </FavoritesProvider>
     </CartProvider>
   );
 }

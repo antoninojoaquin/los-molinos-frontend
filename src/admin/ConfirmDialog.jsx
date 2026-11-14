@@ -22,16 +22,16 @@ export default function ConfirmDialog({ open, title, children, confirmLabel, onC
       onClick={(event) => event.target === event.currentTarget && onCancel()}
       className="m-auto rounded-2xl bg-transparent p-0 backdrop:bg-black/70"
     >
-      <div className="w-[min(92vw,26rem)] bg-gray-800 text-gray-200 rounded-2xl p-6 flex flex-col gap-4">
+      <div className="w-[min(92vw,26rem)] bg-stone-800 text-stone-200 rounded-2xl p-6 flex flex-col gap-4">
         <h2 id="confirm-title" className="text-white text-xl">
           {title}
         </h2>
-        <p className="text-gray-300">{children}</p>
+        <p className="text-stone-300">{children}</p>
         <div className="flex justify-end gap-3 mt-2">
           <button
             onClick={onCancel}
             autoFocus
-            className="px-4 py-2 rounded-full bg-gray-700 hover:bg-gray-600 text-white cursor-pointer"
+            className="px-4 py-2 rounded-full bg-stone-700 hover:bg-stone-600 text-white cursor-pointer"
           >
             Cancelar
           </button>

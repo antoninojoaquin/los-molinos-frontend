@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { FaHeart, FaShoppingCart, FaHome, FaThLarge, FaMapMarkerAlt, FaChevronRight } from "react-icons/fa";
 import Logo from "../assets/logo.png";
 import { useCart } from "../context/cartContext";
+import { useFavorites } from "../context/favoritesContext";
 import { BUSINESS_HOURS, formatRange, isOpenNow } from "../utils/business";
 
 const NAV_ITEMS = [
@@ -15,6 +16,7 @@ function Header() {
   const [open, setOpen] = useState(false);
   const closeMenu = () => setOpen(false);
   const { totalItems, justAdded } = useCart();
+  const { favorites, justAdded: justFavorited } = useFavorites();
   const { pathname } = useLocation();
 
   // Se cierra al navegar (incluye el botón "atrás")
@@ -42,8 +44,8 @@ function Header() {
   const openNow = open && isOpenNow();
 
   return (
-    <header className="bg-gray-800 fixed w-full top-0 z-50 ">
-      <div className="relative z-10 bg-gray-800 max-w-[1920px] mx-auto px-4 md:px-8 h-24 flex justify-between items-center">
+    <header className="bg-stone-950/95 backdrop-blur border-b border-stone-800 fixed w-full top-0 z-50">
+      <div className="relative z-10 max-w-[1920px] mx-auto px-4 md:px-8 h-24 flex justify-between items-center">
         <div className="flex-shrink-0 cursor-pointer">
           <Link to="/">
             <img
@@ -55,7 +57,7 @@ function Header() {
           </Link>
         </div>
 
-        <nav className="hidden lg:flex items-center space-x-8 xl:space-x-16 text-xl font-medium tracking-widest text-orange-500">
+        <nav className="hidden lg:flex items-center gap-10 xl:gap-14 text-lg">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
@@ -64,7 +66,7 @@ function Header() {
             >
               {({ isActive }) => (
                 <>
-                  <span className={`${isActive ? "font-extrabold" : "hover:text-orange-400 transition-colors"}`}>
+                  <span className={`transition-colors ${isActive ? "text-white" : "text-stone-400 hover:text-white"}`}>
                     {item.label}
                   </span>
                   <span
@@ -80,19 +82,29 @@ function Header() {
         </nav>
 
         <div className="flex items-center space-x-6 md:space-x-8">
-          <div className="flex items-center space-x-6 text-2xl md:text-3xl">
-            <Link to="/favoritos" onClick={closeMenu} aria-label="Favoritos" className="relative group">
-              <FaHeart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
+          <div className="flex items-center space-x-6 text-xl md:text-2xl">
+            <Link
+              to="/favoritos"
+              onClick={closeMenu}
+              aria-label={`Favoritos (${favorites.length})`}
+              className={`relative group block ${justFavorited ? "animate-pop" : ""}`}
+            >
+              <FaHeart className="text-stone-300 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
+              {favorites.length > 0 && (
+                <span className="absolute -top-2 -right-3 min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-orange-500 text-white text-xs font-bold leading-none">
+                  {favorites.length > 99 ? "99+" : favorites.length}
+                </span>
+              )}
             </Link>
             <Link
               to="/carrito"
               onClick={closeMenu}
               aria-label={`Carrito (${totalItems} productos)`}
-              className={`relative group block transition-transform duration-300 ${justAdded ? "scale-125" : ""}`}
+              className={`relative group block ${justAdded ? "animate-pop" : ""}`}
             >
-              <FaShoppingCart className="text-orange-500 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
+              <FaShoppingCart className="text-stone-300 cursor-pointer hover:text-orange-400 transition-colors duration-200" />
               {totalItems > 0 && (
-                <span className="absolute -top-2 -right-3 min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-white text-gray-900 text-xs font-bold leading-none">
+                <span className="absolute -top-2 -right-3 min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-orange-500 text-white text-xs font-bold leading-none">
                   {totalItems > 99 ? "99+" : totalItems}
                 </span>
               )}
@@ -114,7 +126,7 @@ function Header() {
             ].map((state, index) => (
               <span
                 key={index}
-                className={`absolute left-0 w-8 h-[3px] rounded-full bg-orange-500 transition-all duration-300 ${state}`}
+                className={`absolute left-0 w-8 h-[3px] rounded-full bg-stone-200 transition-all duration-300 ${state}`}
               />
             ))}
           </button>
@@ -134,7 +146,7 @@ function Header() {
         id="mobile-menu"
         aria-label="Menú principal"
         inert={!open}
-        className={`lg:hidden absolute inset-x-0 top-24 bg-gray-800 rounded-b-3xl shadow-2xl shadow-black/50 px-4 pt-2 pb-5 transition-all duration-300 ease-out
+        className={`lg:hidden absolute inset-x-0 top-24 bg-stone-900 border-b border-stone-800 rounded-b-2xl shadow-2xl shadow-black/50 px-4 pt-2 pb-5 transition-all duration-300 ease-out
           ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"}
         `}
       >
@@ -151,20 +163,20 @@ function Header() {
                 onClick={closeMenu}
                 className={({ isActive }) =>
                   `flex items-center gap-4 px-4 py-4 rounded-2xl text-lg transition-colors
-                  ${isActive ? "bg-orange-500/15 text-orange-400" : "text-gray-100 hover:text-white hover:bg-white/5"}`
+                  ${isActive ? "bg-orange-500/15 text-orange-400" : "text-stone-100 hover:text-white hover:bg-white/5"}`
                 }
               >
                 {({ isActive }) => (
                   <>
                     <span
                       className={`flex items-center justify-center w-10 h-10 rounded-xl text-lg
-                        ${isActive ? "bg-orange-500 text-white" : "bg-gray-700 text-orange-400"}
+                        ${isActive ? "bg-orange-500 text-white" : "bg-stone-800 text-stone-300"}
                       `}
                     >
                       <item.icon />
                     </span>
                     <span className={`flex-1 ${isActive ? "font-semibold" : ""}`}>{item.label}</span>
-                    <FaChevronRight className={`text-sm ${isActive ? "text-orange-400" : "text-gray-500"}`} />
+                    <FaChevronRight className={`text-sm ${isActive ? "text-orange-400" : "text-stone-500"}`} />
                   </>
                 )}
               </NavLink>
@@ -174,16 +186,16 @@ function Header() {
 
         <div
           style={{ transitionDelay: open ? "230ms" : "0ms" }}
-          className={`mt-4 pt-4 border-t border-gray-700 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+          className={`mt-4 pt-4 border-t border-stone-700 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
         >
           <div className="flex items-center gap-2 px-1 mb-1">
-            <span className={`w-2 h-2 rounded-full ${openNow ? "bg-green-400" : "bg-gray-500"}`} />
-            <span className={`text-sm font-semibold ${openNow ? "text-green-400" : "text-gray-400"}`}>
+            <span className={`w-2 h-2 rounded-full ${openNow ? "bg-green-400" : "bg-stone-500"}`} />
+            <span className={`text-sm font-semibold ${openNow ? "text-green-400" : "text-stone-400"}`}>
               {openNow ? "Abierto ahora" : "Cerrado ahora"}
             </span>
           </div>
           {BUSINESS_HOURS.map(({ days, ranges }) => (
-            <p key={days} className="px-1 text-sm text-gray-400">
+            <p key={days} className="px-1 text-sm text-stone-400">
               {days}: {ranges.map(formatRange).join(" y ")} hs
             </p>
           ))}

@@ -38,12 +38,12 @@ export default function DevImport({ currentCount, onDone }) {
   }
 
   return (
-    <div className="rounded-2xl border border-dashed border-gray-600 p-4 flex flex-col sm:flex-row sm:items-center gap-3 text-sm">
-      <p className="flex-1 text-gray-400">
-        <b className="text-gray-200">Solo en desarrollo:</b> reemplazar todo el catálogo por un archivo JSON.
+    <div className="rounded-2xl border border-dashed border-stone-600 p-4 flex flex-col sm:flex-row sm:items-center gap-3 text-sm">
+      <p className="flex-1 text-stone-400">
+        <b className="text-stone-200">Solo en desarrollo:</b> reemplazar todo el catálogo por un archivo JSON.
         {status && <span className="block mt-1 text-orange-300">{status}</span>}
       </p>
-      <label className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-gray-700 hover:bg-gray-600 text-white cursor-pointer">
+      <label className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-stone-700 hover:bg-stone-600 text-white cursor-pointer">
         <FaFileImport />
         Importar productos
         <input
