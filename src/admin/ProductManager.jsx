@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { FaEdit, FaPlus, FaTrash, FaUpload } from "react-icons/fa";
 import { formatPrice } from "../utils/formatPrice";
 import { optimizeImage } from "../utils/image";
@@ -6,6 +6,9 @@ import { isInStock } from "../utils/stock";
 import { deleteProduct, fetchAllProducts, fetchPublishState, publish, saveProduct } from "./api";
 import ConfirmDialog from "./ConfirmDialog";
 import ProductForm from "./ProductForm";
+
+// La importación masiva existe solo en npm run dev: en el build de producción este import desaparece
+const DevImport = import.meta.env.DEV ? lazy(() => import("./DevImport")) : null;
 
 const formatTime = (date) =>
   date.toLocaleString("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
@@ -143,6 +146,15 @@ export default function ProductManager() {
           justPublished={justPublished}
           onPublish={handlePublish}
         />
+      )}
+
+      {DevImport && !loading && (
+        <Suspense fallback={null}>
+          <DevImport
+            currentCount={products.length}
+            onDone={() => refresh().catch(() => setError("No se pudo recargar la lista."))}
+          />
+        </Suspense>
       )}
 
       {error && <p className="text-red-400" role="alert">{error}</p>}
