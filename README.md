@@ -1,6 +1,6 @@
 # Los Molinos Regionales — Tienda online
 
-Código fuente de **[lmregionales.vercel.app](https://lmregionales.vercel.app)**, la tienda online de un negocio de accesorios para parrilla de Dolores, Buenos Aires. Digitaliza un catálogo tradicional con una experiencia de compra moderna, pensada sobre todo para celular.
+Código fuente de **[losmolinos-2zn.pages.dev](https://losmolinos-2zn.pages.dev)**, la tienda online de un negocio de accesorios para parrilla de Dolores, Buenos Aires. Digitaliza un catálogo tradicional con una experiencia de compra moderna, pensada sobre todo para celular.
 
 Es una **SPA en React** con **Tailwind CSS**, con el catálogo en **Firestore**, publicado como un archivo estático en cada build, y cierra cada venta con un **pedido armado automáticamente por WhatsApp**: el canal donde el negocio ya atiende a sus clientes.
 

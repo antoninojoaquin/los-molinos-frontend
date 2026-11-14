@@ -3,6 +3,7 @@ import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { handle, publish, signUpload } from './server/admin.js'
+import { getSiteUrl } from './src/siteConfig.js'
 
 // En producción /api/upload-signature y /api/publish son funciones de Cloudflare (functions/api/);
 // en npm run dev las imita este plugin con la misma lógica (server/admin.js)
@@ -22,12 +23,16 @@ function adminApi(env) {
   }
 }
 
+// Completa %SITE_URL% en index.html (links absolutos de SEO y vista previa al compartir)
+function siteUrl(url) {
+  return { name: 'site-url', transformIndexHtml: (html) => html.replaceAll('%SITE_URL%', url) }
+}
+
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
-  plugins: [
-    tailwindcss(),
-    react(),
-    // Sin prefijo: trae las variables de .env.local (CLOUDINARY_*, DEPLOY_HOOK_URL), que no llegan al navegador
-    adminApi(loadEnv(mode, process.cwd(), '')),
-  ],
-}))
+export default defineConfig(({ mode }) => {
+  // Sin prefijo: trae las variables de .env.local (CLOUDINARY_*, DEPLOY_HOOK_URL, SITE_URL), que no llegan al navegador
+  const env = loadEnv(mode, process.cwd(), '')
+  return {
+    plugins: [tailwindcss(), react(), adminApi(env), siteUrl(getSiteUrl(env))],
+  }
+})
