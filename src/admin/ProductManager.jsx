@@ -40,19 +40,19 @@ function ListFilters({ query, onQuery, category, onCategory, categories, status,
       <div className="flex flex-col sm:flex-row gap-3">
         <label className="relative flex-1 flex items-center">
           <span className="sr-only">Buscar productos</span>
-          <FaSearch className="pointer-events-none absolute left-4 text-gray-500" />
+          <FaSearch className="pointer-events-none absolute left-4 text-stone-500" />
           <input
             type="search"
             value={query}
             onChange={(event) => onQuery(event.target.value)}
             placeholder="Buscar por nombre o descripción"
-            className="w-full h-11 rounded-full bg-gray-900 border border-gray-700 pl-11 pr-10 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 [&::-webkit-search-cancel-button]:hidden"
+            className="w-full h-11 rounded-full bg-stone-900 border border-stone-700 pl-11 pr-10 text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 [&::-webkit-search-cancel-button]:hidden"
           />
           {query && (
             <button
               onClick={() => onQuery("")}
               aria-label="Borrar búsqueda"
-              className="absolute right-3 p-1.5 text-gray-400 hover:text-white cursor-pointer"
+              className="absolute right-3 p-1.5 text-stone-400 hover:text-white cursor-pointer"
             >
               <FaTimes />
             </button>
@@ -63,7 +63,7 @@ function ListFilters({ query, onQuery, category, onCategory, categories, status,
           <select
             value={category}
             onChange={(event) => onCategory(event.target.value)}
-            className="w-full h-11 rounded-full bg-gray-900 border border-gray-700 px-4 text-white focus:outline-none focus:border-orange-500 cursor-pointer"
+            className="w-full h-11 rounded-full bg-stone-900 border border-stone-700 px-4 text-white focus:outline-none focus:border-orange-500 cursor-pointer"
           >
             <option value="">Todas las categorías</option>
             {categories.map((c) => (
@@ -84,10 +84,10 @@ function ListFilters({ query, onQuery, category, onCategory, categories, status,
               onClick={() => onStatus(key)}
               aria-pressed={selected}
               className={`px-3.5 py-1.5 rounded-full text-sm cursor-pointer transition-colors ${
-                selected ? "bg-orange-500 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                selected ? "bg-orange-500 text-white" : "bg-stone-800 text-stone-300 hover:bg-stone-700"
               }`}
             >
-              {label} <span className={selected ? "text-white/80" : "text-gray-500"}>{count}</span>
+              {label} <span className={selected ? "text-white/80" : "text-stone-500"}>{count}</span>
             </button>
           );
         })}
@@ -100,7 +100,7 @@ function PublishBar({ state, publishing, justPublished, onPublish }) {
   return (
     <div
       className={`rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 ${
-        state.pending ? "bg-orange-500/15 border border-orange-500/40" : "bg-gray-800"
+        state.pending ? "bg-orange-500/15 border border-orange-500/40" : "bg-stone-800"
       }`}
     >
       <div className="flex-1 text-sm">
@@ -113,7 +113,7 @@ function PublishBar({ state, publishing, justPublished, onPublish }) {
             Hay cambios sin publicar: la tienda todavía muestra la versión anterior.
           </p>
         ) : (
-          <p className="text-gray-400">
+          <p className="text-stone-400">
             La tienda está al día
             {state.publishedAt && ` · última publicación: ${formatTime(state.publishedAt)}`}
           </p>
@@ -122,7 +122,7 @@ function PublishBar({ state, publishing, justPublished, onPublish }) {
       <button
         onClick={onPublish}
         disabled={!state.pending || publishing}
-        className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-400 text-white font-semibold cursor-pointer disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed"
+        className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-400 text-white font-semibold cursor-pointer disabled:bg-stone-700 disabled:text-stone-400 disabled:cursor-not-allowed"
       >
         <FaUpload />
         {publishing ? "Publicando…" : "Publicar cambios"}
@@ -238,7 +238,7 @@ export default function ProductManager() {
         <div>
           <h1 className="text-white text-3xl">Productos</h1>
           {!loading && (
-            <p className="text-gray-400 text-sm mt-1">
+            <p className="text-stone-400 text-sm mt-1">
               {products.length} productos
               {hiddenCount > 0 && ` · ${hiddenCount} ocultos`}
               {outCount > 0 && ` · ${outCount} sin stock`}
@@ -288,11 +288,11 @@ export default function ProductManager() {
       )}
 
       {loading ? (
-        <p className="text-gray-400">Cargando productos…</p>
+        <p className="text-stone-400">Cargando productos…</p>
       ) : products.length === 0 ? (
-        <p className="text-gray-400">Todavía no hay productos. Creá el primero.</p>
+        <p className="text-stone-400">Todavía no hay productos. Creá el primero.</p>
       ) : filtered.length === 0 ? (
-        <div className="text-gray-400 flex flex-wrap items-center gap-3">
+        <div className="text-stone-400 flex flex-wrap items-center gap-3">
           Ningún producto coincide con la búsqueda.
           <button onClick={clearFilters} className="text-orange-400 hover:text-orange-300 cursor-pointer">
             Limpiar filtros
@@ -301,7 +301,7 @@ export default function ProductManager() {
       ) : (
         <>
         {filtering && (
-          <p className="text-gray-400 text-sm -mb-3 flex flex-wrap gap-3">
+          <p className="text-stone-400 text-sm -mb-3 flex flex-wrap gap-3">
             Mostrando {filtered.length} de {products.length}
             <button onClick={clearFilters} className="text-orange-400 hover:text-orange-300 cursor-pointer">
               Limpiar filtros
@@ -317,7 +317,7 @@ export default function ProductManager() {
               <li
                 key={product.id}
                 className={`flex flex-wrap sm:flex-nowrap items-center gap-x-4 gap-y-3 rounded-2xl p-3 ${
-                  visible ? "bg-gray-800" : "bg-gray-800/50 border border-dashed border-gray-700"
+                  visible ? "bg-stone-800" : "bg-stone-800/50 border border-dashed border-stone-700"
                 } ${busy ? "opacity-60" : ""}`}
               >
                 <img
@@ -326,8 +326,8 @@ export default function ProductManager() {
                   className={`w-16 h-16 rounded-lg object-cover shrink-0 ${inStock ? "" : "grayscale"} ${visible ? "" : "opacity-50"}`}
                 />
                 <div className="flex-1 min-w-0">
-                  <p className={`font-medium truncate ${visible ? "text-white" : "text-gray-400"}`}>{product.name}</p>
-                  <p className="text-gray-400 text-sm truncate">
+                  <p className={`font-medium truncate ${visible ? "text-white" : "text-stone-400"}`}>{product.name}</p>
+                  <p className="text-stone-400 text-sm truncate">
                     {product.category} · {formatPrice(product.price)}
                   </p>
                 </div>
@@ -341,7 +341,7 @@ export default function ProductManager() {
                     className={`w-24 py-1.5 rounded-full text-sm font-semibold cursor-pointer disabled:cursor-wait ${
                       visible
                         ? "bg-sky-600/20 text-sky-300 hover:bg-sky-600/30"
-                        : "bg-gray-700 text-gray-400 hover:bg-gray-600"
+                        : "bg-stone-700 text-stone-400 hover:bg-stone-600"
                     }`}
                   >
                     {visible ? "Visible" : "Oculto"}
@@ -354,7 +354,7 @@ export default function ProductManager() {
                     className={`w-28 py-1.5 rounded-full text-sm font-semibold cursor-pointer disabled:cursor-wait ${
                       inStock
                         ? "bg-green-600/20 text-green-400 hover:bg-green-600/30"
-                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                        : "bg-stone-700 text-stone-300 hover:bg-stone-600"
                     }`}
                   >
                     {inStock ? "Con stock" : "Sin stock"}
@@ -366,8 +366,8 @@ export default function ProductManager() {
                       aria-pressed={product.featured === true}
                       aria-label={product.featured ? `Quitar ${product.name} de destacados` : `Destacar ${product.name} en el inicio`}
                       title={product.featured ? "Quitar de destacados" : "Destacar en el inicio"}
-                      className={`p-2.5 rounded-full hover:bg-gray-700 cursor-pointer ${
-                        product.featured ? "text-yellow-400" : "text-gray-500 hover:text-yellow-400"
+                      className={`p-2.5 rounded-full hover:bg-stone-700 cursor-pointer ${
+                        product.featured ? "text-yellow-400" : "text-stone-500 hover:text-yellow-400"
                       }`}
                     >
                       {product.featured ? <FaStar /> : <FaRegStar />}
@@ -377,7 +377,7 @@ export default function ProductManager() {
                       disabled={!!pendingId}
                       aria-label={`Editar ${product.name}`}
                       title="Editar"
-                      className="p-2.5 rounded-full text-gray-300 hover:text-orange-400 hover:bg-gray-700 cursor-pointer"
+                      className="p-2.5 rounded-full text-stone-300 hover:text-orange-400 hover:bg-stone-700 cursor-pointer"
                     >
                       <FaEdit />
                     </button>
@@ -386,7 +386,7 @@ export default function ProductManager() {
                       disabled={!!pendingId}
                       aria-label={`Eliminar ${product.name}`}
                       title="Eliminar"
-                      className="p-2.5 rounded-full text-gray-300 hover:text-red-400 hover:bg-gray-700 cursor-pointer"
+                      className="p-2.5 rounded-full text-stone-300 hover:text-red-400 hover:bg-stone-700 cursor-pointer"
                     >
                       <FaTrash />
                     </button>

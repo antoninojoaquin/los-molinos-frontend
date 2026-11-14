@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import Lottie from "lottie-react";
 import cartAnimation from "../assets/shopping-cart.json";
 import { useCart } from "../context/cartContext";
+import { FaCartPlus, FaCheck } from "react-icons/fa";
 import { isInStock } from "../utils/stock";
 
 const LABELS = ["Agregar al carrito", "Sin stock"];
 
-export default function AddToCartButton({ product, className = "" }) {
+// compact: botón redondo chico con ícono, para las tarjetas (el botón con texto queda para el detalle)
+export default function AddToCartButton({ product, className = "", compact = false }) {
   const { addToCart } = useCart();
   const [cooldown, setCooldown] = useState(false);
   const cooldownTimeout = useRef(null);
@@ -23,6 +25,26 @@ export default function AddToCartButton({ product, className = "" }) {
     cooldownTimeout.current = setTimeout(() => setCooldown(false), 2000);
   };
 
+  if (compact) {
+    return (
+      <button
+        disabled={cooldown || outOfStock}
+        onClick={handleClick}
+        aria-label={outOfStock ? `${product.name}: sin stock` : cooldown ? "Agregado al carrito" : `Agregar ${product.name} al carrito`}
+        title={outOfStock ? "Sin stock" : "Agregar al carrito"}
+        className={`shrink-0 w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-colors ${
+          cooldown
+            ? "bg-green-600 text-white"
+            : outOfStock
+              ? "bg-stone-800 text-stone-600 cursor-not-allowed"
+              : "bg-orange-500 text-white hover:bg-orange-400 cursor-pointer"
+        } ${className}`}
+      >
+        {cooldown ? <FaCheck /> : <FaCartPlus className="text-base md:text-lg" />}
+      </button>
+    );
+  }
+
   return (
     <button
       disabled={cooldown || outOfStock}
@@ -30,9 +52,9 @@ export default function AddToCartButton({ product, className = "" }) {
       className={`relative w-full text-white font-semibold px-3 rounded-full transition-colors
         ${
           cooldown
-            ? "bg-gray-500"
+            ? "bg-stone-500"
             : outOfStock
-              ? "bg-gray-600 cursor-not-allowed"
+              ? "bg-stone-600 cursor-not-allowed"
               : "bg-orange-500 hover:bg-orange-400 cursor-pointer"
         }
         ${className}

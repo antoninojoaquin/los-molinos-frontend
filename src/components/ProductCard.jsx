@@ -11,7 +11,7 @@ export default function ProductCard({ product, to, isFavorite, onToggleFavorite 
   const image = mainImage(product);
 
   return (
-    <article className="group relative overflow-hidden bg-gray-800 rounded-3xl shadow-lg flex flex-col">
+    <article className="group relative overflow-hidden bg-stone-900 rounded-2xl flex flex-col">
       {/* Foto entera (las fotos son cuadradas, con fondo crema): no se recorta ningún producto */}
       <div className="relative aspect-square overflow-hidden bg-photo">
         <img
@@ -30,11 +30,11 @@ export default function ProductCard({ product, to, isFavorite, onToggleFavorite 
         to={to}
         state={{ fromList: true }}
         aria-label={`Ver detalle de ${product.name}`}
-        className="absolute inset-0 z-[5] rounded-3xl focus-visible:outline-2 focus-visible:outline-orange-400 focus-visible:-outline-offset-2"
+        className="absolute inset-0 z-[5] rounded-2xl focus-visible:outline-2 focus-visible:outline-orange-400 focus-visible:-outline-offset-2"
       />
 
       {outOfStock && (
-        <span className="absolute top-2.5 left-2.5 md:top-3 md:left-3 z-10 max-w-[calc(100%-3.75rem)] truncate text-white text-[11px] md:text-xs font-semibold md:uppercase md:tracking-wide px-2 md:px-2.5 py-1 rounded-full shadow bg-gray-600">
+        <span className="absolute top-2.5 left-2.5 md:top-3 md:left-3 z-10 max-w-[calc(100%-3.75rem)] truncate text-stone-200 text-[11px] md:text-xs font-medium px-2 md:px-2.5 py-1 rounded-full bg-stone-900/85">
           Sin stock
         </span>
       )}
@@ -43,28 +43,27 @@ export default function ProductCard({ product, to, isFavorite, onToggleFavorite 
         onClick={() => onToggleFavorite(product.id)}
         aria-label={isFavorite ? `Quitar ${product.name} de favoritos` : `Agregar ${product.name} a favoritos`}
         aria-pressed={isFavorite}
-        className={`absolute top-2.5 right-2.5 md:top-3 md:right-3 z-10 p-1.5 md:p-2 rounded-full bg-black/55 cursor-pointer transition-colors duration-200 hover:text-orange-300
-          ${isFavorite ? "text-orange-500" : "text-white"}
+        className={`absolute top-2.5 right-2.5 md:top-3 md:right-3 z-10 p-2 rounded-full bg-stone-900/70 cursor-pointer transition-colors duration-200 hover:text-orange-300
+          ${isFavorite ? "text-orange-500" : "text-stone-300"}
         `}
       >
-        <FaHeart className="text-base md:text-xl" />
+        <FaHeart className="text-sm md:text-base" />
       </button>
 
       <div className="pointer-events-none relative z-10 flex-1 w-full p-3 md:p-4 flex flex-col gap-1">
-        <p className="text-orange-300 uppercase tracking-wide text-[10px] md:text-xs truncate">
-          {product.category}
-        </p>
+        <p className="text-stone-500 text-[11px] md:text-xs truncate">{product.category}</p>
 
-        <h3 className="text-white font-bold text-sm md:text-lg leading-tight line-clamp-2 min-h-[2lh]">
+        <h3 className="text-stone-100 font-semibold text-sm md:text-base leading-snug line-clamp-2 min-h-[2lh]">
           {product.name}
         </h3>
 
-        <p className="text-white font-extrabold text-lg md:text-2xl mt-auto pt-1">
-          {formatPrice(product.price)}
-        </p>
-
-        <div className="pointer-events-auto mt-2">
-          <AddToCartButton product={product} className="py-2.5 text-xs md:text-sm" />
+        <div className="mt-auto pt-2 flex items-center justify-between gap-2">
+          <p className={`font-bold text-base md:text-xl ${outOfStock ? "text-stone-500" : "text-orange-400"}`}>
+            {formatPrice(product.price)}
+          </p>
+          <div className="pointer-events-auto">
+            <AddToCartButton product={product} compact />
+          </div>
         </div>
       </div>
     </article>

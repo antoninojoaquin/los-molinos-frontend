@@ -10,13 +10,13 @@ const parseAmount = (text) => {
 
 // Mismo alto y estilo para todos los controles: fondo apenas más claro que la página y borde sutil
 const controlClass =
-  "h-11 rounded-full bg-gray-900 border border-gray-800 text-white transition-colors focus-within:border-orange-500 hover:border-gray-700";
+  "h-11 rounded-full bg-stone-900 border border-stone-800 text-white transition-colors focus-within:border-orange-500 hover:border-stone-700";
 
 // Montos con "$" alineado al texto y puntos de miles (13.500). Texto y no number: sin flechitas
 function AmountInput({ label, value, onChange, className = "" }) {
   return (
     <label className={`flex items-center gap-1 min-w-0 ${className}`}>
-      <span className="text-gray-500">$</span>
+      <span className="text-stone-500">$</span>
       <input
         inputMode="numeric"
         autoComplete="off"
@@ -24,7 +24,7 @@ function AmountInput({ label, value, onChange, className = "" }) {
         placeholder={label}
         value={formatAmount(value)}
         onChange={(event) => onChange(parseAmount(event.target.value))}
-        className="w-full min-w-0 bg-transparent text-white placeholder-gray-500 focus:outline-none"
+        className="w-full min-w-0 bg-transparent text-white placeholder-stone-500 focus:outline-none"
       />
     </label>
   );
@@ -33,9 +33,9 @@ function AmountInput({ label, value, onChange, className = "" }) {
 function PriceRange({ filters, onChange }) {
   return (
     <div className={`${controlClass} flex items-center gap-3 px-4 text-sm`}>
-      <span className="text-gray-400 shrink-0">Precio</span>
+      <span className="text-stone-400 shrink-0">Precio</span>
       <AmountInput label="Mín." value={filters.min} onChange={(min) => onChange({ min })} className="w-20" />
-      <span className="text-gray-600">–</span>
+      <span className="text-stone-600">–</span>
       <AmountInput label="Máx." value={filters.max} onChange={(max) => onChange({ max })} className="w-20" />
     </div>
   );
@@ -51,12 +51,12 @@ function SortSelect({ value, onChange }) {
         className="h-full appearance-none bg-transparent pl-4 pr-10 cursor-pointer focus:outline-none"
       >
         {Object.entries(SORTS).map(([key, label]) => (
-          <option key={key} value={key} className="bg-gray-900">
+          <option key={key} value={key} className="bg-stone-900">
             {label}
           </option>
         ))}
       </select>
-      <FaChevronDown className="pointer-events-none absolute right-4 text-xs text-gray-400" />
+      <FaChevronDown className="pointer-events-none absolute right-4 text-xs text-stone-400" />
     </label>
   );
 }
@@ -81,23 +81,23 @@ function FiltersSheet({ filters, onChange, onClear, shown, onClose }) {
         aria-modal="true"
         aria-labelledby="filters-title"
         onClick={(event) => event.stopPropagation()}
-        className="w-full rounded-t-3xl bg-gray-900 p-5 flex flex-col gap-6 animate-slideUp"
+        className="w-full rounded-t-3xl bg-stone-900 p-5 flex flex-col gap-6 animate-slideUp"
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.25rem)" }}
       >
         <div className="flex items-center justify-between">
           <h2 id="filters-title" className="text-white text-xl">Filtros</h2>
-          <button onClick={onClose} aria-label="Cerrar filtros" className="p-2 -mr-2 text-gray-400 hover:text-white cursor-pointer">
+          <button onClick={onClose} aria-label="Cerrar filtros" className="p-2 -mr-2 text-stone-400 hover:text-white cursor-pointer">
             <FaTimes />
           </button>
         </div>
 
         <div className="flex flex-col gap-2">
-          <p className="text-sm text-gray-400">Precio</p>
+          <p className="text-sm text-stone-400">Precio</p>
           <div className="flex items-center gap-3">
             <div className={`${controlClass} flex-1 flex items-center px-4`}>
               <AmountInput label="Mínimo" value={filters.min} onChange={(min) => onChange({ min })} className="w-full" />
             </div>
-            <span className="text-gray-600">–</span>
+            <span className="text-stone-600">–</span>
             <div className={`${controlClass} flex-1 flex items-center px-4`}>
               <AmountInput label="Máximo" value={filters.max} onChange={(max) => onChange({ max })} className="w-full" />
             </div>
@@ -105,12 +105,12 @@ function FiltersSheet({ filters, onChange, onClear, shown, onClose }) {
         </div>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="text-sm text-gray-400 mb-2">Ordenar por</legend>
+          <legend className="text-sm text-stone-400 mb-2">Ordenar por</legend>
           {Object.entries(SORTS).map(([key, label]) => (
             <label
               key={key}
               className={`flex items-center justify-between rounded-xl px-4 py-3 cursor-pointer transition-colors ${
-                filters.sort === key ? "bg-orange-500/15 text-orange-300" : "bg-gray-800/60 text-gray-200"
+                filters.sort === key ? "bg-orange-500/15 text-orange-300" : "bg-stone-800/60 text-stone-200"
               }`}
             >
               {label}
@@ -127,7 +127,7 @@ function FiltersSheet({ filters, onChange, onClear, shown, onClose }) {
         </fieldset>
 
         <div className="flex items-center gap-3">
-          <button onClick={onClear} className="px-4 py-3 text-gray-300 hover:text-white cursor-pointer">
+          <button onClick={onClear} className="px-4 py-3 text-stone-300 hover:text-white cursor-pointer">
             Limpiar
           </button>
           <button
@@ -154,19 +154,19 @@ export default function CatalogFilters({ filters, onChange, onClear, categories,
       <div className="flex gap-3">
         <label className={`${controlClass} relative flex-1 flex items-center`}>
           <span className="sr-only">Buscar productos</span>
-          <FaSearch className="pointer-events-none absolute left-4 text-gray-500" />
+          <FaSearch className="pointer-events-none absolute left-4 text-stone-500" />
           <input
             type="search"
             placeholder="Buscar productos"
             value={filters.q}
             onChange={(event) => onChange({ q: event.target.value })}
-            className="h-full w-full bg-transparent pl-11 pr-10 placeholder-gray-500 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
+            className="h-full w-full bg-transparent pl-11 pr-10 placeholder-stone-500 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
           />
           {filters.q && (
             <button
               onClick={() => onChange({ q: "" })}
               aria-label="Borrar búsqueda"
-              className="absolute right-3 p-1.5 text-gray-400 hover:text-white cursor-pointer"
+              className="absolute right-3 p-1.5 text-stone-400 hover:text-white cursor-pointer"
             >
               <FaTimes />
             </button>
@@ -184,7 +184,7 @@ export default function CatalogFilters({ filters, onChange, onClear, categories,
           onClick={() => setSheetOpen(true)}
           className={`${controlClass} md:hidden relative flex items-center gap-2 px-4 text-sm cursor-pointer`}
         >
-          <FaSlidersH className="text-gray-400" />
+          <FaSlidersH className="text-stone-400" />
           Filtros
           {sheetCount > 0 && (
             <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-orange-500 text-white text-[11px] font-bold flex items-center justify-center">
@@ -196,7 +196,7 @@ export default function CatalogFilters({ filters, onChange, onClear, categories,
 
       {/* Categorías como pestañas, con el mismo subrayado naranja que el menú. En celular se deslizan
           de costado, sin barra de scroll, y un degradé en el borde avisa que hay más */}
-      <div className="relative border-b border-gray-800">
+      <div className="relative border-b border-stone-800">
         <div
           role="group"
           aria-label="Categorías"
@@ -210,20 +210,20 @@ export default function CatalogFilters({ filters, onChange, onClear, categories,
                 onClick={() => onChange({ cat: name })}
                 aria-pressed={selected}
                 className={`relative shrink-0 pb-3 pt-1 text-sm md:text-base whitespace-nowrap transition-colors cursor-pointer ${
-                  selected ? "text-orange-500 font-semibold" : "text-gray-400 hover:text-white"
+                  selected ? "text-orange-500 font-semibold" : "text-stone-400 hover:text-white"
                 }`}
               >
                 {label ?? name}
-                <span className={`ml-1.5 text-xs ${selected ? "text-orange-300" : "text-gray-600"}`}>{count}</span>
+                <span className={`ml-1.5 text-xs ${selected ? "text-orange-300" : "text-stone-600"}`}>{count}</span>
                 {selected && <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-orange-500" />}
               </button>
             );
           })}
         </div>
-        <div className="pointer-events-none absolute right-0 top-0 bottom-px w-10 bg-gradient-to-l from-gray-950 md:hidden" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-px w-10 bg-gradient-to-l from-stone-950 md:hidden" />
       </div>
 
-      <div className="flex items-center justify-between text-sm text-gray-500 -mt-1">
+      <div className="flex items-center justify-between text-sm text-stone-500 -mt-1">
         <p aria-live="polite">{active ? `${shown} de ${total} productos` : `${total} productos`}</p>
         {active && (
           <button onClick={onClear} className="text-orange-400 hover:text-orange-300 cursor-pointer">

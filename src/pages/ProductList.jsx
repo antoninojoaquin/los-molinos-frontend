@@ -76,7 +76,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
 
   if (loading) {
     return (
-      <div className="flex bg-gray-950 justify-center items-center h-128 w-full">
+      <div className="flex bg-stone-950 justify-center items-center h-128 w-full">
         <Lottie animationData={loadingAnimation} loop className="w-64 h-64" />
       </div>
     );
@@ -84,7 +84,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
 
   if (error) {
     return (
-      <section className="w-full flex items-center justify-center bg-gray-950 px-6 py-20 min-h-[50vh]">
+      <section className="w-full flex items-center justify-center bg-stone-950 px-6 py-20 min-h-[50vh]">
         <p className="text-white/50 text-xl font-semibold text-center">
           No pudimos cargar los productos. Intentá de nuevo más tarde.
         </p>
@@ -97,7 +97,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
   }
 
   return (
-    <section className="w-full bg-gray-950 px-3 sm:px-6 md:px-16 py-12 min-h-[50vh]">
+    <section className="w-full bg-stone-950 px-3 sm:px-6 md:px-16 py-12 min-h-[50vh]">
       {showOnlyFavorites && baseProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center w-full py-12 text-white/50 min-h-[60vh]">
           <FaHeartBroken className="text-6xl text-orange-500 mb-4" />

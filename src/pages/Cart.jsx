@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { FaTrash, FaMinus, FaPlus } from "react-icons/fa";
 import { BiCartDownload } from "react-icons/bi";
 import { useCart } from "../context/cartContext";
@@ -43,25 +44,30 @@ export default function Cart() {
 
   if (cart.length === 0) {
     return (
-      <section className="w-full flex flex-col bg-gray-950 px-6 md:px-16 py-12 items-center justify-center min-h-[60vh]">
+      <section className="w-full flex flex-col bg-stone-950 px-6 md:px-16 py-12 items-center justify-center min-h-[60vh]">
         {stockNotice}
-        <BiCartDownload className="text-8xl text-orange-500 mb-4" />
-        <p className="text-white/50 font-semibold text-xl">
-          Tu carrito está vacío
-        </p>
+        <BiCartDownload className="text-6xl text-stone-600 mb-4" />
+        <p className="text-stone-200 font-semibold text-xl">Tu carrito está vacío</p>
+        <p className="text-stone-500 mt-1">Agregá productos desde el catálogo y mandanos el pedido por WhatsApp.</p>
+        <Link
+          to="/productos"
+          className="mt-6 px-6 py-3 rounded-full bg-orange-500 hover:bg-orange-400 text-white hover:text-white font-semibold transition-colors"
+        >
+          Ver productos
+        </Link>
       </section>
     );
   }
 
   return (
-    <section className="w-full bg-gray-950 px-2 md:px-24 py-12">
+    <section className="w-full bg-stone-950 px-2 md:px-24 py-12">
       {stockNotice}
       <div className="flex flex-col md:flex-col lg:flex-row gap-8 items-center lg:items-start">
         <div className="flex flex-col gap-6 flex-1 w-full">
           {cart.map(item => (
             <div
               key={item.id}
-              className="flex flex-wrap md:flex-nowrap items-center gap-x-4 gap-y-3 bg-gray-800 p-4 rounded-lg shadow"
+              className="flex flex-wrap md:flex-nowrap items-center gap-x-4 gap-y-3 bg-stone-800 p-4 rounded-lg shadow"
             >
               <img
                 src={optimizeImage(item.imageUrl, 300)}
@@ -70,22 +76,22 @@ export default function Cart() {
               />
 
               <div className="flex-1 min-w-0">
-                <p className="text-gray-200 text-sm md:text-base font-medium leading-snug">
+                <p className="text-stone-200 text-sm md:text-base font-medium leading-snug">
                   {item.name}
                 </p>
-                <p className="text-gray-400 text-sm">
+                <p className="text-stone-400 text-sm">
                   {formatPrice(item.price)}
                 </p>
               </div>
 
               {/* En celular, cantidad, subtotal y borrar van en una fila aparte debajo */}
-              <div className="w-full md:w-auto flex items-center justify-between md:justify-end gap-4 border-t border-gray-700 pt-3 md:border-0 md:pt-0">
-                <div className="flex items-center gap-3 border-gray-950 border-2 rounded-full">
+              <div className="w-full md:w-auto flex items-center justify-between md:justify-end gap-4 border-t border-stone-700 pt-3 md:border-0 md:pt-0">
+                <div className="flex items-center gap-3 border-stone-950 border-2 rounded-full">
                   <button
                     onClick={() => decreaseQty(item.id)}
                     disabled={item.quantity <= 1}
                     aria-label={`Quitar una unidad de ${item.name}`}
-                    className="p-2 bg-gray-700 text-white rounded-full hover:bg-gray-600 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-700"
+                    className="p-2 bg-stone-700 text-white rounded-full hover:bg-stone-600 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-stone-700"
                   >
                     <FaMinus />
                   </button>
@@ -97,7 +103,7 @@ export default function Cart() {
                   <button
                     onClick={() => increaseQty(item.id)}
                     aria-label={`Agregar una unidad de ${item.name}`}
-                    className="p-2 bg-gray-700 text-white rounded-full hover:bg-gray-600 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-700"
+                    className="p-2 bg-stone-700 text-white rounded-full hover:bg-stone-600 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-stone-700"
                   >
                     <FaPlus />
                   </button>
@@ -121,8 +127,8 @@ export default function Cart() {
         </div>
 
         <div className="w-full lg:w-auto flex justify-center lg:justify-end">
-          <div className="bg-gray-800 p-6 rounded-lg w-full md:w-96">
-            <p className="text-gray-400 mb-2">Total</p>
+          <div className="bg-stone-800 p-6 rounded-lg w-full md:w-96">
+            <p className="text-stone-400 mb-2">Total</p>
             <p className="text-2xl font-bold text-white mb-4">
               {formatPrice(totalPrice)}
             </p>
@@ -133,7 +139,7 @@ export default function Cart() {
               Continuar pedido por WhatsApp
             </button>
 
-            <ul className="mt-4 space-y-1 text-sm text-gray-400">
+            <ul className="mt-4 space-y-1 text-sm text-stone-400">
               <li>• Pago por transferencia, o en efectivo si retirás en el local.</li>
               <li>• Por ahora, entregas solo en Dolores.</li>
             </ul>

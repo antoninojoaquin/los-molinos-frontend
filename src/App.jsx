@@ -19,10 +19,10 @@ const AdminPage = lazy(() => import("./admin/AdminPage.jsx"));
 
 function StoreLayout() {
   return (
-    <div className="pt-24 min-h-screen flex flex-col justify-between overflow-x-hidden bg-gray-950">
+    <div className="pt-24 min-h-screen flex flex-col justify-between overflow-x-hidden bg-stone-950">
       <Header />
       <main className="flex">
-        <Suspense fallback={<div className="w-full min-h-[60vh] bg-gray-950" />}>
+        <Suspense fallback={<div className="w-full min-h-[60vh] bg-stone-950" />}>
           <Outlet />
         </Suspense>
       </main>
@@ -43,7 +43,7 @@ function App() {
           <Route
             path="/admin"
             element={
-              <Suspense fallback={<div className="min-h-screen bg-gray-950" />}>
+              <Suspense fallback={<div className="min-h-screen bg-stone-950" />}>
                 <AdminPage />
               </Suspense>
             }

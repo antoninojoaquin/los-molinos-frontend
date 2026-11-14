@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaArrowRight, FaShoppingCart, FaStore, FaWhatsapp } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 import ProductCard from "./ProductCard";
 import useFavorites from "../hooks/useFavorites";
 import { fetchProducts } from "../services/products";
@@ -32,7 +32,7 @@ function SectionTitle({ children, link }) {
     <div className="flex items-end justify-between gap-4 mb-5 md:mb-8">
       <h2 className="text-white text-2xl md:text-4xl">{children}</h2>
       {link && (
-        <Link to="/productos" className="flex items-center gap-2 shrink-0 text-orange-400 hover:text-orange-300 text-sm md:text-base">
+        <Link to="/productos" className="flex items-center gap-2 shrink-0 font-normal text-stone-400 hover:text-white text-sm md:text-base">
           Ver todos
           <FaArrowRight className="text-xs" />
         </Link>
@@ -41,17 +41,7 @@ function SectionTitle({ children, link }) {
   );
 }
 
-const STEPS = [
-  { icon: FaShoppingCart, title: "Elegí tus productos", text: "Agregalos al carrito desde el catálogo." },
-  {
-    icon: FaWhatsapp,
-    title: "Mandá el pedido por WhatsApp",
-    text: "Te llega armado con el detalle y el total. Pagás por transferencia, o en efectivo si retirás.",
-  },
-  { icon: FaStore, title: "Retiralo o te lo llevamos", text: "Retiro en el local, o entrega a domicilio en Dolores." },
-];
-
-// Secciones del inicio debajo de la portada: categorías, destacados y cómo comprar.
+// Secciones del inicio debajo de la portada: categorías y destacados.
 // Se descargan aparte (lazy) para que la portada siga apareciendo al instante.
 export default function HomeSections() {
   const [products, setProducts] = useState(null);
@@ -70,7 +60,7 @@ export default function HomeSections() {
   const featured = products ? pickFeatured(products) : [];
 
   return (
-    <div className="w-full bg-gray-950 px-3 sm:px-6 md:px-16 py-12 md:py-20 flex flex-col gap-16 md:gap-24">
+    <div className="w-full bg-stone-950 px-3 sm:px-6 md:px-16 py-12 md:py-20 flex flex-col gap-16 md:gap-24">
       {categories.length > 0 && (
         <section>
           <SectionTitle>Categorías</SectionTitle>
@@ -81,7 +71,7 @@ export default function HomeSections() {
                 <Link
                   key={name}
                   to={{ pathname: "/productos", search: `?cat=${encodeURIComponent(name)}` }}
-                  className="group rounded-2xl md:rounded-3xl overflow-hidden bg-gray-800 flex flex-col focus-visible:outline-2 focus-visible:outline-orange-400"
+                  className="group rounded-2xl overflow-hidden bg-stone-900 flex flex-col focus-visible:outline-2 focus-visible:outline-orange-400"
                 >
                   <div className="aspect-square bg-photo overflow-hidden">
                     {image && (
@@ -95,8 +85,8 @@ export default function HomeSections() {
                     )}
                   </div>
                   <div className="p-2.5 md:p-4 flex-1">
-                    <p className="text-white font-bold text-xs sm:text-sm md:text-base leading-tight group-hover:text-orange-400 transition-colors">{name}</p>
-                    <p className="text-gray-400 text-[11px] sm:text-sm mt-0.5">
+                    <p className="text-stone-100 font-semibold text-xs sm:text-sm md:text-base leading-tight group-hover:text-orange-400 transition-colors">{name}</p>
+                    <p className="text-stone-500 text-[11px] sm:text-sm mt-0.5">
                       {count} {count === 1 ? "producto" : "productos"}
                     </p>
                   </div>
@@ -124,27 +114,6 @@ export default function HomeSections() {
         </section>
       )}
 
-      <section>
-        <SectionTitle>Cómo comprar</SectionTitle>
-        <ol className="grid md:grid-cols-3 gap-3 md:gap-5">
-          {STEPS.map((step, index) => {
-            const { title, text } = step;
-            const Icon = step.icon;
-            return (
-            <li key={title} className="bg-gray-800 rounded-3xl p-5 md:p-6 flex gap-4">
-              <span className="shrink-0 w-12 h-12 rounded-full bg-orange-500/15 text-orange-500 flex items-center justify-center text-xl">
-                <Icon />
-              </span>
-              <div>
-                <p className="text-orange-400 text-sm font-semibold">Paso {index + 1}</p>
-                <p className="text-white font-bold text-lg leading-tight">{title}</p>
-                <p className="text-gray-400 mt-1">{text}</p>
-              </div>
-            </li>
-            );
-          })}
-        </ol>
-      </section>
     </div>
   );
 }

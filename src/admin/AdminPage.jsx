@@ -36,22 +36,22 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center gap-8 px-4">
+    <div className="min-h-screen bg-stone-950 flex flex-col items-center justify-center gap-8 px-4">
       <img src={Logo} alt="Los Molinos Regionales" className="h-32 w-auto" />
-      <div className="w-full max-w-sm bg-gray-800 rounded-2xl p-6 flex flex-col gap-4 text-center">
+      <div className="w-full max-w-sm bg-stone-800 rounded-2xl p-6 flex flex-col gap-4 text-center">
         <h1 className="text-white text-2xl">Panel de administración</h1>
-        <p className="text-gray-400">Ingresá para gestionar el catálogo.</p>
+        <p className="text-stone-400">Ingresá para gestionar el catálogo.</p>
         <button
           onClick={handleSignIn}
           disabled={busy}
-          className="flex items-center justify-center gap-3 py-3 rounded-full bg-orange-500 hover:bg-orange-400 disabled:bg-gray-600 text-white font-semibold cursor-pointer disabled:cursor-wait"
+          className="flex items-center justify-center gap-3 py-3 rounded-full bg-orange-500 hover:bg-orange-400 disabled:bg-stone-600 text-white font-semibold cursor-pointer disabled:cursor-wait"
         >
           <FaGoogle />
           {busy ? "Ingresando…" : "Ingresar con Google"}
         </button>
         {error && <p className="text-red-400 text-sm" role="alert">{error}</p>}
       </div>
-      <a href="/" className="text-gray-400 hover:text-orange-400">← Volver a la tienda</a>
+      <a href="/" className="text-stone-400 hover:text-orange-400">← Volver a la tienda</a>
     </div>
   );
 }
@@ -64,8 +64,8 @@ export default function AdminPage() {
   if (status === "signedOut") return <Login />;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-200">
-      <header className="bg-gray-800">
+    <div className="min-h-screen bg-stone-950 text-stone-200">
+      <header className="bg-stone-800">
         <div className="max-w-6xl mx-auto px-4 h-20 flex items-center gap-4">
           <a href="/" className="shrink-0">
             <img src={Logo} alt="Los Molinos Regionales" className="h-20 w-auto" />
@@ -74,21 +74,21 @@ export default function AdminPage() {
             Panel
           </span>
           <div className="ml-auto flex items-center gap-4">
-            {user && <span className="hidden sm:block text-sm text-gray-400 truncate">{user.email}</span>}
+            {user && <span className="hidden sm:block text-sm text-stone-400 truncate">{user.email}</span>}
             <a
               href="/productos"
               target="_blank"
               rel="noopener"
               aria-label="Ver la tienda"
               title="Ver la tienda"
-              className="text-gray-300 hover:text-orange-400"
+              className="text-stone-300 hover:text-orange-400"
             >
               <FaExternalLinkAlt />
             </a>
             {user && (
               <button
                 onClick={logOut}
-                className="flex items-center gap-2 text-sm text-gray-300 hover:text-orange-400 cursor-pointer"
+                className="flex items-center gap-2 text-sm text-stone-300 hover:text-orange-400 cursor-pointer"
               >
                 <FaSignOutAlt />
                 Salir
@@ -99,15 +99,15 @@ export default function AdminPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-8">
-        {status === "loading" && <p className="text-gray-400">Cargando…</p>}
+        {status === "loading" && <p className="text-stone-400">Cargando…</p>}
         {status === "forbidden" && (
-          <div className="bg-gray-800 rounded-2xl p-6 flex flex-col gap-3">
+          <div className="bg-stone-800 rounded-2xl p-6 flex flex-col gap-3">
             <p>La cuenta {user.email} no tiene permisos de administrador.</p>
-            <p className="text-gray-400 text-sm">
+            <p className="text-stone-400 text-sm">
               Para darle permisos, creá en Firestore el documento <code>admins/{user.uid}</code>{" "}
               (puede estar vacío) y recargá la página.
             </p>
-            <code className="self-start bg-gray-950 px-3 py-2 rounded text-orange-300 select-all break-all">
+            <code className="self-start bg-stone-950 px-3 py-2 rounded text-orange-300 select-all break-all">
               {user.uid}
             </code>
           </div>

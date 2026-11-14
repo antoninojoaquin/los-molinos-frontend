@@ -79,5 +79,5 @@ h1, h2 {
 /* Reserva el lugar del scrollbar: al bloquear el scroll (detalle de producto) la grilla no se re-acomoda */
 :root {
   scrollbar-gutter: stable;
-  background-color: #030712;
+  background-color: #0c0a09;
 }
