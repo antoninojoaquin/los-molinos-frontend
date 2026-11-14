@@ -112,19 +112,20 @@ export default function ProductList({ showOnlyFavorites = false }) {
             return (
             <article
               key={product.id}
-              className="group relative overflow-hidden bg-gray-800 rounded-3xl shadow-lg flex flex-col h-80 sm:h-96 xl:h-[28rem]"
+              className="group relative overflow-hidden bg-gray-800 rounded-3xl shadow-lg flex flex-col"
             >
-              <img
-                className={`absolute inset-0 object-cover h-full w-full transition-transform duration-500 group-hover:scale-105 ${outOfStock ? "grayscale" : ""}`}
-                src={optimizeImage(image, 800)}
-                srcSet={`${optimizeImage(image, 400)} 400w, ${optimizeImage(image, 800)} 800w`}
-                sizes="(min-width: 1024px) 25vw, 50vw"
-                alt={product.name}
-                loading="lazy"
-                decoding="async"
-              />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-45% to-transparent" />
+              {/* Foto entera (las fotos son cuadradas, con fondo crema): no se recorta ningún producto */}
+              <div className="relative aspect-square overflow-hidden bg-photo">
+                <img
+                  className={`h-full w-full object-contain transition-transform duration-500 group-hover:scale-105 ${outOfStock ? "grayscale opacity-70" : ""}`}
+                  src={optimizeImage(image, 800)}
+                  srcSet={`${optimizeImage(image, 400)} 400w, ${optimizeImage(image, 800)} 800w`}
+                  sizes="(min-width: 1024px) 25vw, 50vw"
+                  alt={product.name}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
 
               {/* Toda la card abre el detalle; favoritos y carrito quedan por encima */}
               <Link
@@ -155,7 +156,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
                 <FaHeart className="text-base md:text-xl" />
               </button>
 
-              <div className="pointer-events-none relative z-10 mt-auto w-full p-3 md:p-4 flex flex-col gap-1">
+              <div className="pointer-events-none relative z-10 flex-1 w-full p-3 md:p-4 flex flex-col gap-1">
                 <p className="text-orange-300 uppercase tracking-wide text-[10px] md:text-xs truncate">
                   {product.category}
                 </p>
@@ -164,7 +165,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
                   {product.name}
                 </h3>
 
-                <p className="text-white font-extrabold text-lg md:text-2xl mt-1">
+                <p className="text-white font-extrabold text-lg md:text-2xl mt-auto pt-1">
                   {formatPrice(product.price)}
                 </p>
 
