@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Lottie from "lottie-react";
-import { FaHeart, FaHeartBroken } from "react-icons/fa";
+import { FaHeart, FaHeartBroken, FaSearch } from "react-icons/fa";
 import loadingAnimation from "../assets/loading.json";
 import AddToCartButton from "../components/AddToCartButton";
+import CatalogFilters from "../components/CatalogFilters";
 import ProductDetail from "../components/ProductDetail";
 import { useCart } from "../context/cartContext";
 import { fetchProducts } from "../services/products";
 import { formatPrice } from "../utils/formatPrice";
 import { readStorage, writeStorage } from "../utils/storage";
 import { isInStock } from "../utils/stock";
+import { applyFilters, getCategories, hasActiveFilters, readFilters } from "../utils/catalogFilters";
 import { mainImage, optimizeImage } from "../utils/image";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 
@@ -25,6 +27,10 @@ export default function ProductList({ showOnlyFavorites = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const basePath = showOnlyFavorites ? "/favoritos" : "/productos";
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filters = readFilters(searchParams);
+  // Al abrir y cerrar un producto se conservan los filtros (?q=&cat=...)
+  const listLocation = { pathname: basePath, search: location.search };
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -48,8 +54,20 @@ export default function ProductList({ showOnlyFavorites = false }) {
   const openedFromList = location.state?.fromList;
   const closeDetail = useCallback(() => {
     if (openedFromList) navigate(-1);
-    else navigate(basePath, { replace: true });
-  }, [openedFromList, navigate, basePath]);
+    else navigate({ pathname: basePath, search: location.search }, { replace: true });
+  }, [openedFromList, navigate, basePath, location.search]);
+
+  // Cambia uno o más filtros en la URL; los vacíos se sacan para que quede limpia.
+  // replace: escribir en la búsqueda no llena el historial del botón "atrás"
+  const updateFilters = (changes) => {
+    const next = new URLSearchParams(searchParams);
+    for (const [key, value] of Object.entries(changes)) {
+      if (value == null || value === "" || (key === "sort" && value === "relevance")) next.delete(key);
+      else next.set(key, String(value));
+    }
+    setSearchParams(next, { replace: true });
+  };
+  const clearFilters = () => setSearchParams({}, { replace: true });
 
   const toggleFavorite = (productId) => {
     const updatedFavorites = favorites.includes(productId)
@@ -60,10 +78,9 @@ export default function ProductList({ showOnlyFavorites = false }) {
     writeStorage(FAVORITES_KEY, updatedFavorites);
   };
 
-  // Los productos sin stock van al final (sort es estable: el resto mantiene su orden)
-  const displayedProducts = products
-    .filter((product) => !showOnlyFavorites || favorites.includes(product.id))
-    .sort((a, b) => isInStock(b) - isInStock(a));
+  const baseProducts = products.filter((product) => !showOnlyFavorites || favorites.includes(product.id));
+  const displayedProducts = applyFilters(baseProducts, filters);
+  const filtersActive = hasActiveFilters(filters);
 
   const selectedProduct = productId && products.find((product) => product.id === productId);
 
@@ -90,12 +107,12 @@ export default function ProductList({ showOnlyFavorites = false }) {
   }
 
   if (productId && !selectedProduct) {
-    return <Navigate to={basePath} replace />;
+    return <Navigate to={listLocation} replace />;
   }
 
   return (
     <section className="w-full bg-gray-950 px-3 sm:px-6 md:px-16 py-12 min-h-[50vh]">
-      {showOnlyFavorites && displayedProducts.length === 0 ? (
+      {showOnlyFavorites && baseProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center w-full py-12 text-white/50 min-h-[60vh]">
           <FaHeartBroken className="text-6xl text-orange-500 mb-4" />
           <p className="text-xl font-semibold text-center">
@@ -103,6 +120,25 @@ export default function ProductList({ showOnlyFavorites = false }) {
           </p>
         </div>
       ) : (
+        <>
+        <CatalogFilters
+          filters={filters}
+          onChange={updateFilters}
+          onClear={clearFilters}
+          categories={getCategories(baseProducts)}
+          total={baseProducts.length}
+          shown={displayedProducts.length}
+          active={filtersActive}
+        />
+        {displayedProducts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center w-full py-16 text-white/50 text-center">
+            <FaSearch className="text-5xl text-orange-500 mb-4" />
+            <p className="text-xl font-semibold">No encontramos productos con esos filtros</p>
+            <button onClick={clearFilters} className="mt-4 text-orange-400 hover:text-orange-300 cursor-pointer">
+              Limpiar filtros
+            </button>
+          </div>
+        ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-5">
           {displayedProducts.map((product) => {
             const outOfStock = !isInStock(product);
@@ -129,7 +165,7 @@ export default function ProductList({ showOnlyFavorites = false }) {
 
               {/* Toda la card abre el detalle; favoritos y carrito quedan por encima */}
               <Link
-                to={`${basePath}/${product.id}`}
+                to={{ pathname: `${basePath}/${product.id}`, search: location.search }}
                 state={{ fromList: true }}
                 aria-label={`Ver detalle de ${product.name}`}
                 className="absolute inset-0 z-[5] rounded-3xl focus-visible:outline-2 focus-visible:outline-orange-400 focus-visible:-outline-offset-2"
@@ -177,6 +213,8 @@ export default function ProductList({ showOnlyFavorites = false }) {
             );
           })}
         </div>
+        )}
+        </>
       )}
 
       {selectedProduct && (
