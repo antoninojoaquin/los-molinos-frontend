@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaArrowRight, FaSearch } from "react-icons/fa";
 import HeroImage from "../assets/heroexample-2.webp";
 import useDocumentTitle from "../hooks/useDocumentTitle";
@@ -35,7 +35,7 @@ function Headline() {
   );
 }
 
-// Opción A: el botón pasa a ser un buscador, con las categorías como links de texto debajo
+// Portada: el buscador es la acción principal, y debajo las categorías como pills
 function SearchHero({ categories }) {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
@@ -71,18 +71,22 @@ function SearchHero({ categories }) {
       </form>
 
       {/* Reserva el alto mientras carga el catálogo, para que no salte el contenido */}
-      <nav aria-label="Categorías" className="mt-5 mx-auto max-w-2xl min-h-[3.5rem] flex flex-wrap justify-center gap-x-1 gap-y-1 text-sm md:text-base">
+      {/* Pills con fondo propio (oscuro, semitransparente): se leen sobre cualquier parte del fuego */}
+      <nav aria-label="Categorías" className="mt-6 mx-auto max-w-2xl min-h-[5.5rem] flex flex-wrap justify-center gap-2">
         {categories.map(({ name }) => (
           <Link
             key={name}
             to={categoryLink(name)}
-            className="px-2 py-1 font-normal text-stone-300 hover:text-white drop-shadow underline-offset-4 hover:underline"
+            className="px-4 py-2 rounded-full bg-stone-950/70 backdrop-blur-sm border border-white/15 text-sm md:text-[15px] font-medium text-stone-100 hover:text-white hover:bg-stone-900/90 hover:border-white/30 transition-colors"
           >
             {name}
           </Link>
         ))}
         {categories.length > 0 && (
-          <Link to="/productos" className="px-2 py-1 text-orange-400 hover:text-orange-300 drop-shadow">
+          <Link
+            to="/productos"
+            className="px-4 py-2 rounded-full bg-stone-950/70 backdrop-blur-sm border border-orange-500/60 text-sm md:text-[15px] font-medium text-orange-300 hover:text-orange-200 hover:border-orange-400 transition-colors"
+          >
             Ver todo
           </Link>
         )}
@@ -91,51 +95,9 @@ function SearchHero({ categories }) {
   );
 }
 
-// Opción B: el botón de siempre, y una franja de categorías al pie de la portada, como un menú
-function StripHero({ categories }) {
-  return (
-    <>
-      <div className="relative z-10 text-center px-4 md:px-8 pb-24 md:pb-28">
-        <Headline />
-        <Link
-          to="/productos"
-          className="inline-flex items-center gap-3 mt-8 px-7 py-3.5 text-lg font-semibold rounded-full bg-orange-500 text-white hover:text-white hover:bg-orange-400 transition-colors"
-        >
-          Ver productos
-          <FaArrowRight className="text-sm" />
-        </Link>
-      </div>
-
-      <nav
-        aria-label="Categorías"
-        className="absolute inset-x-0 bottom-0 z-10 border-t border-white/10 bg-stone-950/70 backdrop-blur"
-      >
-        {/* En celular se desliza de costado, sin barra de scroll */}
-        <ul className="flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-6">
-          {categories.map(({ name, count }) => (
-            <li key={name} className="shrink-0 border-r border-white/10 last:border-r-0">
-              <Link to={categoryLink(name)} className="group block px-5 md:px-6 py-4 md:py-5 font-normal">
-                <span className="block text-white font-semibold whitespace-nowrap md:whitespace-normal leading-tight group-hover:text-orange-400 transition-colors">
-                  {name}
-                </span>
-                <span className="block text-stone-400 text-sm mt-0.5">
-                  {count} {count === 1 ? "producto" : "productos"}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </>
-  );
-}
-
 function Hero() {
   useDocumentTitle();
   const categories = useCategories();
-  // Temporal, para comparar las dos opciones: /?hero=a (buscador) o /?hero=b (franja)
-  const [searchParams] = useSearchParams();
-  const variant = searchParams.get("hero") === "b" ? "b" : "a";
 
   return (
     <div className="w-full flex flex-col">
@@ -146,7 +108,7 @@ function Hero() {
           loading="eager"
           className="absolute inset-0 w-full h-full object-cover brightness-45 blur-[3px]"
         />
-        {variant === "a" ? <SearchHero categories={categories} /> : <StripHero categories={categories} />}
+        <SearchHero categories={categories} />
       </section>
 
       <Suspense fallback={<div className="min-h-[40vh] bg-stone-950" />}>
