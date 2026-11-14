@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node --env-file-if-exists=.env.local scripts/build-catalog.mjs dist",
+    "build": "vite build && node --env-file-if-exists=.env.local scripts/build-catalog.mjs dist && node --env-file-if-exists=.env.local scripts/prerender.mjs dist",
     "catalog": "node --env-file-if-exists=.env.local scripts/build-catalog.mjs public",
     "lint": "eslint .",
     "preview": "vite preview"
