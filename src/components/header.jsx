@@ -44,7 +44,7 @@ function Header() {
   const openNow = open && isOpenNow();
 
   return (
-    <header className="bg-stone-950/95 backdrop-blur border-b border-stone-800 fixed w-full top-0 z-50">
+    <header className="bg-stone-950 border-b border-stone-800 fixed w-full top-0 z-50">
       <div className="relative z-10 max-w-[1920px] mx-auto px-4 md:px-8 h-24 flex justify-between items-center">
         <div className="flex-shrink-0 cursor-pointer">
           <Link to="/">

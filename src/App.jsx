@@ -23,7 +23,7 @@ function StoreLayout() {
     <div className="pt-24 min-h-screen flex flex-col justify-between overflow-x-hidden bg-stone-950">
       <Header />
       <main className="flex">
-        <Suspense fallback={<div className="w-full min-h-[60vh] bg-stone-950" />}>
+        <Suspense fallback={<div className="w-full min-h-dvh bg-stone-950" />}>
           <Outlet />
         </Suspense>
       </main>

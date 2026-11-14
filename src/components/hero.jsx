@@ -58,7 +58,7 @@ function SearchHero({ categories }) {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="¿Qué estás buscando?"
-          className="w-full h-14 rounded-full bg-stone-950/75 backdrop-blur border border-stone-700 pl-12 pr-16 text-lg text-white placeholder-stone-400 focus:outline-none focus:border-orange-500 [&::-webkit-search-cancel-button]:hidden"
+          className="w-full h-14 rounded-full bg-stone-950/80 border border-stone-700 pl-12 pr-16 text-lg text-white placeholder-stone-400 focus:outline-none focus:border-orange-500 [&::-webkit-search-cancel-button]:hidden"
         />
         <button
           type="submit"
@@ -76,7 +76,7 @@ function SearchHero({ categories }) {
           <Link
             key={name}
             to={categoryLink(name)}
-            className="px-4 py-2 rounded-full bg-stone-950/70 backdrop-blur-sm border border-white/15 text-sm md:text-[15px] font-medium text-stone-100 hover:text-white hover:bg-stone-900/90 hover:border-white/30 transition-colors"
+            className="px-4 py-2 rounded-full bg-stone-950/75 border border-white/15 text-sm md:text-[15px] font-medium text-stone-100 hover:text-white hover:bg-stone-900/90 hover:border-white/30 transition-colors"
           >
             {name}
           </Link>
@@ -84,7 +84,7 @@ function SearchHero({ categories }) {
         {categories.length > 0 && (
           <Link
             to="/productos"
-            className="px-4 py-2 rounded-full bg-stone-950/70 backdrop-blur-sm border border-orange-500/60 text-sm md:text-[15px] font-medium text-orange-300 hover:text-orange-200 hover:border-orange-400 transition-colors"
+            className="px-4 py-2 rounded-full bg-stone-950/75 border border-orange-500/60 text-sm md:text-[15px] font-medium text-orange-300 hover:text-orange-200 hover:border-orange-400 transition-colors"
           >
             Ver todo
           </Link>
@@ -101,7 +101,8 @@ function Hero() {
   return (
     <div className="w-full flex flex-col">
       <section className="relative w-full h-[78dvh] min-h-[32rem] max-h-[48rem] flex items-center justify-center overflow-hidden">
-        {/* Tres tamaños (public/images): el celular baja el chico. La misma lista se precarga en index.html */}
+        {/* Tres tamaños (public/images): el celular baja el chico. La misma lista se precarga en index.html.
+            La foto ya viene desenfocada y oscurecida: aplicar blur/brightness con CSS es muy caro en celulares */}
         <img
           src="/images/hero-1024.webp"
           srcSet="/images/hero-640.webp 640w, /images/hero-1024.webp 1024w, /images/hero-1600.webp 1600w"
@@ -110,7 +111,7 @@ function Hero() {
           height="1142"
           alt=""
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover brightness-45 blur-[3px]"
+          className="absolute inset-0 w-full h-full object-cover"
         />
         <SearchHero categories={categories} />
       </section>

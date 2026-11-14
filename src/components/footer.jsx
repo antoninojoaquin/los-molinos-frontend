@@ -63,7 +63,7 @@ function Footer() {
         </div>
       </div>
 
-      <p className="border-t border-stone-900 py-4 text-center text-xs text-stone-600">
+      <p className="border-t border-stone-900 py-4 text-center text-xs text-stone-400">
         © {new Date().getFullYear()} Los Molinos Regionales
       </p>
     </footer>
