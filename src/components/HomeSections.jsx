@@ -41,7 +41,7 @@ function SectionTitle({ children, link }) {
   );
 }
 
-// Secciones del inicio debajo de la portada: categorías y destacados.
+// Secciones del inicio debajo de la portada: destacados y categorías.
 // Se descargan aparte (lazy) para que la portada siga apareciendo al instante.
 export default function HomeSections() {
   const [products, setProducts] = useState(null);
@@ -61,6 +61,23 @@ export default function HomeSections() {
 
   return (
     <div className="w-full bg-stone-950 px-3 sm:px-6 md:px-16 py-12 md:py-20 flex flex-col gap-16 md:gap-24">
+      {featured.length > 0 && (
+        <section>
+          <SectionTitle link>Destacados</SectionTitle>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-5">
+            {featured.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                to={`/productos/${product.id}`}
+                isFavorite={favorites.includes(product.id)}
+                onToggleFavorite={toggleFavorite}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
       {categories.length > 0 && (
         <section>
           <SectionTitle>Categorías</SectionTitle>
@@ -96,24 +113,6 @@ export default function HomeSections() {
           </div>
         </section>
       )}
-
-      {featured.length > 0 && (
-        <section>
-          <SectionTitle link>Destacados</SectionTitle>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-5">
-            {featured.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                to={`/productos/${product.id}`}
-                isFavorite={favorites.includes(product.id)}
-                onToggleFavorite={toggleFavorite}
-              />
-            ))}
-          </div>
-        </section>
-      )}
-
     </div>
   );
 }
