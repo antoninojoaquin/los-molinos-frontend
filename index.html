@@ -8,6 +8,8 @@
     <link rel="preload" href="/fonts/roboto-slab-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/archivo-black-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preconnect" href="https://res.cloudinary.com" />
+    <!-- Catálogo: se pide en paralelo con el JavaScript (lo usan todas las páginas) -->
+    <link rel="preload" href="/catalog.json" as="fetch" crossorigin />
     <!-- Foto de la portada: se pide de entrada (en las otras páginas, scripts/prerender.mjs saca esta línea) -->
     <link rel="preload" as="image" href="/images/hero-blur-1024.webp" imagesrcset="/images/hero-blur-640.webp 640w, /images/hero-blur-1024.webp 1024w, /images/hero-blur-1600.webp 1600w" imagesizes="100vw" fetchpriority="high" data-hero-preload />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -74,7 +76,10 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- La foto de portada ya está en el HTML: se pinta apenas llega, sin esperar a React. Misma posición
+         y tamaño que la portada de la app (components/hero.jsx), que la reemplaza al arrancar sin que se note.
+         En las otras páginas, scripts/prerender.mjs la saca -->
+    <div id="root"><img data-static-hero src="/images/hero-blur-1024.webp" srcset="/images/hero-blur-640.webp 640w, /images/hero-blur-1024.webp 1024w, /images/hero-blur-1600.webp 1600w" sizes="100vw" width="1600" height="1142" alt="" fetchpriority="high" style="display:block;width:100%;height:78dvh;min-height:32rem;max-height:48rem;object-fit:cover;margin-top:6rem" /></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
