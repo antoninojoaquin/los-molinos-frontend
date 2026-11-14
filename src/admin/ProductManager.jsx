@@ -1,5 +1,6 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from "react";
-import { FaEdit, FaPlus, FaTrash, FaUpload } from "react-icons/fa";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { FaEdit, FaPlus, FaSearch, FaTimes, FaTrash, FaUpload } from "react-icons/fa";
+import { normalize } from "../utils/catalogFilters";
 import { formatPrice } from "../utils/formatPrice";
 import { mainImage, optimizeImage } from "../utils/image";
 import { isInStock } from "../utils/stock";
@@ -12,6 +13,85 @@ const DevImport = import.meta.env.DEV ? lazy(() => import("./DevImport")) : null
 
 const formatTime = (date) =>
   date.toLocaleString("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+
+const STATUSES = [
+  { key: "all", label: "Todos" },
+  { key: "visible", label: "Visibles" },
+  { key: "hidden", label: "Ocultos" },
+  { key: "out", label: "Sin stock" },
+];
+
+const matchesStatus = (product, status) =>
+  status === "visible"
+    ? product.visible !== false
+    : status === "hidden"
+      ? product.visible === false
+      : status === "out"
+        ? !isInStock(product)
+        : true;
+
+// Buscador del panel: por nombre, categoría y estado (visible, oculto o sin stock)
+function ListFilters({ query, onQuery, category, onCategory, categories, status, onStatus, products }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <label className="relative flex-1 flex items-center">
+          <span className="sr-only">Buscar productos</span>
+          <FaSearch className="pointer-events-none absolute left-4 text-gray-500" />
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => onQuery(event.target.value)}
+            placeholder="Buscar por nombre o descripción"
+            className="w-full h-11 rounded-full bg-gray-900 border border-gray-700 pl-11 pr-10 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 [&::-webkit-search-cancel-button]:hidden"
+          />
+          {query && (
+            <button
+              onClick={() => onQuery("")}
+              aria-label="Borrar búsqueda"
+              className="absolute right-3 p-1.5 text-gray-400 hover:text-white cursor-pointer"
+            >
+              <FaTimes />
+            </button>
+          )}
+        </label>
+        <label className="sm:w-64">
+          <span className="sr-only">Categoría</span>
+          <select
+            value={category}
+            onChange={(event) => onCategory(event.target.value)}
+            className="w-full h-11 rounded-full bg-gray-900 border border-gray-700 px-4 text-white focus:outline-none focus:border-orange-500 cursor-pointer"
+          >
+            <option value="">Todas las categorías</option>
+            {categories.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Estado">
+        {STATUSES.map(({ key, label }) => {
+          const count = products.filter((p) => matchesStatus(p, key)).length;
+          const selected = status === key;
+          return (
+            <button
+              key={key}
+              onClick={() => onStatus(key)}
+              aria-pressed={selected}
+              className={`px-3.5 py-1.5 rounded-full text-sm cursor-pointer transition-colors ${
+                selected ? "bg-orange-500 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+              }`}
+            >
+              {label} <span className={selected ? "text-white/80" : "text-gray-500"}>{count}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function PublishBar({ state, publishing, justPublished, onPublish }) {
   return (
@@ -58,6 +138,20 @@ export default function ProductManager() {
   const [removing, setRemoving] = useState(null);
   const [publishing, setPublishing] = useState(false);
   const [justPublished, setJustPublished] = useState(false);
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("");
+  const [status, setStatus] = useState("all");
+  // Al volver de editar, la lista vuelve a la misma altura (no al principio)
+  const scrollBeforeEdit = useRef(0);
+
+  const openEditor = (target) => {
+    scrollBeforeEdit.current = window.scrollY;
+    setEditing(target);
+  };
+
+  useEffect(() => {
+    if (!editing) requestAnimationFrame(() => window.scrollTo(0, scrollBeforeEdit.current));
+  }, [editing]);
 
   const refresh = useCallback(async () => {
     const [all, state] = await Promise.all([fetchAllProducts(), fetchPublishState()]);
@@ -117,6 +211,21 @@ export default function ProductManager() {
     );
   }
 
+  const categories = [...new Set(products.map((p) => p.category))].sort((a, b) => a.localeCompare(b));
+  const words = normalize(query).split(/s+/).filter(Boolean);
+  const filtered = products.filter(
+    (p) =>
+      (!category || p.category === category) &&
+      matchesStatus(p, status) &&
+      words.every((word) => normalize(`${p.name} ${p.category} ${p.description ?? ""}`).includes(word))
+  );
+  const filtering = !!(words.length || category || status !== "all");
+  const clearFilters = () => {
+    setQuery("");
+    setCategory("");
+    setStatus("all");
+  };
+
   const outCount = products.filter((p) => !isInStock(p)).length;
   const hiddenCount = products.filter((p) => p.visible === false).length;
 
@@ -134,7 +243,7 @@ export default function ProductManager() {
           )}
         </div>
         <button
-          onClick={() => setEditing("new")}
+          onClick={() => openEditor("new")}
           className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-400 text-white font-semibold cursor-pointer"
         >
           <FaPlus />
@@ -162,13 +271,42 @@ export default function ProductManager() {
 
       {error && <p className="text-red-400" role="alert">{error}</p>}
 
+      {!loading && products.length > 0 && (
+        <ListFilters
+          query={query}
+          onQuery={setQuery}
+          category={category}
+          onCategory={setCategory}
+          categories={categories}
+          status={status}
+          onStatus={setStatus}
+          products={products}
+        />
+      )}
+
       {loading ? (
         <p className="text-gray-400">Cargando productos…</p>
       ) : products.length === 0 ? (
         <p className="text-gray-400">Todavía no hay productos. Creá el primero.</p>
+      ) : filtered.length === 0 ? (
+        <div className="text-gray-400 flex flex-wrap items-center gap-3">
+          Ningún producto coincide con la búsqueda.
+          <button onClick={clearFilters} className="text-orange-400 hover:text-orange-300 cursor-pointer">
+            Limpiar filtros
+          </button>
+        </div>
       ) : (
+        <>
+        {filtering && (
+          <p className="text-gray-400 text-sm -mb-3 flex flex-wrap gap-3">
+            Mostrando {filtered.length} de {products.length}
+            <button onClick={clearFilters} className="text-orange-400 hover:text-orange-300 cursor-pointer">
+              Limpiar filtros
+            </button>
+          </p>
+        )}
         <ul className="flex flex-col gap-3">
-          {products.map((product) => {
+          {filtered.map((product) => {
             const inStock = isInStock(product);
             const visible = product.visible !== false;
             const busy = pendingId === product.id;
@@ -220,7 +358,7 @@ export default function ProductManager() {
                   </button>
                   <div className="flex items-center gap-1">
                     <button
-                      onClick={() => setEditing(product)}
+                      onClick={() => openEditor(product)}
                       disabled={!!pendingId}
                       aria-label={`Editar ${product.name}`}
                       title="Editar"
@@ -243,6 +381,7 @@ export default function ProductManager() {
             );
           })}
         </ul>
+        </>
       )}
 
       <ConfirmDialog
