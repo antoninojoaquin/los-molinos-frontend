@@ -35,7 +35,7 @@ export default function AddToCartButton({ product, className = "", variant = "fu
         onClick={handleClick}
         aria-label={outOfStock ? `${product.name}: sin stock` : `Agregar ${product.name} al carrito`}
         // Sin transición al cambiar a "Agregado": el cambio se ve en el mismo instante del toque
-        className={`group/btn w-full h-10 md:h-11 rounded-full flex items-center justify-center gap-2 text-sm font-semibold ${
+        className={`group/btn w-full h-10 md:h-11 px-3 rounded-full flex items-center justify-center gap-2 text-sm font-semibold whitespace-nowrap ${
           cooldown
             ? "bg-green-600 text-white"
             : outOfStock
@@ -44,7 +44,10 @@ export default function AddToCartButton({ product, className = "", variant = "fu
         } ${className}`}
       >
         {cooldown ? <FaCheck /> : !outOfStock && <FaCartPlus className="text-orange-400 group-hover/btn:text-white" />}
-        {cooldown ? "Agregado" : outOfStock ? "Sin stock" : "Agregar"}
+        {/* El texto aparece solo si entra (tarjetas angostas: solo el ícono) */}
+        <span className={outOfStock ? "" : "hidden @[11rem]:inline"}>
+          {cooldown ? "Agregado" : outOfStock ? "Sin stock" : "Agregar"}
+        </span>
       </button>
     );
   }
