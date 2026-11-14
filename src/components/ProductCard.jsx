@@ -57,13 +57,11 @@ export default function ProductCard({ product, to, isFavorite, onToggleFavorite 
           {product.name}
         </h3>
 
-        <div className="mt-auto pt-2 flex items-center justify-between gap-2">
-          <p className={`font-bold text-base md:text-xl ${outOfStock ? "text-stone-500" : "text-orange-400"}`}>
-            {formatPrice(product.price)}
-          </p>
-          <div className="pointer-events-auto">
-            <AddToCartButton product={product} compact />
-          </div>
+        <p className={`mt-auto pt-1 font-bold text-base md:text-xl ${outOfStock ? "text-stone-500" : "text-orange-400"}`}>
+          {formatPrice(product.price)}
+        </p>
+        <div className="pointer-events-auto mt-2">
+          <AddToCartButton product={product} variant="wide" />
         </div>
       </div>
     </article>
