@@ -36,12 +36,14 @@ service cloud.firestore {
     // Valida el documento completo que queda guardado (mismos límites que el formulario del panel)
     function isValidProduct(p) {
       return p.keys().hasAll(['name', 'category', 'description', 'price', 'inStock', 'images'])
-        && p.keys().hasOnly(['name', 'category', 'description', 'price', 'inStock', 'images'])
+        && p.keys().hasOnly(['name', 'category', 'description', 'price', 'inStock', 'images', 'visible'])
         && p.name is string && p.name.size() > 0 && p.name.size() <= 120
         && p.category is string && p.category.size() > 0 && p.category.size() <= 60
         && p.description is string && p.description.size() <= 1000
         && p.price is int && p.price >= 0
         && p.inStock is bool
+        // Oculto (false): queda guardado en el panel pero no se publica en la tienda
+        && (!('visible' in p) || p.visible is bool)
         && hasValidImages(p.images);
     }
 

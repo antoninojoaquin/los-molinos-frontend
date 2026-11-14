@@ -118,6 +118,7 @@ export default function ProductManager() {
   }
 
   const outCount = products.filter((p) => !isInStock(p)).length;
+  const hiddenCount = products.filter((p) => p.visible === false).length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -126,7 +127,9 @@ export default function ProductManager() {
           <h1 className="text-white text-3xl">Productos</h1>
           {!loading && (
             <p className="text-gray-400 text-sm mt-1">
-              {products.length} productos{outCount > 0 && ` · ${outCount} sin stock`}
+              {products.length} productos
+              {hiddenCount > 0 && ` · ${hiddenCount} ocultos`}
+              {outCount > 0 && ` · ${outCount} sin stock`}
             </p>
           )}
         </div>
@@ -167,27 +170,41 @@ export default function ProductManager() {
         <ul className="flex flex-col gap-3">
           {products.map((product) => {
             const inStock = isInStock(product);
+            const visible = product.visible !== false;
             const busy = pendingId === product.id;
             return (
               <li
                 key={product.id}
-                className={`flex flex-wrap sm:flex-nowrap items-center gap-x-4 gap-y-3 bg-gray-800 rounded-2xl p-3 ${
-                  busy ? "opacity-60" : ""
-                }`}
+                className={`flex flex-wrap sm:flex-nowrap items-center gap-x-4 gap-y-3 rounded-2xl p-3 ${
+                  visible ? "bg-gray-800" : "bg-gray-800/50 border border-dashed border-gray-700"
+                } ${busy ? "opacity-60" : ""}`}
               >
                 <img
                   src={optimizeImage(mainImage(product), 300)}
                   alt=""
-                  className={`w-16 h-16 rounded-lg object-cover shrink-0 ${inStock ? "" : "grayscale"}`}
+                  className={`w-16 h-16 rounded-lg object-cover shrink-0 ${inStock ? "" : "grayscale"} ${visible ? "" : "opacity-50"}`}
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-medium truncate">{product.name}</p>
+                  <p className={`font-medium truncate ${visible ? "text-white" : "text-gray-400"}`}>{product.name}</p>
                   <p className="text-gray-400 text-sm truncate">
                     {product.category} · {formatPrice(product.price)}
                   </p>
                 </div>
 
                 <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-2">
+                  <button
+                    onClick={() => run(product.id, () => saveProduct({ ...product, visible: !visible }))}
+                    disabled={!!pendingId}
+                    title={visible ? "Ocultar de la tienda" : "Mostrar en la tienda"}
+                    aria-label={`${product.name}: ${visible ? "visible. Ocultar de la tienda" : "oculto. Mostrar en la tienda"}`}
+                    className={`w-24 py-1.5 rounded-full text-sm font-semibold cursor-pointer disabled:cursor-wait ${
+                      visible
+                        ? "bg-sky-600/20 text-sky-300 hover:bg-sky-600/30"
+                        : "bg-gray-700 text-gray-400 hover:bg-gray-600"
+                    }`}
+                  >
+                    {visible ? "Visible" : "Oculto"}
+                  </button>
                   <button
                     onClick={() => run(product.id, () => saveProduct({ ...product, inStock: !inStock }))}
                     disabled={!!pendingId}
